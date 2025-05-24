@@ -1,0 +1,27 @@
+[
+  {
+    "query": "What color is a ripe banana?",
+    "context": "A banana is an elongated, edible fruit botanically a berry, produced by several kinds of large herbaceous flowering plants in the genus Musa. Ripe bananas are typically yellow.",
+    "answer": "A ripe banana is yellow."
+  },
+  {
+    "query": "What color is the sky on a clear day?",
+    "context": "The sky is the expanse of air and outer space as seen from Earth. On a clear day, the sky appears blue due to Rayleigh scattering of sunlight.",
+    "answer": "The sky on a clear day is blue."
+  },
+  {
+    "query": "What color is a common fire truck?",
+    "context": "A fire truck (also known in some regions as a fire engine) is a road vehicle (usually a truck) that serves a primary purpose in firefighting. Most fire trucks are painted red.",
+    "answer": "A common fire truck is red."
+  },
+  {
+    "query": "What color is grass?",
+    "context": "Grass is a monocotyledonous, herbaceous plant with narrow leaves growing from the base. It is a common type of vegetation found in lawns, fields, and pastures. Grass is typically green.",
+    "answer": "Grass is green."
+  },
+  {
+    "query": "What color are most clouds?",
+    "context": "A cloud is an aerosol consisting of a visible mass of minute liquid droplets, frozen crystals, or other particles suspended in the atmosphere of a planetary body. Most clouds appear white or gray.",
+    "answer": "Most clouds are white or gray."
+  }
+]

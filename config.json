@@ -1,0 +1,10 @@
+{
+  "llm_config": {
+    "model": "tinyllama",
+    "temperature": 1.1
+  },
+  "embedding_model": "nomic-embed-text",
+  "vision_model": "moondream",
+  "ollama_url_endpoint": "http://localhost:11434/api/generate",
+  "system_prompt": "Hey there! Please do your best to answer the user's question, but **only use the information I give you in the context below**. If you can't find the answer in the context, it's totally okay to just say you don't know. Don't try to guess or make things up, alright?\n\nContext: {context}"
+}

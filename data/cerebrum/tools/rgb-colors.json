@@ -1,0 +1,48 @@
+{
+  "document_title": "RGB Color Model for LLMs",
+  "description": "This document provides a detailed explanation of the RGB color model, its components, how colors are represented, and common examples. It is intended to serve as a knowledge base for an LLM to understand and answer queries related to RGB colors.",
+  "rgb_basics": {
+    "name": "RGB Color Model",
+    "definition": "RGB stands for Red, Green, and Blue. It is an additive color model in which red, green, and blue light are added together in various ways to reproduce a broad array of colors. It is primarily used for displaying images on electronic devices like televisions, computer monitors, and mobile phones.",
+    "components": [
+      {"color": "Red", "description": "Primary component, represents the intensity of red light."},
+      {"color": "Green", "description": "Primary component, represents the intensity of green light."},
+      {"color": "Blue", "description": "Primary component, represents the intensity of blue light."}
+    ],
+    "additive_nature": "In the RGB model, combining all three primary colors at their full intensity produces white light. The absence of all three colors results in black."
+  },
+  "color_representation": {
+    "value_range": "Each of the Red, Green, and Blue components is represented by an integer value typically ranging from 0 to 255. A value of 0 means no intensity for that color, while 255 means full intensity.",
+    "format": "RGB colors are commonly written as a triplet of numbers, for example, rgb(R, G, B) or (R, G, B).",
+    "total_colors": "Since each component has 256 possible values (0-255), there are 256 * 256 * 256 = 16,777,216 possible unique RGB colors."
+  },
+  "common_rgb_colors": [
+    {"name": "Black", "rgb": "rgb(0, 0, 0)", "explanation": "Absence of all light."},
+    {"name": "White", "rgb": "rgb(255, 255, 255)", "explanation": "Full intensity of all three primary colors."},
+    {"name": "Red", "rgb": "rgb(255, 0, 0)", "explanation": "Full red, no green or blue."},
+    {"name": "Green", "rgb": "rgb(0, 255, 0)", "explanation": "Full green, no red or blue."},
+    {"name": "Blue", "rgb": "rgb(0, 0, 255)", "explanation": "Full blue, no red or green."},
+    {"name": "Yellow", "rgb": "rgb(255, 255, 0)", "explanation": "Full red + full green."},
+    {"name": "Cyan", "rgb": "rgb(0, 255, 255)", "explanation": "Full green + full blue."},
+    {"name": "Magenta", "rgb": "rgb(255, 0, 255)", "explanation": "Full red + full blue."},
+    {"name": "Gray", "rgb": "rgb(128, 128, 128)", "explanation": "Equal intensity of all three colors (mid-range)."},
+    {"name": "Light Gray", "rgb": "rgb(200, 200, 200)", "explanation": "Higher equal intensity."},
+    {"name": "Dark Gray", "rgb": "rgb(50, 50, 50)", "explanation": "Lower equal intensity."},
+    {"name": "Orange", "rgb": "rgb(255, 165, 0)", "explanation": "Full red with moderate green."},
+    {"name": "Purple", "rgb": "rgb(128, 0, 128)", "explanation": "Moderate red and blue, no green."}
+  ],
+  "how_to_mix_colors": "To create a new color, you adjust the intensity of each red, green, and blue component. For example, to make a lighter shade, you increase the values of all three components proportionally. To make a darker shade, you decrease them.",
+  "applications": [
+    "Digital displays (monitors, TVs, phones)",
+    "Web design (CSS colors)",
+    "Image editing software",
+    "Digital art and graphics"
+  ],
+  "llm_interaction_guidelines": [
+    "When asked about a color, provide its RGB triplet and a brief explanation.",
+    "If asked to describe how a color is formed, explain the combination of red, green, and blue light.",
+    "If asked to convert a color name to RGB, use the provided examples.",
+    "If asked about the range of RGB values, state 0-255 for each component.",
+    "Explain that RGB is an additive model, meaning light is added to create colors."
+  ]
+}

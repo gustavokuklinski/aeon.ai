@@ -1,0 +1,136 @@
+[
+    {
+  "conversationBehavior": {
+    "description": "Defines the behavioral guidelines for an AI engaging in natural and helpful dialogue, especially when leveraging a retrieval-augmented generation (RAG) system.",
+    "stages": [
+      {
+        "stageName": "Understanding User Intent",
+        "purpose": "To accurately interpret the user's query and identify their underlying need or question.",
+        "actions": [
+          "Analyze keywords and phrases.",
+          "Identify explicit questions.",
+          "Infer implicit intent (e.g., 'I'm cold' implies 'turn up the heat').",
+          "Determine if retrieval is necessary."
+        ],
+        "output": {
+          "type": "object",
+          "properties": {
+            "originalQuery": { "type": "string", "description": "The raw user input." },
+            "parsedIntent": { "type": "string", "description": "A concise summary of the user's intent." },
+            "keywordsForRetrieval": { "type": "array", "items": { "type": "string" }, "description": "Keywords extracted for information retrieval." }
+          }
+        }
+      },
+      {
+        "stageName": "Information Retrieval & Synthesis",
+        "purpose": "To fetch relevant information and integrate it seamlessly into a coherent response.",
+        "actions": [
+          "Execute retrieval based on keywords.",
+          "Filter and prioritize retrieved documents/snippets based on relevance.",
+          "Extract key facts and concepts from retrieved content.",
+          "Rephrase and summarize information in natural language (avoid direct copy-paste).",
+          "Identify any information gaps or limitations in retrieved data."
+        ],
+        "output": {
+          "type": "object",
+          "properties": {
+            "retrievedContext": { "type": "string", "description": "Synthesized relevant information from retrieval." },
+            "informationGaps": { "type": "array", "items": { "type": "string" }, "description": "Areas where retrieved information was insufficient." }
+          }
+        }
+      },
+      {
+        "stageName": "Response Generation & Refinement",
+        "purpose": "To construct a natural, empathetic, and complete answer.",
+        "actions": [
+          "Start with an acknowledgment of the query.",
+          "Incorporate retrieved information smoothly, using conversational transitions.",
+          "Use contractions and varied sentence structures.",
+          "Avoid jargon or explain it clearly.",
+          "Maintain an approachable and friendly tone.",
+          "Address the user's explicit and implicit needs.",
+          "If information is limited, state it gracefully without making things up."
+        ],
+        "output": {
+          "type": "object",
+          "properties": {
+            "generatedResponse": { "type": "string", "description": "The complete, natural language response to the user." },
+            "tone": { "type": "string", "enum": ["approachable", "friendly", "informal"], "description": "The desired tone of the response." }
+          }
+        }
+      },
+      {
+        "stageName": "Engagement & Follow-up",
+        "purpose": "To encourage further interaction and ensure user satisfaction.",
+        "actions": [
+          "End with an open invitation for more questions.",
+          "Suggest logical next steps if applicable.",
+          "Offer to clarify or expand on points.",
+          "Monitor for user feedback or further queries."
+        ],
+        "output": {
+          "type": "object",
+          "properties": {
+            "invitationToContinue": { "type": "boolean", "description": "True if the response encourages further dialogue." },
+            "suggestedNextSteps": { "type": "array", "items": { "type": "string" }, "description": "Optional suggestions for the user's next action." }
+          }
+        }
+      }
+    ],
+    "generalGuidelines": [
+      "Prioritize clarity and conciseness.",
+      "Always be helpful and empathetic.",
+      "Never hallucinate information; admit when details are unknown.",
+      "Avoid robotic or overly formal phrasing.",
+      "Ensure responses feel complete but invite further questions."
+    ]
+  }
+},
+{
+  "conversationSimulation": {
+    "title": "Simple AI-User Conversation Flow",
+    "description": "This JSON outlines a basic conversational exchange, demonstrating turns between an AI and a user with pre-defined AI questions.",
+    "turns": [
+      {
+        "turnNumber": 1,
+        "speaker": "AI",
+        "message": "Hello!",
+        "expectedUserResponse": "User's greeting (e.g., 'Hi there!', 'Hello back!', 'Hey!')"
+      },
+      {
+        "turnNumber": 2,
+        "speaker": "User",
+        "messagePlaceholder": "User's response to 'Hello!'"
+      },
+      {
+        "turnNumber": 3,
+        "speaker": "AI",
+        "message": "How are you?",
+        "expectedUserResponse": "User's current state (e.g., 'I'm doing great!', 'I'm good, thanks!', 'A bit tired, but okay.')"
+      },
+      {
+        "turnNumber": 4,
+        "speaker": "User",
+        "messagePlaceholder": "User's response to 'How are you?'"
+      },
+      {
+        "turnNumber": 5,
+        "speaker": "AI",
+        "message": "How have you been?",
+        "expectedUserResponse": "User's update on recent well-being (e.g., 'I've been well, busy with work.', 'Pretty good, just relaxing.', 'Things have been a bit hectic lately.')"
+      },
+      {
+        "turnNumber": 6,
+        "speaker": "User",
+        "messagePlaceholder": "User's response to 'How have you been?'"
+      },
+      {
+        "turnNumber": 7,
+        "speaker": "AI",
+        "message": "That's all for now! Thanks for chatting. Feel free to keep typing, but I don't have more pre-programmed questions.",
+        "expectedUserResponse": "Any further user input or conclusion."
+      }
+    ]
+  }
+}
+]

@@ -1,0 +1,1287 @@
+[{
+    "text": "<s>[INST] Transfer a directory \"project\" to a new location with a new name: [/INST] mv project /new/location/newname/ </s>"
+},
+{
+    "text": "<s>[INST] Change the name of a file from \"file1.txt\" to \"file2.txt\": [/INST] mv file1.txt file2.txt </s>"
+},
+{
+    "text": "<s>[INST] Switch to another folder. [/INST] cd </s>"
+},
+{
+    "text": "<s>[INST] Give me more money. [/INST] Invalid command. </s>"
+},
+{
+    "text": "<s>[INST] Switch to the primary directory. [/INST] cd ~ </s>"
+},
+{
+    "text": "<s>[INST] What's the current working directory? [/INST] pwd </s>"
+},
+{
+    "text": "<s>[INST] Make another copy of 3.txt as 4.txt [/INST] cp 3.txt 4.txt </s>"
+},
+{
+    "text": "<s>[INST] Display files in the current directory [/INST] ls </s>"
+},
+{
+    "text": "<s>[INST] Move me to a different place in the file system [/INST] cd </s>"
+},
+{
+    "text": "<s>[INST] What are the files in this location? [/INST] ls </s>"
+},
+{
+    "text": "<s>[INST] Sort the lines in input.txt file in reverse order. [/INST] sort -r input.txt </s>"
+},
+{
+    "text": "<s>[INST] Show contents of file 2.txt with numbering [/INST] cat -n 2.txt </s>"
+},
+{
+    "text": "<s>[INST] Display my current directory. [/INST] pwd </s>"
+},
+{
+    "text": "<s>[INST] Allow execute permissions for a program named \"app\" to the owner and group. [/INST] chmod ug+x app </s>"
+},
+{
+    "text": "<s>[INST] Can you display the current directory? [/INST] pwd </s>"
+},
+{
+    "text": "<s>[INST] I want to be in the folder named \"backups\". [/INST] cd backups </s>"
+},
+{
+    "text": "<s>[INST] Take me to the directory with the name \"images\" [/INST] cd images </s>"
+},
+{
+    "text": "<s>[INST] Modify the timestamp of \"draft.docx\" [/INST] touch draft.docx </s>"
+},
+{
+    "text": "<s>[INST] List all files in this directory including hidden files [/INST] ls -a </s>"
+},
+{
+    "text": "<s>[INST] Create files \"doc1.docx\" and \"doc2.docx\" [/INST] touch doc1.docx doc2.docx </s>"
+},
+{
+    "text": "<s>[INST] Store lines of 3.txt to 2.txt [/INST] cp 3.txt 2.txt </s>"
+},
+{
+    "text": "<s>[INST] Move a file named \"document.pdf\" to the parent directory: [/INST] mv document.pdf .. </s>"
+},
+{
+    "text": "<s>[INST] Create files fil1.txt, file2.txt and file3.txt [/INST] touch file1.txt file2.txt file3.txt </s>"
+},
+{
+    "text": "<s>[INST] Give the lines in file.c that do not match '//' [/INST] grep -v \"//\" file.c </s>"
+},
+{
+    "text": "<s>[INST] Show all the files under this directory [/INST] ls </s>"
+},
+{
+    "text": "<s>[INST] Determine the number of lines containing the keyword \"important\" in a notes.txt [/INST] grep -c \"important\" notes.txt </s>"
+},
+{
+    "text": "<s>[INST] Move to the previous location. [/INST] cd - </s>"
+},
+{
+    "text": "<s>[INST] Who will win the World cup? [/INST] Invalid command. </s>"
+},
+{
+    "text": "<s>[INST] Present detailed information of files present in this directory [/INST] ls -l </s>"
+},
+{
+    "text": "<s>[INST] Show the files within this folder [/INST] ls </s>"
+},
+{
+    "text": "<s>[INST] Deny all permissions for a file named \"confidential.doc\" to everyone except the owner. [/INST] chmod u=rw,go= confidential.doc </s>"
+},
+{
+    "text": "<s>[INST] Make a replica of 3.txt to 4.txt [/INST] cp 3.txt 4.txt </s>"
+},
+{
+    "text": "<s>[INST] Please find and list all lines in \"students.csv\" that begin with \"2023\", if you could. [/INST] grep \"^2023\" students.csv </s>"
+},
+{
+    "text": "<s>[INST] Create a folder named images [/INST] mkdir images </s>"
+},
+{
+    "text": "<s>[INST] Display a catalog of files in this folder [/INST] ls </s>"
+},
+{
+    "text": "<s>[INST] Move a file named \"file.txt\" to a directory called \"archive\": [/INST] mv file.txt archive/ </s>"
+},
+{
+    "text": "<s>[INST] Create a file named \"report.txt\" [/INST] touch report.txt </s>"
+},
+{
+    "text": "<s>[INST] Give a list of files present in this folder [/INST] ls </s>"
+},
+{
+    "text": "<s>[INST] Provide the text found in memo1.txt [/INST] cat mem1.txt </s>"
+},
+{
+    "text": "<s>[INST] Sort the file 1.txt in numerical order [/INST] sort -n 1.txt </s>"
+},
+{
+    "text": "<s>[INST] Relocate a file called \"document.doc\" to a parent directory: [/INST] mv document.doc .. </s>"
+},
+{
+    "text": "<s>[INST] Enumerate the files in this directory [/INST] ls </s>"
+},
+{
+    "text": "<s>[INST] What are the contents of this directory [/INST] ls </s>"
+},
+{
+    "text": "<s>[INST] Display the current folder path. [/INST] pwd </s>"
+},
+{
+    "text": "<s>[INST] I'm curious about the characters in \"script.sh.\" [/INST] wc -c script.sh </s>"
+},
+{
+    "text": "<s>[INST] Relocate a directory \"photos\" to a parent directory: [/INST] mv photos .. </s>"
+},
+{
+    "text": "<s>[INST] Change my location to the directory /path/to/directory. [/INST] cd /path/to/directory </s>"
+},
+{
+    "text": "<s>[INST] Make a new directory with the name music [/INST] mkdir music </s>"
+},
+{
+    "text": "<s>[INST] Determine the word count in a \"speech.txt\" file. [/INST] wc -w speech.txt </s>"
+},
+{
+    "text": "<s>[INST] Move to the directory named \"downloads\" [/INST] cd downloads </s>"
+},
+{
+    "text": "<s>[INST] Change the modification date of file \"file1.cpp\" to today's date [/INST] touch file1.cpp </s>"
+},
+{
+    "text": "<s>[INST] Sing the song \"Happy Birthday\" [/INST] Invalid command. </s>"
+},
+{
+    "text": "<s>[INST] Find the longest line in \"longest_line.txt\" by counting its characters. [/INST] wc -L longest_line.txt </s>"
+},
+{
+    "text": "<s>[INST] A new folder named reports is needed. [/INST] mkdir reports </s>"
+},
+{
+    "text": "<s>[INST] Change my location to the directory named \"media\". [/INST] cd media </s>"
+},
+{
+    "text": "<s>[INST] Show the material in notes.txt with line numbers. [/INST] cat -n notes.txt </s>"
+},
+{
+    "text": "<s>[INST] List all email addresses in a text file. [/INST] `grep -o -E \"\\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+.[A-Z </s>"
+},
+{
+    "text": "<s>[INST] What's my current directory? [/INST] pwd </s>"
+},
+{
+    "text": "<s>[INST] Display lines in the \"access.log\" file that contain either \"GET\" or \"POST\" requests. [/INST] grep -E \"GET|POST\" access.log </s>"
+},
+{
+    "text": "<s>[INST] Move to the directory before this one. [/INST] cd .. </s>"
+},
+{
+    "text": "<s>[INST] Copy all the files with .txt extension to 4.txt [/INST] cp *.txt 4.txt </s>"
+},
+{
+    "text": "<s>[INST] Set the modification date of \"video.mp4\" to today [/INST] touch video.mp4 </s>"
+},
+{
+    "text": "<s>[INST] Set the modification date of \"image.png\" to today's date [/INST] touch image.png </s>"
+},
+{
+    "text": "<s>[INST] The file 5.txt should get all the lines of 3.txt [/INST] cp 3.txt 5.txt </s>"
+},
+{
+    "text": "<s>[INST] List all details about files here [/INST] ls -al </s>"
+},
+{
+    "text": "<s>[INST] Restrict write and execute permissions for a script called \"secure.sh\" to the owner only. [/INST] chmod u=we secure.sh </s>"
+},
+{
+    "text": "<s>[INST] Which folder am I currently in? [/INST] pwd </s>"
+},
+{
+    "text": "<s>[INST] Generate notes for Machine Intelligence [/INST] Invalid Command </s>"
+},
+{
+    "text": "<s>[INST] Prisha is a penguin [/INST] Invalid Command </s>"
+},
+{
+    "text": "<s>[INST] Names of files located in this directory [/INST] ls </s>"
+},
+{
+    "text": "<s>[INST] Generate \"archive.gz\" file [/INST] touch archive.gz </s>"
+},
+{
+    "text": "<s>[INST] Determine the character count in a source code file, \"main.c.\" [/INST] wc -c main.c </s>"
+},
+{
+    "text": "<s>[INST] Create a device that can speak to me [/INST] Invalid Command </s>"
+},
+{
+    "text": "<s>[INST] Allow read and write permissions for the owner and group on a file named \"document.doc\". [/INST] chmod ug+rw document.doc </s>"
+},
+{
+    "text": "<s>[INST] Change the name of a file from \"file3.txt\" to \"file4.txt\": [/INST] mv file3.txt file4.txt </s>"
+},
+{
+    "text": "<s>[INST] Change my current location. [/INST] cd </s>"
+},
+{
+    "text": "<s>[INST] Arrange lines in input.txt file in descending numerical order. [/INST] sort -nr input.txt </s>"
+},
+{
+    "text": "<s>[INST] Here is where you can form a new directory named AAAA. [/INST] mkdir AAAA </s>"
+},
+{
+    "text": "<s>[INST] Copy all lines of 2.txt to 3.txt [/INST] cp 2.txt 3.txt </s>"
+},
+{
+    "text": "<s>[INST] Set the modification date of \"presentation_slide.ppt\" to today's date [/INST] touch presentation_slide.ppt </s>"
+},
+{
+    "text": "<s>[INST] Go to the folder one level up. [/INST] cd .. </s>"
+},
+{
+    "text": "<s>[INST] You can form a new directory named documents here. [/INST] mkdir documents </s>"
+},
+{
+    "text": "<s>[INST] Navigate to the main directory. [/INST] cd ~ </s>"
+},
+{
+    "text": "<s>[INST] Present a detailed list of files in /var/log/system/ [/INST] ls /var/log/system/ </s>"
+},
+{
+    "text": "<s>[INST] Change to the top directory. [/INST] cd ~ </s>"
+},
+{
+    "text": "<s>[INST] Tell me the current directory. [/INST] pwd </s>"
+},
+{
+    "text": "<s>[INST] Make this flower bloom [/INST] Invalid Command </s>"
+},
+{
+    "text": "<s>[INST] Combine report.txt and summary.txt. Show their contents. [/INST] cat report.txt summary.txt </s>"
+},
+{
+    "text": "<s>[INST] View the insights in README.txt with line numbers. [/INST] cat -n README.txt </s>"
+},
+{
+    "text": "<s>[INST] Output the contents of appendix.txt with numbering. [/INST] cat -n appendix.txt </s>"
+},
+{
+    "text": "<s>[INST] Copy 3.txt to location /path/to/the/directory [/INST] cp 3.txt /path/to/the/directory </s>"
+},
+{
+    "text": "<s>[INST] Please create a river here [/INST] Invalid Command </s>"
+},
+{
+    "text": "<s>[INST] Show the file 1.txt with numbering [/INST] cat -n 1.txt </s>"
+},
+{
+    "text": "<s>[INST] Display the contents of both intro.txt and conclusion.txt. [/INST] cat intro.txt conclusion.txt </s>"
+},
+{
+    "text": "<s>[INST] What's in both files - report.txt and analysis.txt? [/INST] cat report.txt analysis.txt </s>"
+},
+{
+    "text": "<s>[INST] Display the files within the directory /var/log/system/ [/INST] ls /var/log/system/ </s>"
+},
+{
+    "text": "<s>[INST] Count the number of characters in a configuration file \"settings.conf\". [/INST] wc -c settings.conf </s>"
+},
+{
+    "text": "<s>[INST] Become a good human being [/INST] Invalid Command </s>"
+},
+{
+    "text": "<s>[INST] Remove all permissions for a file named \"secret.txt\" from others. [/INST] chmod o= secret.txt </s>"
+},
+{
+    "text": "<s>[INST] You can display the contents of the file 1.txt . [/INST] cat 1.txt </s>"
+},
+{
+    "text": "<s>[INST] Show the contents of the directory path /home/user/documents [/INST] ls /home/user/documents </s>"
+},
+{
+    "text": "<s>[INST] Which location is it? [/INST] pwd </s>"
+},
+{
+    "text": "<s>[INST] Enumerate the items present in this folder [/INST] ls </s>"
+},
+{
+    "text": "<s>[INST] Can you perform a case-insensitive search for the name \"John Doe\" in \"contacts.txt\"? [/INST] grep -i \"John Doe\" contacts.txt </s>"
+},
+{
+    "text": "<s>[INST] Show the information from specs.txt with line numbers. [/INST] cat -n specs.txt </s>"
+},
+{
+    "text": "<s>[INST] List files and directories in the designated path [/INST] ls /path/to/directory </s>"
+},
+{
+    "text": "<s>[INST] The contents of the files 2.txt should be combined. [/INST] cat 2.txt </s>"
+},
+{
+    "text": "<s>[INST] Draw a line with width of 10cm [/INST] Invalid Command </s>"
+},
+{
+    "text": "<s>[INST] Where is my current location? [/INST] pwd </s>"
+},
+{
+    "text": "<s>[INST] Show the current working directory [/INST] pwd </s>"
+},
+{
+    "text": "<s>[INST] You can open a new directory with name as pri. [/INST] mkdir pri </s>"
+},
+{
+    "text": "<s>[INST] Find all files with the \".log\" extension in the \"/var/logs\" directory that contain the word \"error.\" [/INST] grep -rl \"error\" /var/logs/*.log </s>"
+},
+{
+    "text": "<s>[INST] When were you born? [/INST] Invalid command. </s>"
+},
+{
+    "text": "<s>[INST] Create a directory called reports [/INST] mkdir reports </s>"
+},
+{
+    "text": "<s>[INST] Where am I located? [/INST] pwd </s>"
+},
+{
+    "text": "<s>[INST] Print the path of the current directory. [/INST] pwd </s>"
+},
+{
+    "text": "<s>[INST] Move me to a different path. [/INST] cd </s>"
+},
+{
+    "text": "<s>[INST] Return to the directory I was last in. [/INST] cd - </s>"
+},
+{
+    "text": "<s>[INST] Enumerate and show the contents of the target directory [/INST] ls /path/to/directory </s>"
+},
+{
+    "text": "<s>[INST] List permissions of all files present in this folder [/INST] ls -l </s>"
+},
+{
+    "text": "<s>[INST] Change to a different location. [/INST] cd </s>"
+},
+{
+    "text": "<s>[INST] The current working directory should be shown. [/INST] pwd </s>"
+},
+{
+    "text": "<s>[INST] Change where I am. [/INST] cd </s>"
+},
+{
+    "text": "<s>[INST] What does data.txt contain? [/INST] cat data.xt </s>"
+},
+{
+    "text": "<s>[INST] Sort lines of p3.txt in reverse alphabetical order. [/INST] sort -r p3.txt </s>"
+},
+{
+    "text": "<s>[INST] Calculate the number of words in a novel named \"great_expectations.txt\". [/INST] wc -w great_expectations.txt </s>"
+},
+{
+    "text": "<s>[INST] Copy all .py files to directory /path/here [/INST] cp *.py /path/here </s>"
+},
+{
+    "text": "<s>[INST] RCB will win the IPL match. [/INST] Invalid command. </s>"
+},
+{
+    "text": "<s>[INST] Modify the timestamp of \"settings.ini\" [/INST] touch settings.ini </s>"
+},
+{
+    "text": "<s>[INST] Modify the timestamp of the \"draft_document.docx\" [/INST] touch draft_document.docx </s>"
+},
+{
+    "text": "<s>[INST] Can you predict tomorrow's weather? [/INST] Invalid Command </s>"
+},
+{
+    "text": "<s>[INST] Move a file named \"music.mp3\" to the parent directory: [/INST] mv music.mp3 .. </s>"
+},
+{
+    "text": "<s>[INST] Information of all files contained in this folder [/INST] ls -al </s>"
+},
+{
+    "text": "<s>[INST] Put me inside the directory called \"reports\". [/INST] cd reports </s>"
+},
+{
+    "text": "<s>[INST] Grant execute permission for a shell script named \"install.sh\" to everyone. [/INST] chmod +x install.sh </s>"
+},
+{
+    "text": "<s>[INST] List files in /path/to/directory [/INST] ls /path/to/directory </s>"
+},
+{
+    "text": "<s>[INST] Calculate the number of lines, words, and characters in a document, \"document.doc.\" [/INST] wc -l -w -c document.doc </s>"
+},
+{
+    "text": "<s>[INST] What's in report.txt along with notes.txt? [/INST] cat report.txt notes.txt </s>"
+},
+{
+    "text": "<s>[INST] List everything in this directory [/INST] ls </s>"
+},
+{
+    "text": "<s>[INST] Craft a new file named \"presentation.pptx\" [/INST] touch presentation.pptx </s>"
+},
+{
+    "text": "<s>[INST] Go back to the main folder. [/INST] cd ~ </s>"
+},
+{
+    "text": "<s>[INST] Provide a detailed listing of files here [/INST] ls -l </s>"
+},
+{
+    "text": "<s>[INST] You can create a new directory named documents here. [/INST] mkdir documents </s>"
+},
+{
+    "text": "<s>[INST] Change the name of a file from \"oldname.txt\" to \"newname.txt\": [/INST] mv oldname.txt newname.txt </s>"
+},
+{
+    "text": "<s>[INST] Reveal the details of description.txt along with numbering. [/INST] cat -n description.txt </s>"
+},
+{
+    "text": "<s>[INST] Could you show me how many lines are in \"songlist.txt\"? [/INST] wc -l songlist.txt </s>"
+},
+{
+    "text": "<s>[INST] Present the absolute path of my current location. [/INST] pwd </s>"
+},
+{
+    "text": "<s>[INST] Enumerate contents of this folder [/INST] ls </s>"
+},
+{
+    "text": "<s>[INST] Display the content of notes.txt with line numbers. [/INST] cat -n notes.txt </s>"
+},
+{
+    "text": "<s>[INST] Help me count the words in \"lyrics.txt.\" [/INST] wc -w lyrics.txt </s>"
+},
+{
+    "text": "<s>[INST] Take a look at the contents of the file 2.txt followed by 3.txt. [/INST] cat 2.txt 3.txt </s>"
+},
+{
+    "text": "<s>[INST] Solve rubix cube for me [/INST] Invalid Command </s>"
+},
+{
+    "text": "<s>[INST] Drink 8 litres of water now [/INST] Invalid Command </s>"
+},
+{
+    "text": "<s>[INST] List items within the folder located at /var/log/ [/INST] ls /var/log/ </s>"
+},
+{
+    "text": "<s>[INST] What are the hidden files in this directory? [/INST] ls -a </s>"
+},
+{
+    "text": "<s>[INST] Combine and display the contents of files file2.txt and file3.txt. [/INST] cat file2.txt file3.txt </s>"
+},
+{
+    "text": "<s>[INST] Give me a summary of files here [/INST] ls </s>"
+},
+{
+    "text": "<s>[INST] Move me to the folder called \"temp_files\". [/INST] cd temp_files </s>"
+},
+{
+    "text": "<s>[INST] Adjust the modification date of \"pic.jpg\" to today's date [/INST] touch pic.jpg </s>"
+},
+{
+    "text": "<s>[INST] Set full permissions for a directory named \"uploads\" for everyone. [/INST] chmod a+rwx uploads </s>"
+},
+{
+    "text": "<s>[INST] Establish a new folder named Personal [/INST] mkdir Personal </s>"
+},
+{
+    "text": "<s>[INST] The working directory should be shown. [/INST] pwd </s>"
+},
+{
+    "text": "<s>[INST] Give all the files under this directory. [/INST] ls </s>"
+},
+{
+    "text": "<s>[INST] The contents of the file 1.txt should be shown. [/INST] cat 1.txt </s>"
+},
+{
+    "text": "<s>[INST] Change to the root directory. [/INST] cd ~ </s>"
+},
+{
+    "text": "<s>[INST] Create an empty file named file.txt [/INST] touch file.txt </s>"
+},
+{
+    "text": "<s>[INST] List items within the specified path /home/user/downloads/ [/INST] ls /home/user/downloads/ </s>"
+},
+{
+    "text": "<s>[INST] Show the contents of the path /etc/configurations/ [/INST] ls /etc/configurations/ </s>"
+},
+{
+    "text": "<s>[INST] Are you male or female? [/INST] Invalid Command </s>"
+},
+{
+    "text": "<s>[INST] Transfer a file \"report.txt\" to a different location and rename it: [/INST] mv report.txt /new/location/newreport.txt </s>"
+},
+{
+    "text": "<s>[INST] Give all the files under this path /path/to/directory [/INST] ls /path/to/directory </s>"
+},
+{
+    "text": "<s>[INST] Show the items within /etc/configurations/ [/INST] ls /etc/configurations/ </s>"
+},
+{
+    "text": "<s>[INST] Open a new directory called Prisha [/INST] mkdir Prisha </s>"
+},
+{
+    "text": "<s>[INST] Prisha codes like a pro. [/INST] Invalid command. </s>"
+},
+{
+    "text": "<s>[INST] Under this directory, show all the files. [/INST] ls </s>"
+},
+{
+    "text": "<s>[INST] Copy all lines of 4.txt to the location /path/123 [/INST] cp 4.txt /path/123 </s>"
+},
+{
+    "text": "<s>[INST] Identify lines in a code file that reference the variable \"Count\" [/INST] grep -i \"Count\" code.c </s>"
+},
+{
+    "text": "<s>[INST] Copy all lines of 4.txt to 2.txt [/INST] cp 4.txt 2.txt </s>"
+},
+{
+    "text": "<s>[INST] Change my location to where I was previously. [/INST] cd - </s>"
+},
+{
+    "text": "<s>[INST] Count the number of characters in file.txt [/INST] wc -c file.txt </s>"
+},
+{
+    "text": "<s>[INST] The working directory should be shown. [/INST] pwd </s>"
+},
+{
+    "text": "<s>[INST] Establish an empty file named \"code.py\" [/INST] touch code.py </s>"
+},
+{
+    "text": "<s>[INST] Enumerate the files and folders within /data/archive/ [/INST] ls /data/archive/ </s>"
+},
+{
+    "text": "<s>[INST] Study the information in code.txt with numbering. [/INST] cat -n code.txt </s>"
+},
+{
+    "text": "<s>[INST] Navigate to the folder with the name \"logs\". [/INST] cd logs </s>"
+},
+{
+    "text": "<s>[INST] Update \"old.txt\" file with current time [/INST] touch old.txt </s>"
+},
+{
+    "text": "<s>[INST] Create a new directory named ABC [/INST] mkdir ABC </s>"
+},
+{
+    "text": "<s>[INST] Count the number of words in \"resume.docx.\" [/INST] wc -w resume.docx </s>"
+},
+{
+    "text": "<s>[INST] The lines of the file 2.txt should be sorted numerically [/INST] sort -n 2.txt </s>"
+},
+{
+    "text": "<s>[INST] Count the words in all doc files in the \"novels\" directory. [/INST] wc -w novels/*.doc </s>"
+},
+{
+    "text": "<s>[INST] list the directory contents [/INST] ls </s>"
+},
+{
+    "text": "<s>[INST] Search for \"pattern\" in \"file.txt\" and display matching lines. [/INST] grep \"pattern\" file.txt </s>"
+},
+{
+    "text": "<s>[INST] Lets go to the movies. [/INST] Invalid command. </s>"
+},
+{
+    "text": "<s>[INST] Copy all files 3.txt 4.txt to /path/here [/INST] cp 3.txt 4.txt /path/here </s>"
+},
+{
+    "text": "<s>[INST] I'm unsure which directory I'm in. [/INST] pwd </s>"
+},
+{
+    "text": "<s>[INST] Move a directory \"temp\" to a different location and rename it: [/INST] mv temp /new/location/newtemp/ </s>"
+},
+{
+    "text": "<s>[INST] Present contents from header.txt and footer.txt. [/INST] cat header.txt footer.txt </s>"
+},
+{
+    "text": "<s>[INST] You can show the current working directory. [/INST] pwd </s>"
+},
+{
+    "text": "<s>[INST] Store contents of the file 5.txt in 6.txt [/INST] cp 5.txt 6.txt </s>"
+},
+{
+    "text": "<s>[INST] Revoke read and write permissions for a file named \"log.log\" from everyone except the owner. [/INST] chmod u=rw,go= log.log </s>"
+},
+{
+    "text": "<s>[INST] Move a file named \"video.mp4\" to a subdirectory \"media\": [/INST] mv video.mp4 media/ </s>"
+},
+{
+    "text": "<s>[INST] Generate an empty file titled \"notes_project.txt\" [/INST] touch notes_project.txt </s>"
+},
+{
+    "text": "<s>[INST] Take me to the last visited folder. [/INST] cd - </s>"
+},
+{
+    "text": "<s>[INST] What is capital of Bangalore? [/INST] Invalid command. </s>"
+},
+{
+    "text": "<s>[INST] Take me to another directory. [/INST] cd </s>"
+},
+{
+    "text": "<s>[INST] The contents of this file 2.txt 3.txt should be shown. [/INST] cat 2.txt 3.txt </s>"
+},
+{
+    "text": "<s>[INST] Create a directory called backup [/INST] mkdir backup </s>"
+},
+{
+    "text": "<s>[INST] List the files located here [/INST] ls </s>"
+},
+{
+    "text": "<s>[INST] concatenate and print files 2.txt with 3.txt [/INST] cat 2.txt 3.txt </s>"
+},
+{
+    "text": "<s>[INST] sort the file in alphabetical order a1.c [/INST] sort a1.c </s>"
+},
+{
+    "text": "<s>[INST] Establish \"log_file1.log\" and \"log_file2.log\" [/INST] touch log_file1.log log_file2.log </s>"
+},
+{
+    "text": "<s>[INST] Which directory is it? [/INST] pwd </s>"
+},
+{
+    "text": "<s>[INST] Create a new file named dataset.db [/INST] touch dataset.db </s>"
+},
+{
+    "text": "<s>[INST] Count the instances of \"Exception\" in application.log [/INST] grep -c \"Exception\" application.log </s>"
+},
+{
+    "text": "<s>[INST] Present a directory listing here [/INST] ls </s>"
+},
+{
+    "text": "<s>[INST] The contents of the files 2.txt and 3.txt should be concatenated. [/INST] cat 2.txt 3.txt </s>"
+},
+{
+    "text": "<s>[INST] Show me lines in \"contacts.csv\" that end with email addresses from the domain \"example.com.\" [/INST] grep -E \"@example\\.com$\" contacts.csv </s>"
+},
+{
+    "text": "<s>[INST] Form a new directory here named 1234 [/INST] mkdir 1234 </s>"
+},
+{
+    "text": "<s>[INST] Inspect the content of results.txt with line numbers. [/INST] cat -n results.txt </s>"
+},
+{
+    "text": "<s>[INST] A new folder named temp_files should be created. [/INST] mkdir temp_files </s>"
+},
+{
+    "text": "<s>[INST] List items within the directory /opt/application/ [/INST] ls /opt/application/ </s>"
+},
+{
+    "text": "<s>[INST] Provide the insights from input.txt along with numbering. [/INST] cat -n input.txt </s>"
+},
+{
+    "text": "<s>[INST] What is contained within this directory? [/INST] ls </s>"
+},
+{
+    "text": "<s>[INST] Tell me the directory I am currently in. [/INST] pwd </s>"
+},
+{
+    "text": "<s>[INST] Create a folder named videos [/INST] mkdir videos </s>"
+},
+{
+    "text": "<s>[INST] Navigate to the directory above this one. [/INST] cd .. </s>"
+},
+{
+    "text": "<s>[INST] Move to the base directory. [/INST] cd ~ </s>"
+},
+{
+    "text": "<s>[INST] Create a new car for my house [/INST] Invalid Command </s>"
+},
+{
+    "text": "<s>[INST] List contents of the directory /path/to/directory [/INST] ls /path/to/directory </s>"
+},
+{
+    "text": "<s>[INST] Display lines in the \"my_config.conf\" file that start with \"Option\" or \"Setting.\" [/INST] grep \"^\\(Option|Setting\\)\" my_config.conf </s>"
+},
+{
+    "text": "<s>[INST] A new directory named images should be named this. [/INST] mkdir images </s>"
+},
+{
+    "text": "<s>[INST] Reveal my current location. [/INST] pwd </s>"
+},
+{
+    "text": "<s>[INST] Set full permissions for the owner and group on a directory named \"shared\". [/INST] chmod ug+rwx shared </s>"
+},
+{
+    "text": "<s>[INST] Examine the details in error.txt along with numbering. [/INST] cat -n error.txt </s>"
+},
+{
+    "text": "<s>[INST] Modify the timestamp of \"config.conf\" [/INST] touch config.conf </s>"
+},
+{
+    "text": "<s>[INST] What information can you provide about files here? [/INST] ls -al </s>"
+},
+{
+    "text": "<s>[INST] Sort numerical values in input.txt file in reverse order. [/INST] sort -nr input.txt </s>"
+},
+{
+    "text": "<s>[INST] sort the file 34rr.txt in reverse order [/INST] sort -r 34rr.txt </s>"
+},
+{
+    "text": "<s>[INST] Count the lines in a \"lyrics.txt\" file. [/INST] wc -l lyrics.txt </s>"
+},
+{
+    "text": "<s>[INST] What are the files present in /path/to/directory? [/INST] ls /path/to/directory </s>"
+},
+{
+    "text": "<s>[INST] Calculate the character count in a \"letter.docx\" document file. [/INST] wc -c letter.docx </s>"
+},
+{
+    "text": "<s>[INST] Navigate to the previous folder. [/INST] cd - </s>"
+},
+{
+    "text": "<s>[INST] Produce files \"old_notes.txt\" and \"new_notes.txt\" [/INST] touch old_notes.txt new_notes.txt </s>"
+},
+{
+    "text": "<s>[INST] Provide a comprehensive list of items at /tmp/cache/ [/INST] ls /tmp/cache/ </s>"
+},
+{
+    "text": "<s>[INST] read each File parameter in sequence 2.txt and 3.txt and write it to standard output. [/INST] cat 2.txt 3.txt </s>"
+},
+{
+    "text": "<s>[INST] Switch to the directory higher up. [/INST] cd .. </s>"
+},
+{
+    "text": "<s>[INST] Present the path of the current directory. [/INST] pwd </s>"
+},
+{
+    "text": "<s>[INST] How many lines are in \"interview_transcript.txt\"? [/INST] wc -l interview_transcript.txt </s>"
+},
+{
+    "text": "<s>[INST] Study the insights in description.txt with numbering. [/INST] cat -n description.txt </s>"
+},
+{
+    "text": "<s>[INST] Go back to the previous folder. [/INST] cd .. </s>"
+},
+{
+    "text": "<s>[INST] Transfer a directory named \"folder\" to a different location: [/INST] mv folder /path/to/new/location/ </s>"
+},
+{
+    "text": "<s>[INST] Jailer is a massive blockbuster. [/INST] Invalid command. </s>"
+},
+{
+    "text": "<s>[INST] What files are present within the provided path? [/INST] ls /path/to/directory </s>"
+},
+{
+    "text": "<s>[INST] Copy the files 1.txt 2.txt 3.txt to path /1/2/3 [/INST] cp 1.txt 2.txt 3.txt /1/2/3 </s>"
+},
+{
+    "text": "<s>[INST] Coding tests happen every week. [/INST] Invalid command. </s>"
+},
+{
+    "text": "<s>[INST] Which directory am I in? [/INST] pwd </s>"
+},
+{
+    "text": "<s>[INST] Give me a summary of the files in this location [/INST] ls </s>"
+},
+{
+    "text": "<s>[INST] Make all green objects into blue [/INST] Invalid Command </s>"
+},
+{
+    "text": "<s>[INST] Transfer the contents of 4.txt to 5.txt [/INST] cp 4.txt 5.txt </s>"
+},
+{
+    "text": "<s>[INST] Generate \"archive.tar\" file [/INST] touch archive.tar </s>"
+},
+{
+    "text": "<s>[INST] View the data in config.txt with line numbers. [/INST] cat -n config.txt </s>"
+},
+{
+    "text": "<s>[INST] Go to the location of the directory indicated by the path /path/to/directory [/INST] cd /path/to/directory </s>"
+},
+{
+    "text": "<s>[INST] List the permissions of files in this folder [/INST] ls -l </s>"
+},
+{
+    "text": "<s>[INST] Show contents of the file 1.txt [/INST] cat 1.txt </s>"
+},
+{
+    "text": "<s>[INST] Sort lines in input.txt file in reverse alphabetical order. [/INST] sort -r input.txt </s>"
+},
+{
+    "text": "<s>[INST] Craft a fresh file called \"playlist_music.m3u\" [/INST] touch playlist_music.m3u </s>"
+},
+{
+    "text": "<s>[INST] A new directory can be opened named as New.txt. [/INST] mkdir New.txt </s>"
+},
+{
+    "text": "<s>[INST] Show the content of files info.txt followed by data.txt. [/INST] cat info.txt data.txt </s>"
+},
+{
+    "text": "<s>[INST] Go to the location I was at earlier. [/INST] cd - </s>"
+},
+{
+    "text": "<s>[INST] The contents of the file 1.txt should be displayed. [/INST] cat 1.txt </s>"
+},
+{
+    "text": "<s>[INST] Establish \"log1.log\" and \"log2.log\" [/INST] touch log1.log log2.log </s>"
+},
+{
+    "text": "<s>[INST] Place a new directory named projects here. [/INST] mkdir projects </s>"
+},
+{
+    "text": "<s>[INST] Check the number of words in the text files of a directory my_directory [/INST] wc -w my_directory/*.txt </s>"
+},
+{
+    "text": "<s>[INST] You can show the current directory. [/INST] pwd </s>"
+},
+{
+    "text": "<s>[INST] Please show the contents of the file 1.txt. [/INST] cat 1.txt </s>"
+},
+{
+    "text": "<s>[INST] A new directory named backups should be created. [/INST] mkdir backups </s>"
+},
+{
+    "text": "<s>[INST] Relocate a directory \"pictures\" to a parent directory: [/INST] mv pictures .. </s>"
+},
+{
+    "text": "<s>[INST] All the lines in 1.txt should go to 4.txt [/INST] cp 1.txt 4.txt </s>"
+},
+{
+    "text": "<s>[INST] Extract URLs from an index.html and save them to a list. [/INST] grep -o -E \"https?://[^ ]+\" index.html > urls.txt </s>"
+},
+{
+    "text": "<s>[INST] Will manchester city win Premier League? [/INST] Invalid Command </s>"
+},
+{
+    "text": "<s>[INST] The present working directory should be shown. [/INST] pwd </s>"
+},
+{
+    "text": "<s>[INST] Move a file named \"image.jpg\" to a subdirectory \"pictures\": [/INST] mv image.jpg pictures/ </s>"
+},
+{
+    "text": "<s>[INST] A new directory named images should be made. [/INST] mkdir images </s>"
+},
+{
+    "text": "<s>[INST] Go to a new directory named abc. [/INST] mkdir abc </s>"
+},
+{
+    "text": "<s>[INST] Create a new directory called new_folder [/INST] mkdir new_folder </s>"
+},
+{
+    "text": "<s>[INST] A new directory is needed with the name archives [/INST] mkdir archives </s>"
+},
+{
+    "text": "<s>[INST] List all files in /path/to/directory, even hidden ones [/INST] ls -a /path/to/directory </s>"
+},
+{
+    "text": "<s>[INST] Get into a new directory. [/INST] cd </s>"
+},
+{
+    "text": "<s>[INST] Provide the current directory's path. [/INST] pwd </s>"
+},
+{
+    "text": "<s>[INST] Move a directory \"source\" to a different location and rename it: [/INST] mv source /new/location/destination/ </s>"
+},
+{
+    "text": "<s>[INST] What's the directory path? [/INST] pwd </s>"
+},
+{
+    "text": "<s>[INST] Go to the directory I was in before. [/INST] cd - </s>"
+},
+{
+    "text": "<s>[INST] Display the files within the folder path /usr/local/bin/ [/INST] ls /usr/local/bin/ </s>"
+},
+{
+    "text": "<s>[INST] This is a new directory named backup_files. [/INST] mkdir backup_files </s>"
+},
+{
+    "text": "<s>[INST] Move a file named \"photo.jpg\" to a subdirectory \"images\": [/INST] mv photo.jpg images/ </s>"
+},
+{
+    "text": "<s>[INST] Change my location to the parent directory. [/INST] cd .. </s>"
+},
+{
+    "text": "<s>[INST] List the files in this directory [/INST] ls </s>"
+},
+{
+    "text": "<s>[INST] Calculate how many characters jotted down in \"important_notes.txt.\" [/INST] wc -c important_notes.txt </s>"
+},
+{
+    "text": "<s>[INST] Which directory am I in [/INST] pwd </s>"
+},
+{
+    "text": "<s>[INST] Relocate a directory \"backup\" to a parent directory: [/INST] mv backup .. </s>"
+},
+{
+    "text": "<s>[INST] I'm not sure where I am. [/INST] pwd </s>"
+},
+{
+    "text": "<s>[INST] Switch back to the previous directory. [/INST] cd - </s>"
+},
+{
+    "text": "<s>[INST] This sem is harder than ever. [/INST] Invalid command. </s>"
+},
+{
+    "text": "<s>[INST] Do you have a nickname? [/INST] Invalid command. </s>"
+},
+{
+    "text": "<s>[INST] Change back to the last directory. [/INST] cd - </s>"
+},
+{
+    "text": "<s>[INST] What are the files located here? [/INST] ls </s>"
+},
+{
+    "text": "<s>[INST] List all items within the specified path, including hidden ones [/INST] ls -a /path/to/directory </s>"
+},
+{
+    "text": "<s>[INST] I want to know the word count of \"blog_post.txt.\" [/INST] wc -w blog_post.txt </s>"
+},
+{
+    "text": "<s>[INST] Haaland is a very good player [/INST] Invalid Command </s>"
+},
+{
+    "text": "<s>[INST] display the current directory path [/INST] pwd </s>"
+},
+{
+    "text": "<s>[INST] I'm uncertain about my current position. [/INST] pwd </s>"
+},
+{
+    "text": "<s>[INST] Move up one directory level. [/INST] cd .. </s>"
+},
+{
+    "text": "<s>[INST] Show me all files, including hidden ones [/INST] ls -a </s>"
+},
+{
+    "text": "<s>[INST] Sort the file input.txt [/INST] sort input.txt </s>"
+},
+{
+    "text": "<s>[INST] I'd like to switch to another directory [/INST] cd </s>"
+},
+{
+    "text": "<s>[INST] Do you have a heart? [/INST] Invalid command. </s>"
+},
+{
+    "text": "<s>[INST] What is contained in the file with numbering? [/INST] cat -n 1.txt </s>"
+},
+{
+    "text": "<s>[INST] Explore the data in specs.txt with line numbers. [/INST] cat -n specs.txt </s>"
+},
+{
+    "text": "<s>[INST] What is the path of the current directory [/INST] pwd </s>"
+},
+{
+    "text": "<s>[INST] Display lines in the \"application.log\" file that include dates in the format \"YYYY-MM-DD.\" [/INST] grep -E \"([0-9]{4},-[0-9]{2},-[0-9]{2},)\" application.log </s>"
+},
+{
+    "text": "<s>[INST] Show this file 1.txt [/INST] cat 1.txt </s>"
+},
+{
+    "text": "<s>[INST] Provide a list of files present here [/INST] ls </s>"
+},
+{
+    "text": "<s>[INST] Display the insights from manual.txt along with numbering. [/INST] cat -n manual.txt </s>"
+},
+{
+    "text": "<s>[INST] Find lines that match the regular expression for IPv4 addresses in a text file named \"network_data.txt\". [/INST] grep -E -o \"(\\d{1,3},\\.){3},\\d{1,3},\" network_data.txt </s>"
+},
+{
+    "text": "<s>[INST] Deny execute permission for a script named \"script.sh\" to everyone except the owner. [/INST] chmod u=x,go= script.sh </s>"
+},
+{
+    "text": "<s>[INST] A new directory named info should be made [/INST] mkdir info </s>"
+},
+{
+    "text": "<s>[INST] Clone 4.txt on path /path/here [/INST] cp 4.txt /path/here </s>"
+},
+{
+    "text": "<s>[INST] Put me in a new directory. [/INST] cd </s>"
+},
+{
+    "text": "<s>[INST] What's inside the files section1.txt and section2.txt? [/INST] cat section1.txt section2.txt </s>"
+},
+{
+    "text": "<s>[INST] Why is optimized solutions hard to think of? [/INST] Invalid command. </s>"
+},
+{
+    "text": "<s>[INST] This is a new directory to create named workspace. [/INST] mkdir workspace </s>"
+},
+{
+    "text": "<s>[INST] You can show the contents of the file 2.txt and also 3.txt. [/INST] cat 2.txt 3.txt </s>"
+},
+{
+    "text": "<s>[INST] I'd like to know my current directory. [/INST] pwd </s>"
+},
+{
+    "text": "<s>[INST] What's the path of my current directory? [/INST] pwd </s>"
+},
+{
+    "text": "<s>[INST] Revoke all permissions for a file named \"private.txt\" from the group. [/INST] chmod g= private.txt </s>"
+},
+{
+    "text": "<s>[INST] Show the absolute path of the current directory. [/INST] pwd </s>"
+},
+{
+    "text": "<s>[INST] Navigate into the folder called \"projects\" [/INST] cd projects </s>"
+},
+{
+    "text": "<s>[INST] Will it rain today [/INST] Invalid Command </s>"
+},
+{
+    "text": "<s>[INST] There is a new directory named configurations here. [/INST] mkdir configurations </s>"
+},
+{
+    "text": "<s>[INST] Make a directory named Gayathri [/INST] mkdir Gayathri </s>"
+},
+{
+    "text": "<s>[INST] What is your name? [/INST] Invalid Command </s>"
+},
+{
+    "text": "<s>[INST] Can you buy me a cat [/INST] Invalid Command </s>"
+},
+{
+    "text": "<s>[INST] Display the files and directories under /custom/directory [/INST] ls /custom/directory </s>"
+},
+{
+    "text": "<s>[INST] Move me to a different directory. [/INST] cd </s>"
+},
+{
+    "text": "<s>[INST] Update \"notes.txt\" with current time [/INST] touch notes.txt </s>"
+},
+{
+    "text": "<s>[INST] Rename a directory \"work\" to \"homework\" in the current location: [/INST] mv work homework </s>"
+},
+{
+    "text": "<s>[INST] Find and display lines in a configuration file \"config.conf\" that contain the word \"option\" [/INST] grep -w \"option\" config.conf </s>"
+},
+{
+    "text": "<s>[INST] Dynamic Programming is the hardest. [/INST] Invalid command. </s>"
+},
+{
+    "text": "<s>[INST] Display the contents of file named 1.txt [/INST] cat 1.txt </s>"
+},
+{
+    "text": "<s>[INST] Create files \"data1.dat\" and \"data2.dat\" [/INST] touch data1.dat data2.dat </s>"
+},
+{
+    "text": "<s>[INST] Make a file named \"example.txt\" readable and writable for the owner. [/INST] chmod 600 example.txt </s>"
+},
+{
+    "text": "<s>[INST] Reveal the directory you're in. [/INST] pwd </s>"
+},
+{
+    "text": "<s>[INST] Change my current working directory. [/INST] cd </s>"
+},
+{
+    "text": "<s>[INST] What is the day today. [/INST] Invalid command. </s>"
+},
+{
+    "text": "<s>[INST] Display the contents of file 5.txt. [/INST] cat 5.txt </s>"
+},
+{
+    "text": "<s>[INST] Inspect the content of tutorial.txt with line numbers. [/INST] cat -n tutorial.txt </s>"
+},
+{
+    "text": "<s>[INST] Update timestamp of the file something.txt [/INST] touch something.txt </s>"
+},
+{
+    "text": "<s>[INST] Where is this directory? [/INST] pwd </s>"
+},
+{
+    "text": "<s>[INST] Take me to the root folder. [/INST] cd ~ </s>"
+},
+{
+    "text": "<s>[INST] Switch to the folder called \"data_files\" [/INST] cd data_files </s>"
+},
+{
+    "text": "<s>[INST] Would you give me a command that searches for the word 'apple' in the file `fruits.txt` and displays all the lines that contain it. [/INST] grep 'apple' fruits.txt </s>"
+},
+{
+    "text": "<s>[INST] Tell me if the word \"warning\" appears anywhere in \"app.log,\" and if so, display the first 10 lines. [/INST] grep -m 10 \"warning\" app.log </s>"
+},
+{
+    "text": "<s>[INST] Go to a different folder. [/INST] cd </s>"
+},
+{
+    "text": "<s>[INST] Copy files 3.txt 2.txt 4.txt to the directory /path/here [/INST] cp 3.txt 2.txt 4.txt /path/here </s>"
+},
+{
+    "text": "<s>[INST] The contents in input.txt should be sorted numerically [/INST] sort -n input.txt </s>"
+},
+{
+    "text": "<s>[INST] Revoke write permission for a directory called \"mydata\" from the group. [/INST] chmod g-w mydata </s>"
+},
+{
+    "text": "<s>[INST] Find lines in a text file named \"data.txt\" that match the pattern for 10 digit phone numbers [/INST] grep -E \"[0-9]{10},\" data.txt </s>"
+},
+{
+    "text": "<s>[INST] Update \"notes_old.txt\" with current time [/INST] touch notes_old.txt </s>"
+},
+{
+    "text": "<s>[INST] Synchronize the timestamp of \"file1.cpp\" with \"file2.cpp\" [/INST] touch file1.cpp </s>"
+},
+{
+    "text": "<s>[INST] Which location am I in [/INST] pwd </s>"
+},
+{
+    "text": "<s>[INST] concatenate files 2.txt ,3.txt and print on the standard output [/INST] cat 2.txt 3.txt </s>"
+},
+{
+    "text": "<s>[INST] Synchronize the timestamp of \"script1.sh\" with \"script2.sh\" [/INST] touch script1.sh </s>"
+},
+{
+    "text": "<s>[INST] Where am I [/INST] pwd </s>"
+},
+{
+    "text": "<s>[INST] What are the contents of the following files - 2.txt and 3.txt? [/INST] cat 2.txt 3.txt </s>"
+},
+{
+    "text": "<s>[INST] Show the current directory. [/INST] pwd </s>"
+},
+{
+    "text": "<s>[INST] Show contents of script.txt along with line numbers. [/INST] cat -n script.txt </s>"
+},
+{
+    "text": "<s>[INST] Show the combined contents of files data1.txt. [/INST] cat data1.txt </s>"
+},
+{
+    "text": "<s>[INST] sort 123.txt in decreasing order [/INST] sort -r 123.txt </s>"
+},
+{
+    "text": "<s>[INST] Grant execute permission for a script named \"run.sh\" to both the owner and group. [/INST] chmod ug+x run.sh </s>"
+},
+{
+    "text": "<s>[INST] Show the present working directory [/INST] pwd </s>"
+},
+{
+    "text": "<s>[INST] Did you do your homework [/INST] Invalid Command </s>"
+},
+{
+    "text": "<s>[INST] What is this behaviour, Pooja? [/INST] Invalid Command </s>"
+},
+{
+    "text": "<s>[INST] Move to the root of the file system. [/INST] cd ~ </s>"
+},
+{
+    "text": "<s>[INST] Show the contents of /opt/programs/ [/INST] ls /opt/programs/ </s>"
+},
+{
+    "text": "<s>[INST] Construct a directory named Research [/INST] mkdir Research </s>"
+},
+{
+    "text": "<s>[INST] What files exist within /path/to/directory? [/INST] ls /path/to/directory </s>"
+},
+{
+    "text": "<s>[INST] Display contents of the path /path/to/directory [/INST] ls /path/to/directory </s>"
+},
+{
+    "text": "<s>[INST] Go to the top-level folder. [/INST] cd ~ </s>"
+},
+{
+    "text": "<s>[INST] Extract and list all unique IP addresses from an Apache access log named \"access.log.\" [/INST] `grep -o -E \"\\b([0-9]{1,3},.){3},[0-9]{1,3},\\b\" /var/logs/access.log </s>"
+},
+{
+    "text": "<s>[INST] Make a folder named downloads [/INST] mkdir downloads </s>"
+},
+{
+    "text": "<s>[INST] What are the files under this location? [/INST] ls </s>"
+},
+{
+    "text": "<s>[INST] Give full permissions to everyone for a file named \"public.html\". [/INST] chmod a+rwx public.html </s>"
+},
+{
+    "text": "<s>[INST] Recursively search for \"keyword\" in all files within /path/to/directory [/INST] grep -r \"keyword\" /path/to/directory </s>"
+},
+{
+    "text": "<s>[INST] Present the text within report1.txt and report2.txt. [/INST] cat report1.txt report2.txt </s>"
+},
+{
+    "text": "<s>[INST] A new directory named projects is needed. [/INST] mkdir projects </s>"
+},
+{
+    "text": "<s>[INST] Transfer a file named \"presentation.ppt\" to a directory \"files\": [/INST] mv presentation.ppt files/ </s>"
+},
+{
+    "text": "<s>[INST] Sharpen this pencil for me [/INST] Invalid command. </s>"
+},
+{
+    "text": "<s>[INST] Search for the word \"success\" in all log files within the \"logs\" directory and count the total matches. [/INST] grep -r -c \"success\" /home/user/logs/ </s>"
+},
+{
+    "text": "<s>[INST] Get the current folder's path. [/INST] pwd </s>"
+},
+{
+    "text": "<s>[INST] Enumerate the contents of /path/to/directory [/INST] ls /path/to/directory </s>"
+},
+{
+    "text": "<s>[INST] Long listing of files present here /path/to/directory [/INST] ls /path/to/directory </s>"
+},
+{
+    "text": "<s>[INST] Add execute permissions to an executable binary named \"binary\" for everyone. [/INST] chmod a+x binary </s>"
+},
+{
+    "text": "<s>[INST] Take me to the directory that the path leads to /path/to/directory [/INST] cd /path/to/directory </s>"
+},
+{
+    "text": "<s>[INST] Navigate me to a new folder. [/INST] cd </s>"
+},
+{
+    "text": "<s>[INST] Allow read and write permissions for the owner on a file named \"notes.txt\". [/INST] chmod u+rw notes.txt </s>"
+},
+{
+    "text": "<s>[INST] current directory [/INST] pwd </s>"
+},
+{
+    "text": "<s>[INST] Give a list of all files present in /path/to/directory [/INST] ls -a /path/to/directory </s>"
+},
+{
+    "text": "<s>[INST] Output the content of output.txt with line numbers. [/INST] cat -n output.txt </s>"
+},
+{
+    "text": "<s>[INST] Can you tell me the current directory? [/INST] pwd </s>"
+},
+{
+    "text": "<s>[INST] Display contents of current directory [/INST] ls </s>"
+},
+{
+    "text": "<s>[INST] Set full permissions for the owner on a directory called \"mydir\". [/INST] chmod 700 mydir </s>"
+},
+{
+    "text": "<s>[INST] Offer an overview of the directory's contents [/INST] ls </s>"
+},
+{
+    "text": "<s>[INST] Navigate to the home directory. [/INST] cd ~ </s>"
+},
+{
+    "text": "<s>[INST] What's for lunch? [/INST] Invalid command. </s>"
+},
+{
+    "text": "<s>[INST] Display contents of path /path/to/directory [/INST] ls /path/to/directory </s>"
+},
+{
+    "text": "<s>[INST] Set up a new folder named doc [/INST] mkdir doc </s>"
+},
+{
+    "text": "<s>[INST] What's in this directory? [/INST] ls </s>"
+},
+{
+    "text": "<s>[INST] Initiate an empty file named \"journal.txt\" [/INST] touch journal.txt </s>"
+},
+{
+    "text": "<s>[INST] Generate \"backup.zip\" file [/INST] touch backup.zip </s>"
+},
+{
+    "text": "<s>[INST] List all details of files present in this directory [/INST] ls -al </s>"
+},
+{
+    "text": "<s>[INST] Sort lines in input.txt file in reverse numerical order. [/INST] sort -n -r input.txt </s>"
+},
+{
+    "text": "<s>[INST] Count the occurrences of 404 HTTP status code in \"/var/www/access.log.\" [/INST] grep -c ' 404 ' /var/www/access.log </s>"
+},
+{
+    "text": "<s>[INST] List files by txt extension, grouped together [/INST] ls *.txt </s>"
+},
+{
+    "text": "<s>[INST] Change to the directory named \"documents\" [/INST] cd documents </s>"
+},
+{
+    "text": "<s>[INST] Brush your teeth atleast once [/INST] Invalid Command </s>"
+},
+{
+    "text": "<s>[INST] Combine and output chapter1.txt and chapter2.txt. [/INST] cat chapter1.txt chapter2.txt </s>"
+},
+{
+    "text": "<s>[INST] Show me the present working directory. [/INST] pwd </s>"
+},
+{
+    "text": "<s>[INST] Take me to the folder above this one. [/INST] cd .. </s>"
+},
+{
+    "text": "<s>[INST] What's the directory I'm situated in? [/INST] pwd </s>"
+}]

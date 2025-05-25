@@ -1,13 +1,11 @@
+```
  █████╗ ███████╗ ██████╗ ███╗   ██╗
-
 ██╔══██╗██╔════╝██╔═══██╗████╗  ██║
-
 ███████║█████╗  ██║   ██║██╔██╗ ██║
-
 ██╔══██║██╔══╝  ██║   ██║██║╚██╗██║
-
 ██║  ██║███████╗╚██████╔╝██║ ╚████║
 ╚═╝  ╚═╝╚══════╝ ╚═════╝ ╚═╝  ╚═══╝
+```
 
 AEON is a simple, stateless Retrieval-Augmented Generation (RAG) chatbot designed to answer questions based on a provided set of Markdown (.md), Text (.txt), and JSON (.json) documents. It leverages local Large Language Models (LLMs) and embedding models all powered by Ollama. Chroma is used for its vector database.
 

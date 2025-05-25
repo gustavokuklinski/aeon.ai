@@ -9,6 +9,15 @@ AEON is a simple, stateless Retrieval-Augmented Generation (RAG) chatbot designe
 
 The main focus is to be simple and lightweight to run on CPU with at least 8GB Ram and i3 processors, typically using models like *smollm2:135m*,*gemma3:3b (To generate images)*, *nomic-embed-text*, and *moondream*.
 
+## Instalation
+
+Use the ```./install.sh``` to set your ```.venv``` in Python and all the pip dependencies
+
+```shell
+$ chmod +x ./install.sh
+$ ./install.sh
+``` 
+
 ```config.json``` to setup Aeon
 
 ```json
@@ -32,6 +41,6 @@ $ ./aeon.sh
 
 ## Data - RAG
 All data is stored in: ```/data/*``` 
-  * ```/data/cerebrom``` Place your own Markdown files. 
+  * ```/data/cerebrum``` Place your own Markdown files. 
   * ```/data/output``` AEON response to ```/draw red circle``` (NOTE: Not all models will generate good results)
   * ```/data/synapse``` Chroma vector database

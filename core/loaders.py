@@ -54,10 +54,6 @@ class JsonPlaintextLoader:
             total_string_nodes = self._count_string_nodes(data)
             processed_string_nodes = 0
 
-            # Only print "Ingesting knowledge..." if not hiding messages
-            if not self.hide_messages:
-                self._print_info_line("Ingesting knowledge...")
-
             def _extract_strings_recursively(obj, current_path=""):
                 nonlocal processed_string_nodes
                 if isinstance(obj, dict):

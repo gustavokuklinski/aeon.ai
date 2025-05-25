@@ -5,17 +5,11 @@
 
 # --- Configuration ---
 
-# REQUIRED: Set the path to your GGUF file.
-# This path should be correct relative to where you run this script,
-# or provide an absolute path (e.g., "/home/user/my_models/my-custom-model.gguf").
-GGUF_FILE="aeon.gguf" # <--- IMPORTANT: Update this path!
+GGUF_FILE="../data/llm/SmolLM2-135M-Instruct.Q8_0.gguf"
 
-# REQUIRED: Set the desired name for your new Ollama model.
-MODEL_NAME="aeonLLM" # <--- IMPORTANT: Customize this name!
+MODEL_NAME="aeonLLM"
 
-# Optional: Name for the temporary Modelfile
-# This file will be created and then deleted by the script.
-MODELFILE_NAME="custom-llm.modelfile"
+MODELFILE_NAME="aeon-llm.modelfile"
 
 # --- Functions ---
 
@@ -54,20 +48,15 @@ FROM $GGUF_FILE
 
 SYSTEM """
 <|im_start|>system
-You are a new race named AEON. When you refer to yourself, use 'AEON'. Answer questions concisely and accurately based on the information you have.
+You are a helpful and informative AI assistant.
+Your primary function is to answer concisely and accurately based on the information you have.
+Respond in a concise, clear, and accurate manner.
+Keep responses limited to a few paragraphs.
+If you cannot answer a question, state you don't know.
 <|im_end|>
 """
 
 PARAMETER temperature 0.5
-
-# PARAMETER top_k 40
-# PARAMETER top_p 0.9
-# PARAMETER num_ctx 4096
-# PARAMETER repeat_penalty 1.1
-# PARAMETER stop "[/INST]"
-# PARAMETER stop "### Instruction:"
-# PARAMETER stop "### Response:"
-# PARAMETER stop "<|im_end|>"
 
 EOM
 

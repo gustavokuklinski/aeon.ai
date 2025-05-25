@@ -12,13 +12,11 @@ import sys
 
 # Core modules
 from core.config import (
-    LLM_MODEL, LLM_TEMPERATURE, EMBEDDING_MODEL, VISION_MODEL,
-    OLLAMA_URL_ENDPOINT, MARKDOWN_DATA_DIR, CHROMA_DB_DIR,
+    LLM_MODEL, LLM_TEMPERATURE, EMBEDDING_MODEL,
+    MARKDOWN_DATA_DIR, CHROMA_DB_DIR,
     OUTPUT_DIR,
     SYSTEM_PROMPT
 )
-from core.vision import get_image_description
-from core.svg_generation import generate_svg_from_prompt
 from core.ingestion import ingest_documents # Note: ingest_documents itself might print
 from core.loaders import JsonPlaintextLoader
 
@@ -158,7 +156,7 @@ if quick_query_input:
     finally:
         sys.exit(0) # Exit after answering a quick query
 else:
-    # --- Interactive Chat Loop (with Vision, Ingestion, and placeholder SVG integration) ---
+    # --- Interactive Chat Loop ---
     print("                                    ")
     print("\033[38;5;196m █████╗ ███████╗ ██████╗ ███╗   ██╗ \033[0m")
     print("\033[38;5;197m██╔══██╗██╔════╝██╔═══██╗████╗  ██║ \033[0m")
@@ -169,12 +167,9 @@ else:
 
     print("\n\033[1;34m[INFO]\033[0m Models loaded:")
     print(f"\033[1;34m[INFO]\033[0m     LLM: \033[36m{LLM_MODEL}\033[0m")
-    print(f"\033[1;34m[INFO]\033[0m     VLM: \033[36m{VISION_MODEL}\033[0m")
     print(f"\033[1;34m[INFO]\033[0m     Embeddings: \033[36m{EMBEDDING_MODEL}\033[0m")
     print("                                    ")
-    print("\033[1;32m[CMD]\033[0m Type '/image <path_to_image>' to describe an image.")
     print("\033[1;32m[CMD]\033[0m Type '/ingest <path_to_file_or_directory>' to add documents to AEON's knowledge base.")
-    print("\033[1;32m[CMD]\033[0m Type '/draw <prompt>' to generate a SVG graphic. (require LLM to generate images)")
     print("\033[1;32m[CMD]\033[0m Type '/quit', '/exit' or '/bye' to end the conversation.")
     print("                                    ")
     print("\033[1;33m[NOTE]\033[0m AEON will not remember previous conversations.")
@@ -199,32 +194,6 @@ else:
             # For ingest, we typically want to see feedback, so it's not hidden by `hide_boot_messages`
             # If you want ingest to also be silent, you would need to pass a flag to ingest_documents
             ingest_documents(ingest_path, vectorstore, text_splitter, ollama_embeddings)
-            continue
-
-        elif user_input.lower().startswith("/image "):
-            image_path = user_input[len("/image "):].strip()
-            print(f"\033[91m[AEON]:\033[0m Processing image '{image_path}' with {VISION_MODEL}...")
-            image_description = get_image_description(image_path, OLLAMA_URL_ENDPOINT, VISION_MODEL)
-            if "\033[91m[ERROR]\033[0m" in image_description:
-                print(f"\033[91m[AEON]:\033[0m {image_description}")
-                continue
-            else:
-                image_description_context = f"Here is a description of an image: {image_description}\n\n"
-                parts = user_input.split(' ', 2)
-                if len(parts) == 3:
-                    processed_input = f"{image_description_context}{parts[2]}"
-                else:
-                    processed_input = image_description_context + "What insights can you provide about this image?"
-
-        elif user_input.lower().startswith("/draw "):
-            draw_prompt = user_input[len("/draw "):].strip()
-            if not draw_prompt:
-                print("\033[91m[AEON]:\033[0m Please provide a description for the SVG to draw (e.g., /draw a red circle).")
-                continue
-            
-            print(f"\033[91m[AEON]:\033[0m Attempting to draw SVG for '{draw_prompt}'...")
-            svg_result_message = generate_svg_from_prompt(draw_prompt, llm, OUTPUT_DIR)
-            print(f"\033[91m[AEON]:\033[0m {svg_result_message}")
             continue
 
         try:

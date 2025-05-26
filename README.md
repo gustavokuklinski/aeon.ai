@@ -31,6 +31,8 @@ $ ./install.sh
     "temperature": 0.2
   },
   "embedding_model": "nomic-embed-text",
+  "system_prompt": "Answer the user's question, but only use the information you have the context. If you can't find the answer in the context, say you don't know.\n\nContext: {context}"
+
 }
 ```
 
@@ -42,6 +44,18 @@ $ chmod +x ./aeon.sh
 $ ./aeon.sh
 ``` 
 
+Running Aeon question mode:
+```shell
+$ ./aeon.sh -q "<your_input>"
+``` 
+
+Example: 
+```shell
+$ ./aeon.sh -q "What is 1+1?"
+$ [AEON]: 1 + 1 is equals 2
+$ 
+```
+
 ## Data - RAG
 All data is stored in: ```/data/*``` 
   * ```/data/cerebrum``` Place your own Markdown, Text and JSON files. 
@@ -49,5 +63,5 @@ All data is stored in: ```/data/*```
 
 ## AEON Chat command
 Command can be placed on chat
-```/ingest <path_to_file_or_directory>``` To insert new files or folders
-```/quit, /bye, /exit``` To close AEON
+  * ```/ingest <path_to_file_or_directory>``` To insert new files or folders
+  * ```/quit, /bye, /exit``` To close AEON

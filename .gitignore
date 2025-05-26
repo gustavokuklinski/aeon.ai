@@ -1,4 +1,5 @@
 venv
 .venv
+scripts/
 core/__pycache__/
 synapse/*

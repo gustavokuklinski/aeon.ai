@@ -4,10 +4,8 @@ from pathlib import Path
 import json
 import base64
 import requests
-from PIL import Image
 import io
 import uuid
-import svgwrite
 import sys
 
 # Core modules
@@ -17,7 +15,7 @@ from core.config import (
     OUTPUT_DIR,
     SYSTEM_PROMPT
 )
-from core.ingestion import ingest_documents # Note: ingest_documents itself might print
+from core.ingestion import ingest_documents
 from core.loaders import JsonPlaintextLoader
 
 # Langchain modules
@@ -37,7 +35,7 @@ from langchain_core.documents import Document
 hide_boot_messages = False
 if "--hide-boot-messages" in sys.argv:
     hide_boot_messages = True
-    sys.argv.remove("--hide-boot-messages") # Remove it so it doesn't confuse other parsers
+    sys.argv.remove("--hide-boot-messages")
 
 # --- Quick Query Input Check ---
 quick_query_input = None
@@ -45,7 +43,6 @@ if "--query" in sys.argv:
     try:
         query_index = sys.argv.index("--query")
         quick_query_input = sys.argv[query_index + 1]
-        # Remove --query and its value from sys.argv
         sys.argv.pop(query_index + 1)
         sys.argv.pop(query_index)
     except (ValueError, IndexError):
@@ -130,8 +127,9 @@ qa_system_prompt = SYSTEM_PROMPT
 
 qa_prompt = ChatPromptTemplate.from_messages(
     [
-        ("human", "{input}"),
         ("system", qa_system_prompt),
+        ("human", "{input}"),
+        
     ]
 )
 

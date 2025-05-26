@@ -15,25 +15,24 @@ try:
     LLM_MODEL = config["llm_config"]["model"]
     LLM_TEMPERATURE = config["llm_config"]["temperature"]
     EMBEDDING_MODEL = config["embedding_model"]
-    # NEW: Load QA System Prompt from config.json, with a default fallback
-    SYSTEM_PROMPT = config.get("system_prompt", "Answer questions ONLY from the provided context. If the answer isn't in the context, state you don't know.\n\nContext: {context}")
+    SYSTEM_PROMPT = config["system_prompt"]
 
     
 
 except FileNotFoundError:
-    print(f"\033[91m[ERROR]\033[0m {CONFIG_FILE} not found. Please create it with LLM, embedding model, and Moondream settings.")
+    print(f"\033[91m[ERROR]\033[0m {CONFIG_FILE} not found. Please create it with LLM and embedding model")
     print("\033[91m[ERROR]\033[0m Example config.json:")
     print(json.dumps({
         "llm_config": {
             "model": "smollm2:135m",
-            "temperature": 0.2
+            "temperature": 1.0
         },
         "embedding_model": "nomic-embed-text",
         "system_prompt": "You are a helpful AI assistant. Answer questions ONLY from the provided context.\n\nContext: {context}"
     }, indent=2))
     exit()
 except KeyError as e:
-    print(f"\033[91m[ERROR]\033[0m Missing key in {CONFIG_FILE}: {e}. Please ensure 'llm_config.model', 'llm_config.temperature', 'embedding_model', and optionally 'system_prompt' are defined.")
+    print(f"\033[91m[ERROR]\033[0m Missing key in {CONFIG_FILE}: {e}. Please ensure 'llm_config.model', 'llm_config.temperature', 'embedding_model', 'system_prompt' are defined.")
     exit()
 
 # Ensure OUTPUT_DIR exists

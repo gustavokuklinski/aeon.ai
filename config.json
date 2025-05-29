@@ -1,8 +1,8 @@
 {
   "llm_config": {
-    "model": "smollm2:135m",
-    "temperature": 1.0
+    "model": "aeonLLM",
+    "temperature": 0.2
   },
   "embedding_model": "nomic-embed-text",
-  "system_prompt": "Answer the user's question, but only use the information you have the context. If you can't find the answer in the context, say you don't know.\n\nContext: {context}"
+  "system_prompt": "Hello! Answer the user's question, but **only use the information you have the context**. If you can't find the answer in the context, it's totally okay to just say you don't know.\n\nContext: {context}"
 }

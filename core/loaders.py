@@ -1,21 +1,18 @@
 # core/loaders.py
+# core/loaders.py
 import json
 import sys
 import os
 from langchain_core.documents import Document # Explicitly import Document
 
 class JsonPlaintextLoader:
-    def __init__(self, file_path: str, hide_messages: bool = False): # Added hide_messages parameter
+    def __init__(self, file_path: str): # Removed hide_messages parameter
         self.file_path = file_path
-        self.hide_messages = hide_messages # Store the flag
 
     def _print_info_line(self, message: str):
         """
-        Prints a single info line to the console, but only if hide_messages is False.
+        Prints a single info line to the console.
         """
-        if self.hide_messages: # Conditional printing
-            return
-
         terminal_width = 80
         try:
             terminal_width = os.get_terminal_size().columns
@@ -44,7 +41,6 @@ class JsonPlaintextLoader:
     def load(self) -> list[Document]:
         """
         Loads the JSON file, extracts all string values, and returns them as a list of Document objects.
-        Conditionally displays info messages.
         """
         try:
             with open(self.file_path, 'r', encoding='utf-8') as f:
@@ -75,12 +71,9 @@ class JsonPlaintextLoader:
 
             _extract_strings_recursively(data)
 
-            # Print a final newline only if not hiding messages, for cleaner output in interactive mode
-            if not self.hide_messages:
-                print()
+            print() # Print a final newline for cleaner output
 
-            # Only print WARNING if not hiding messages
-            if not documents and not self.hide_messages:
+            if not documents:
                 print(f"\033[1;33m[WARN]\033[0m No string content found in '{self.file_path}'.")
 
             return documents

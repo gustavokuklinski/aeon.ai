@@ -1,3 +1,4 @@
+# core/ingestion.py
 import os
 from pathlib import Path
 from langchain_community.document_loaders import DirectoryLoader, UnstructuredMarkdownLoader, UnstructuredFileLoader, TextLoader

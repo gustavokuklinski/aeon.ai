@@ -1,5 +1,7 @@
 venv
 .venv
-scripts/
 core/__pycache__/
+
 synapse/*
+synapse/*/*
+synapse/chroma.sqlite3

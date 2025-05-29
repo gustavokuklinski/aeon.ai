@@ -1,11 +1,14 @@
+# core/aeon.py
 import os
 import shutil
 from pathlib import Path
 import json
 import base64
 import requests
+from PIL import Image
 import io
 import uuid
+import svgwrite
 import sys
 
 # Core modules
@@ -15,7 +18,7 @@ from core.config import (
     OUTPUT_DIR,
     SYSTEM_PROMPT
 )
-from core.ingestion import ingest_documents
+from core.ingestion import ingest_documents # Note: ingest_documents itself might print
 from core.loaders import JsonPlaintextLoader
 
 # Langchain modules
@@ -31,11 +34,14 @@ from langchain.chains import create_retrieval_chain
 from langchain.chains.combine_documents import create_stuff_documents_chain
 from langchain_core.documents import Document
 
+<<<<<<< HEAD
+# --- Helper for conditional printing (now simplified as messages are always shown) ---
+=======
 # --- Argument Parsing for boot messages ---
 hide_boot_messages = False
 if "--hide-boot-messages" in sys.argv:
     hide_boot_messages = True
-    sys.argv.remove("--hide-boot-messages")
+    sys.argv.remove("--hide-boot-messages") # Remove it so it doesn't confuse other parsers
 
 # --- Quick Query Input Check ---
 quick_query_input = None
@@ -43,6 +49,7 @@ if "--query" in sys.argv:
     try:
         query_index = sys.argv.index("--query")
         quick_query_input = sys.argv[query_index + 1]
+        # Remove --query and its value from sys.argv
         sys.argv.pop(query_index + 1)
         sys.argv.pop(query_index)
     except (ValueError, IndexError):
@@ -51,14 +58,12 @@ if "--query" in sys.argv:
 
 
 # --- Helper for conditional printing ---
+>>>>>>> parent of a6ca992 (Updated .MD files, kept a simple data to use RAG, default model to SmolLM2:135m for low-end)
 def print_boot_message(message: str):
-    if not hide_boot_messages:
-        print(f"\033[1;93m[BOOT]\033[0m {message}")
+    print(f"\033[1;93m[BOOT]\033[0m {message}")
 
 def print_info_message(message: str):
-    if not hide_boot_messages:
-        print(f"\033[1;34m[INFO]\033[0m {message}")
-
+    print(f"\033[1;34m[INFO]\033[0m {message}")
 
 # --- RAG Pipeline Setup ---
 
@@ -82,12 +87,9 @@ documents.extend(txt_loader.load())
 # Load JSON files with custom loader
 json_files = list(Path(MARKDOWN_DATA_DIR).glob("**/*.json"))
 for json_file in json_files:
-    # Pass the hide_messages flag to the custom JSON loader
-    json_loader = JsonPlaintextLoader(str(json_file), hide_messages=hide_boot_messages)
-    # This info message is general for AEON, not the loader's internal progress
-    if not hide_boot_messages:
-        print_info_message(f"Found JSON file during initial boot: '{json_file}'. Loading with custom JSON plaintext loader.")
-    documents.extend(json_loader.load()) # The loader's internal prints are now conditional
+    json_loader = JsonPlaintextLoader(str(json_file)) # hide_messages is now effectively False
+    print_info_message(f"Found JSON file during initial boot: '{json_file}'. Loading with custom JSON plaintext loader.")
+    documents.extend(json_loader.load())
 
 print_boot_message(f"Loaded {len(documents)} initial documents.")
 
@@ -127,9 +129,11 @@ qa_system_prompt = SYSTEM_PROMPT
 
 qa_prompt = ChatPromptTemplate.from_messages(
     [
-        ("system", qa_system_prompt),
         ("human", "{input}"),
-        
+<<<<<<< HEAD
+=======
+        ("system", qa_system_prompt),
+>>>>>>> parent of a6ca992 (Updated .MD files, kept a simple data to use RAG, default model to SmolLM2:135m for low-end)
     ]
 )
 
@@ -142,63 +146,49 @@ rag_chain = (
 
 print_boot_message("Stateless RAG chain assembled.")
 
-# --- Determine if running in quick query mode or interactive mode ---
-if quick_query_input:
-    # --- Quick Query Mode ---
+# --- Interactive Chat Loop ---
+print("                                    ")
+print("\033[38;5;196m █████╗ ███████╗ ██████╗ ███╗   ██╗ \033[0m")
+print("\033[38;5;197m██╔══██╗██╔════╝██╔═══██╗████╗  ██║ \033[0m")
+print("\033[38;5;160m███████║█████╗  ██║   ██║██╔██╗ ██║ \033[0m")
+print("\033[38;5;124m██╔══██║██╔══╝  ██║   ██║██║╚██╗██║ \033[0m")
+print("\033[38;5;88m██║  ██║███████╗╚██████╔╝██║ ╚████║ \033[0m")
+print("\033[38;5;52m╚═╝  ╚═╝╚══════╝ ╚═════╝ ╚═╝  ╚═══╝ \033[0m")
+
+print("\n\033[1;34m[INFO]\033[0m Models loaded:")
+print(f"\033[1;34m[INFO]\033[0m     LLM: \033[36m{LLM_MODEL}\033[0m")
+print(f"\033[1;34m[INFO]\033[0m     Embeddings: \033[36m{EMBEDDING_MODEL}\033[0m")
+print("                                    ")
+print("\033[1;32m[CMD]\033[0m Type '/ingest <path_to_file_or_directory>' to add documents to AEON's knowledge base.")
+print("\033[1;32m[CMD]\033[0m Type '/quit', '/exit' or '/bye' to end the conversation.")
+print("                                    ")
+print("\033[1;33m[NOTE]\033[0m AEON will not remember previous conversations.")
+print("                                    ")
+print("\033[1;31m[START AEON]\033[0m")
+
+while True:
+    user_input = input("\n\033[92m[>>>>]:\033[0m ").strip()
+
+    if user_input.lower() in ["/quit", "/exit", "/bye"]:
+        print("\033[92m[AEON]:\033[0m Goodbye!")
+        break
+
+    if not user_input:
+        continue
+
+    processed_input = user_input
+    
+    # Ingest command in interactive mode
+    if user_input.lower().startswith("/ingest "):
+        ingest_path = user_input[len("/ingest "):].strip()
+        ingest_documents(ingest_path, vectorstore, text_splitter, ollama_embeddings)
+        continue
+
     try:
-        response = rag_chain.invoke(quick_query_input)
+        response = rag_chain.invoke(processed_input)
         ai_response_content = response
         print(f"\033[91m[AEON]:\033[0m {ai_response_content}")
     except Exception as e:
         print(f"\033[91m[ERROR]\033[0m An error occurred during RAG processing: {e}")
-    finally:
-        sys.exit(0) # Exit after answering a quick query
-else:
-    # --- Interactive Chat Loop ---
-    print("                                    ")
-    print("\033[38;5;196m █████╗ ███████╗ ██████╗ ███╗   ██╗ \033[0m")
-    print("\033[38;5;197m██╔══██╗██╔════╝██╔═══██╗████╗  ██║ \033[0m")
-    print("\033[38;5;160m███████║█████╗  ██║   ██║██╔██╗ ██║ \033[0m")
-    print("\033[38;5;124m██╔══██║██╔══╝  ██║   ██║██║╚██╗██║ \033[0m")
-    print("\033[38;5;88m██║  ██║███████╗╚██████╔╝██║ ╚████║ \033[0m")
-    print("\033[38;5;52m╚═╝  ╚═╝╚══════╝ ╚═════╝ ╚═╝  ╚═══╝ \033[0m")
-
-    print("\n\033[1;34m[INFO]\033[0m Models loaded:")
-    print(f"\033[1;34m[INFO]\033[0m     LLM: \033[36m{LLM_MODEL}\033[0m")
-    print(f"\033[1;34m[INFO]\033[0m     Embeddings: \033[36m{EMBEDDING_MODEL}\033[0m")
-    print("                                    ")
-    print("\033[1;32m[CMD]\033[0m Type '/ingest <path_to_file_or_directory>' to add documents to AEON's knowledge base.")
-    print("\033[1;32m[CMD]\033[0m Type '/quit', '/exit' or '/bye' to end the conversation.")
-    print("                                    ")
-    print("\033[1;33m[NOTE]\033[0m AEON will not remember previous conversations.")
-    print("                                    ")
-    print("\033[1;31m[START AEON]\033[0m")
-
-    while True:
-        user_input = input("\n\033[92m[>>>>]:\033[0m ").strip()
-
-        if user_input.lower() in ["/quit", "/exit", "/bye"]:
-            print("\033[92m[AEON]:\033[0m Goodbye!")
-            break
-
-        if not user_input:
-            continue
-
-        processed_input = user_input
-        
-        # Ingest command in interactive mode
-        if user_input.lower().startswith("/ingest "):
-            ingest_path = user_input[len("/ingest "):].strip()
-            # For ingest, we typically want to see feedback, so it's not hidden by `hide_boot_messages`
-            # If you want ingest to also be silent, you would need to pass a flag to ingest_documents
-            ingest_documents(ingest_path, vectorstore, text_splitter, ollama_embeddings)
-            continue
-
-        try:
-            response = rag_chain.invoke(processed_input)
-            ai_response_content = response
-            print(f"\033[91m[AEON]:\033[0m {ai_response_content}")
-        except Exception as e:
-            print(f"\033[91m[ERROR]\033[0m An error occurred during RAG processing: {e}")
-            print("\033[91m[ERROR]\033[0m Please try again or check the logs.")
-            continue
+        print("\033[91m[ERROR]\033[0m Please try again or check the logs.")
+        continue

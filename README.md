@@ -12,7 +12,7 @@ AEON is a simple, stateless Retrieval-Augmented Generation (RAG) chatbot designe
 The main focus is to be simple and lightweight to run on CPU with at least 8GB Ram and i3 processors, typically using models like *smollm2:135m* and *tinyllama* with *nomic-embed-text*.
 
 ## Instalation
-Install [Ollama](https://ollama.com/) on your machine first
+Install [Ollama](https://ollama.com/) on your machine first.
 
 Use the script ```./install.sh``` to set your ```.venv``` in Python and install pip dependencies
 
@@ -21,13 +21,31 @@ $ chmod +x ./install.sh
 $ ./install.sh
 ``` 
 
+## Setup LLM
+Pull the LLM you want from Ollama, recomend: ```smollm2``` due lightweight and ```nomic-embed-text```
+
+```bash
+$ ollama pull nomic-embed-text
+$ ollama pull smollm2:360m
+```
+
+**Optional**
+
+AeonLLM is a copy of SmolLM2 with 360 million parameters to be trained with RAG JSON provided in ```/data/cerebrum```
+
+To build the LLM use the command:
+
+```bash
+$ ollama create aeonLLM -f aeon.modelfile
+```
+
 ## Configuration
-```config.json``` to setup Aeon
+Edit ```config.json``` to fit your needs
 
 ```json
 {
   "llm_config": {
-    "model": "tinyllama", <-- Choose your LLM
+    "model": "aeonLLM", <-- Choose your LLM
     "temperature": 0.2
   },
   "embedding_model": "nomic-embed-text",
@@ -37,24 +55,12 @@ $ ./install.sh
 ```
 
 ## Start AEON
-Make sure you have all dependencies like: ollama, python and dependencies installed on your machine and run:
+Make sure you have all dependencies like: Ollama, python and dependencies installed on your machine and run:
 
 ```shell
 $ chmod +x ./aeon.sh
 $ ./aeon.sh
 ``` 
-
-Running Aeon question mode:
-```shell
-$ ./aeon.sh -q "<your_input>"
-``` 
-
-Example: 
-```shell
-$ ./aeon.sh -q "What is 1+1?"
-$ [AEON]: 1 + 1 is equals 2
-$ 
-```
 
 ## Data - RAG
 All data is stored in: ```/data/*``` 
@@ -65,3 +71,8 @@ All data is stored in: ```/data/*```
 Command can be placed on chat
   * ```/ingest <path_to_file_or_directory>``` To insert new files or folders
   * ```/quit, /bye, /exit``` To close AEON
+
+### Tested on
+| OS                 | CPU               | GPU | RAM  |
+|--------------------|-------------------|-----|------|
+| Ubuntu 24.04.2 LTS | Intel i7 - 10510U | -   | 16GB |

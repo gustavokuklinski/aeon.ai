@@ -22,7 +22,7 @@ $ ./install.sh
 ``` 
 
 ## Setup LLM
-Pull the LLM you want from Ollama, recomend: ```smollm2``` due lightweight and ```nomic-embed-text```
+Pull the LLM you want from Ollama, recomended: ```smollm2:135m``` due lightweight and the embedding model: ```nomic-embed-text```
 
 ```bash
 $ ollama pull nomic-embed-text

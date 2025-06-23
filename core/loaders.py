@@ -1,9 +1,7 @@
-# core/loaders.py
-# core/loaders.py
 import json
 import sys
 import os
-from langchain_core.documents import Document # Explicitly import Document
+from langchain_core.documents import Document
 
 class JsonPlaintextLoader:
     def __init__(self, file_path: str): # Removed hide_messages parameter

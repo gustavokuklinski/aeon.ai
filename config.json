@@ -1,6 +1,6 @@
 {
   "llm_config": {
-    "model": "aeonLLM",
+    "model": "llama3.2:1b",
     "temperature": 0.2
   },
   "embedding_model": "nomic-embed-text",

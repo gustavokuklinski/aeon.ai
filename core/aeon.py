@@ -5,10 +5,8 @@ from pathlib import Path
 import json
 import base64
 import requests
-from PIL import Image
 import io
 import uuid
-import svgwrite
 import sys
 
 # Core modules
@@ -34,31 +32,7 @@ from langchain.chains import create_retrieval_chain
 from langchain.chains.combine_documents import create_stuff_documents_chain
 from langchain_core.documents import Document
 
-<<<<<<< HEAD
-# --- Helper for conditional printing (now simplified as messages are always shown) ---
-=======
-# --- Argument Parsing for boot messages ---
-hide_boot_messages = False
-if "--hide-boot-messages" in sys.argv:
-    hide_boot_messages = True
-    sys.argv.remove("--hide-boot-messages") # Remove it so it doesn't confuse other parsers
-
-# --- Quick Query Input Check ---
-quick_query_input = None
-if "--query" in sys.argv:
-    try:
-        query_index = sys.argv.index("--query")
-        quick_query_input = sys.argv[query_index + 1]
-        # Remove --query and its value from sys.argv
-        sys.argv.pop(query_index + 1)
-        sys.argv.pop(query_index)
-    except (ValueError, IndexError):
-        print("\033[91m[ERROR]\033[0m Usage: python -m core.aeon --query \"Your question here\"")
-        sys.exit(1)
-
-
 # --- Helper for conditional printing ---
->>>>>>> parent of a6ca992 (Updated .MD files, kept a simple data to use RAG, default model to SmolLM2:135m for low-end)
 def print_boot_message(message: str):
     print(f"\033[1;93m[BOOT]\033[0m {message}")
 
@@ -129,11 +103,9 @@ qa_system_prompt = SYSTEM_PROMPT
 
 qa_prompt = ChatPromptTemplate.from_messages(
     [
-        ("human", "{input}"),
-<<<<<<< HEAD
-=======
         ("system", qa_system_prompt),
->>>>>>> parent of a6ca992 (Updated .MD files, kept a simple data to use RAG, default model to SmolLM2:135m for low-end)
+        ("human", "{input}"),
+        
     ]
 )
 

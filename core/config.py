@@ -4,7 +4,7 @@ import json
 from pathlib import Path
 
 # --- Configuration ---
-MARKDOWN_DATA_DIR = "./data/cerebrum"
+INPUT_DIR = "./data/cerebrum"
 CHROMA_DB_DIR = "./data/synapse"
 OUTPUT_DIR = "./data/output"
 CONFIG_FILE = "./config.json"

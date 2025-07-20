@@ -12,7 +12,7 @@ import sys
 # Core modules
 from core.config import (
     LLM_MODEL, LLM_TEMPERATURE, EMBEDDING_MODEL,
-    MARKDOWN_DATA_DIR, CHROMA_DB_DIR,
+    INPUT_DIR, CHROMA_DB_DIR,
     OUTPUT_DIR,
     SYSTEM_PROMPT
 )
@@ -41,25 +41,25 @@ def print_info_message(message: str):
 
 # --- RAG Pipeline Setup ---
 
-# 1. Load Initial Documents from MARKDOWN_DATA_DIR (now supports all types)
-if not os.path.exists(MARKDOWN_DATA_DIR):
-    print(f"\033[91m[ERROR]\033[0m Directory '{MARKDOWN_DATA_DIR}' not found. Please create it and place your Markdown, JSON, or TXT files inside.")
+# 1. Load Initial Documents from INPUT_DIR (now supports all types)
+if not os.path.exists(INPUT_DIR):
+    print(f"\033[91m[ERROR]\033[0m Directory '{INPUT_DIR}' not found. Please create it and place your Markdown, JSON, or TXT files inside.")
     sys.exit(1)
 
-print_boot_message(f"Loading initial documents from: {MARKDOWN_DATA_DIR} (Markdown, JSON, TXT)")
+print_boot_message(f"Loading initial documents from: {INPUT_DIR} (Markdown, JSON, TXT)")
 
 documents = [] # Initialize an empty list to collect all documents
 
 # Load Markdown files
-md_loader = DirectoryLoader(str(Path(MARKDOWN_DATA_DIR)), glob="**/*.md", loader_cls=UnstructuredMarkdownLoader)
+md_loader = DirectoryLoader(str(Path(INPUT_DIR)), glob="**/*.md", loader_cls=UnstructuredMarkdownLoader)
 documents.extend(md_loader.load())
 
 # Load Text files
-txt_loader = DirectoryLoader(str(Path(MARKDOWN_DATA_DIR)), glob="**/*.txt", loader_cls=TextLoader)
+txt_loader = DirectoryLoader(str(Path(INPUT_DIR)), glob="**/*.txt", loader_cls=TextLoader)
 documents.extend(txt_loader.load())
 
 # Load JSON files with custom loader
-json_files = list(Path(MARKDOWN_DATA_DIR).glob("**/*.json"))
+json_files = list(Path(INPUT_DIR).glob("**/*.json"))
 for json_file in json_files:
     json_loader = JsonPlaintextLoader(str(json_file)) # hide_messages is now effectively False
     print_info_message(f"Found JSON file during initial boot: '{json_file}'. Loading with custom JSON plaintext loader.")
@@ -105,7 +105,6 @@ qa_prompt = ChatPromptTemplate.from_messages(
     [
         ("system", qa_system_prompt),
         ("human", "{input}"),
-        
     ]
 )
 

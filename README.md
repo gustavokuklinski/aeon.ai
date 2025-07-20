@@ -26,17 +26,7 @@ Pull the LLM you want from Ollama, recomended: ```smollm2:135m``` due lightweigh
 
 ```bash
 $ ollama pull nomic-embed-text
-$ ollama pull smollm2:360m
-```
-
-**Optional**
-
-AeonLLM is a copy of SmolLM2 with 360 million parameters to be trained with RAG JSON provided in ```/data/cerebrum```
-
-To build the LLM use the command:
-
-```bash
-$ ollama create aeonLLM -f aeon.modelfile
+$ ollama pull smollm2:135m
 ```
 
 ## Configuration
@@ -45,7 +35,7 @@ Edit ```config.json``` to fit your needs
 ```json
 {
   "llm_config": {
-    "model": "aeonLLM", <-- Choose your LLM
+    "model": "smollm2:135m", <-- Choose your LLM
     "temperature": 0.2
   },
   "embedding_model": "nomic-embed-text",
@@ -66,6 +56,17 @@ $ ./aeon.sh
 All data is stored in: ```/data/*``` 
   * ```/data/cerebrum``` Place your own Markdown, Text and JSON files. 
   * ```/data/synapse``` Chroma vector database
+
+To use your own JSON files, follow the example in: ```/data/cerebrum/example.json``` :
+```json
+[
+  {
+    "query": "What is your name?", <-- Write your Query
+    "context": "The AI assistant is asked its name, how it may be called", <-- What your query is about
+    "answer": "Hello! My name is Aeon!" <-- Predicted response for training
+  }
+]
+```
 
 ## AEON Chat command
 Command can be placed on chat

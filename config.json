@@ -1,7 +1,7 @@
 {
   "llm_config": {
-    "model": "llama3.2:1b",
-    "temperature": 0.2
+    "model": "smollm2:135m",
+    "temperature": 0.4
   },
   "embedding_model": "nomic-embed-text",
   "system_prompt": "Hello! Answer the user's question, but **only use the information you have the context**. If you can't find the answer in the context, it's totally okay to just say you don't know.\n\nContext: {context}"

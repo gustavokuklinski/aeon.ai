@@ -2,6 +2,5 @@ venv
 .venv
 core/__pycache__/
 
-synapse/*
-synapse/*/*
-synapse/chroma.sqlite3
+/data/synapse/
+/data/synapse/chroma.sqlite3

@@ -1,6 +1,6 @@
 {
   "llm_config": {
-    "model": "gemma3:1b",
+    "model": "smollm2:135m",
     "temperature": 0.7
   },
   "embedding_model": "nomic-embed-text",

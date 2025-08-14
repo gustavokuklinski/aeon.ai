@@ -1,11 +1,4 @@
-```
- █████╗ ███████╗ ██████╗ ███╗   ██╗
-██╔══██╗██╔════╝██╔═══██╗████╗  ██║
-███████║█████╗  ██║   ██║██╔██╗ ██║
-██╔══██║██╔══╝  ██║   ██║██║╚██╗██║
-██║  ██║███████╗╚██████╔╝██║ ╚████║
-╚═╝  ╚═╝╚══════╝ ╚═════╝ ╚═╝  ╚═══╝
-```
+<img src="https://raw.githubusercontent.com/gustavokuklinski/aeon.ai/refs/heads/main/web/assets/img/aeon.png">
 
 AEON is a simple, stateless Retrieval-Augmented Generation (RAG) chatbot designed to answer questions based on a provided set of Markdown (.md), Text (.txt), and JSON (.json) documents. It leverages local Large (or Small) Language Models (LLMs and SLMs) and embedding models all powered by Ollama. Chroma is used for its vector database.
 
@@ -47,6 +40,8 @@ Edit ```config.json``` to fit your needs
 ## Start AEON
 Make sure you have all dependencies like: Ollama, python and dependencies installed on your machine and run:
 
+<img src="https://raw.githubusercontent.com/gustavokuklinski/aeon.ai/refs/heads/main/web/assets/img/aeon-1.png">
+
 ```shell
 $ chmod +x ./aeon.sh
 $ ./aeon.sh
@@ -68,13 +63,20 @@ To use your own JSON files, follow the example in: ```/data/cerebrum/example.jso
 ]
 ```
 
+
 ## AEON Chat command
+
+<img src="https://raw.githubusercontent.com/gustavokuklinski/aeon.ai/refs/heads/main/web/assets/img/aeon-terminal.png">
+
 Command can be placed on chat
   * ```/ingest <path_to_file_or_directory>``` To insert new files or folders
   * ```/quit, /bye, /exit``` To close AEON
 
 ## Web Chat Interface
-```localhost:4303```
+
+<img src="https://raw.githubusercontent.com/gustavokuklinski/aeon.ai/refs/heads/main/web/assets/img/aeon-web.png">
+
+Open your browser at: ```localhost:4303```
 
 ### Tested on
 | OS                 | CPU               | GPU | RAM  |

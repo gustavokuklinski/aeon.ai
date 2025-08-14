@@ -7,7 +7,7 @@
 ╚═╝  ╚═╝╚══════╝ ╚═════╝ ╚═╝  ╚═══╝
 ```
 
-AEON is a simple, stateless Retrieval-Augmented Generation (RAG) chatbot designed to answer questions based on a provided set of Markdown (.md), Text (.txt), and JSON (.json) documents. It leverages local Large Language Models (LLMs) and embedding models all powered by Ollama. Chroma is used for its vector database.
+AEON is a simple, stateless Retrieval-Augmented Generation (RAG) chatbot designed to answer questions based on a provided set of Markdown (.md), Text (.txt), and JSON (.json) documents. It leverages local Large (or Small) Language Models (LLMs and SLMs) and embedding models all powered by Ollama. Chroma is used for its vector database.
 
 The main focus is to be simple and lightweight to run on CPU with at least 8GB Ram and i3 processors, typically using models like *smollm2:135m* and *tinyllama* with *nomic-embed-text*.
 
@@ -39,7 +39,7 @@ Edit ```config.json``` to fit your needs
     "temperature": 0.2
   },
   "embedding_model": "nomic-embed-text",
-  "system_prompt": "Answer the user's question, but only use the information you have the context. If you can't find the answer in the context, say you don't know.\n\nContext: {context}"
+  "system_prompt": "You are a helpful AI assistant. Answer questions ONLY from the provided context.\n\nContext: {context}"
 
 }
 ```
@@ -72,6 +72,9 @@ To use your own JSON files, follow the example in: ```/data/cerebrum/example.jso
 Command can be placed on chat
   * ```/ingest <path_to_file_or_directory>``` To insert new files or folders
   * ```/quit, /bye, /exit``` To close AEON
+
+## Web Chat Interface
+```localhost:4303```
 
 ### Tested on
 | OS                 | CPU               | GPU | RAM  |

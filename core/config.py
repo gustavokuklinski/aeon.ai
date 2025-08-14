@@ -24,10 +24,10 @@ except FileNotFoundError:
     print("\033[91m[ERROR]\033[0m Example config.json:")
     print(json.dumps({
         "llm_config": {
-            "model": "smollm2:135m",
-            "temperature": 0.2
+            "model": "<YOUR_MODEL_HERE>",
+            "temperature": 0.7
         },
-        "embedding_model": "nomic-embed-text",
+        "embedding_model": "<YOUR_EMBED_MODEL_HERE>",
         "system_prompt": "You are a helpful AI assistant. Answer questions ONLY from the provided context.\n\nContext: {context}"
     }, indent=2))
     exit()

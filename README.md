@@ -5,13 +5,13 @@ AEON is a simple, stateless Retrieval-Augmented Generation (RAG) chatbot designe
 The main focus is to be simple and lightweight to run on CPU with at least 8GB Ram and i3 processors, typically using models like *smollm2:135m*, *gemma3:270m* and *tinyllama* with *nomic-embed-text*.
 
 ### Summary
-[Installation](#installation)
-[Setup LLM](#setup-llm)
-[Configuration](#configuration)
-[Start AEON](#start-aeon)
-[Data RAG](#data-rag)
-[AEON Chat command](#aeon-chat-command)
-[Web Chat Interface](#web-chat-interface)
+[Installation](#installation)<br />
+[Setup LLM](#setup-llm)<br />
+[Configuration](#configuration)<br />
+[Start AEON](#start-aeon)<br />
+[Data RAG](#data-rag)<br />
+[AEON Chat command](#aeon-chat-command)<br />
+[Web Chat Interface](#web-chat-interface)<br />
 [Running on VPS](#running-on-vps)
 
 ## Installation
@@ -73,7 +73,6 @@ To use your own JSON files, follow the example in: ```/data/cerebrum/example.jso
 ]
 ```
 
-
 ## AEON Chat command
 
 <img src="https://raw.githubusercontent.com/gustavokuklinski/aeon.ai/refs/heads/main/web/assets/img/aeon-terminal.png">
@@ -103,6 +102,8 @@ $ ./aeon.sh
 ```
 
 Remember to setup your ```config.json``` and install (Ollama)[https://ollama.com]
+
+To use locally with Ngrok ```$ ngrok http 4303```
 
 ### Tested on
 | OS                 | CPU               | GPU | RAM  |

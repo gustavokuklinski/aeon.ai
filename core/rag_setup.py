@@ -6,7 +6,7 @@ from pathlib import Path
 # Langchain modules
 from langchain_community.document_loaders import DirectoryLoader, UnstructuredMarkdownLoader, TextLoader
 from langchain.text_splitter import RecursiveCharacterTextSplitter
-from langchain_ollama import OllamaEmbeddings  # <-- Revert to this
+from langchain_ollama import OllamaEmbeddings
 from langchain_chroma import Chroma
 from langchain_ollama import ChatOllama
 from langchain.prompts import ChatPromptTemplate
@@ -55,7 +55,6 @@ def initialize_rag_system():
     chunks = text_splitter.split_documents(documents)
 
     # 3. Generate Embeddings and Store in a Vector Database
-    # Use the LangChain OllamaEmbeddings class
     ollama_embeddings = OllamaEmbeddings(model=EMBEDDING_MODEL)
 
     if not chroma_db_dir_path.exists() or not os.listdir(chroma_db_dir_path):

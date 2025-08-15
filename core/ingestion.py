@@ -3,7 +3,7 @@ import os
 from pathlib import Path
 from langchain_community.document_loaders import DirectoryLoader, UnstructuredMarkdownLoader, UnstructuredFileLoader, TextLoader
 from langchain.text_splitter import RecursiveCharacterTextSplitter
-from langchain_ollama import OllamaEmbeddings # <-- Revert to this
+from langchain_ollama import OllamaEmbeddings
 from langchain_chroma import Chroma
 
 # Import the custom loader

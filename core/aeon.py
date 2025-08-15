@@ -2,34 +2,30 @@
 import os
 import sys
 from pathlib import Path
-
-# Core modules
 from core.config import (
     LLM_MODEL, EMBEDDING_MODEL,
     INPUT_DIR, CHROMA_DB_DIR
 )
 from core.ingestion import ingest_documents
 from core.rag_setup import initialize_rag_system
-
-# Langchain modules (used for type hinting in the function call)
 from langchain_chroma import Chroma
 from langchain_ollama import OllamaEmbeddings
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 
-# --- Helper for conditional printing ---
+# Helper for conditional printing ---
 def print_boot_message(message: str):
     print(f"\033[1;93m[BOOT]\033[0m {message}")
 
 def print_info_message(message: str):
     print(f"\033[1;34m[INFO]\033[0m {message}")
 
-# --- RAG Pipeline Setup (Now a single function call) ---
+# RAG Pipeline Setup (Now a single function call) ---
 print_boot_message("Initializing RAG system...")
 rag_chain, vectorstore, text_splitter, ollama_embeddings = initialize_rag_system()
 print_boot_message("Vector store ready.")
 print_boot_message("Stateless RAG chain assembled.")
 
-# --- Interactive Chat Loop (Remains the same) ---
+# Interactive Chat Loop (Remains the same) ---
 print("                                    ")
 print("\033[38;5;196m █████╗ ███████╗ ██████╗ ███╗   ██╗ \033[0m")
 print("\033[38;5;197m██╔══██╗██╔════╝██╔═══██╗████╗  ██║ \033[0m")

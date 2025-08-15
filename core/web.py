@@ -1,4 +1,4 @@
-# web/app.py
+# core/web.py
 import os
 import sys
 from pathlib import Path
@@ -14,10 +14,10 @@ from core.config import (
 from core.ingestion import ingest_documents
 from core.rag_setup import initialize_rag_system # New import
 
-# --- Flask App Setup ---
+# Flask App Setup
 app = Flask(__name__, template_folder='../web/templates', static_folder='../web/assets')
 
-# --- RAG System Initialization (runs once on app startup) ---
+# RAG System Initialization (runs once on app startup)
 rag_chain = None
 vectorstore = None
 text_splitter = None
@@ -30,7 +30,7 @@ def initialize_rag_system_for_web():
     # Call the new shared function
     rag_chain, vectorstore, text_splitter, ollama_embeddings = initialize_rag_system()
 
-# --- Routes ---
+# Routes
 @app.route("/")
 def index():
     """Render the main chat interface."""

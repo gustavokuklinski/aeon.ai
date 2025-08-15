@@ -17,7 +17,7 @@ try:
     LLM_TEMPERATURE = config["llm_config"]["temperature"]
     EMBEDDING_MODEL = config["embedding_model"]
     # NEW: Load QA System Prompt from config.json, with a default fallback
-    SYSTEM_PROMPT = config.get("system_prompt", "Answer questions ONLY from the provided context. If the answer isn't in the context, state you don't know.\n\nContext: {context}")
+    SYSTEM_PROMPT = config.get("system_prompt", "You are a helpful AI assistant called Aeon.\n\nContext: {context}")
 
 except FileNotFoundError:
     print(f"\033[91m[ERROR]\033[0m {CONFIG_FILE} not found. Please create it with LLM, embedding model, and Moondream settings.")
@@ -28,7 +28,7 @@ except FileNotFoundError:
             "temperature": 0.7
         },
         "embedding_model": "<YOUR_EMBED_MODEL_HERE>",
-        "system_prompt": "You are a helpful AI assistant. Answer questions ONLY from the provided context.\n\nContext: {context}"
+        "system_prompt": "You are a helpful AI assistant called Aeon.\n\nContext: {context}"
     }, indent=2))
     exit()
 except KeyError as e:

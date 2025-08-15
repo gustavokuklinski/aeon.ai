@@ -1,42 +1,30 @@
-# web/app.py
+# core/rag_setup.py
 import os
 import sys
 from pathlib import Path
-from flask import Flask, render_template, request, jsonify
-
-# Add the parent directory to the Python path to import from 'core'
-sys.path.append('..')
-
-# Import core modules from your project
-from core.config import (
-    LLM_MODEL, LLM_TEMPERATURE, EMBEDDING_MODEL,
-    INPUT_DIR, CHROMA_DB_DIR, SYSTEM_PROMPT
-)
-from core.loaders import JsonPlaintextLoader # Used during initial load
-from core.ingestion import ingest_documents # Used for the '/ingest' functionality
 
 # Langchain modules
 from langchain_community.document_loaders import DirectoryLoader, UnstructuredMarkdownLoader, TextLoader
 from langchain.text_splitter import RecursiveCharacterTextSplitter
-from langchain_ollama import OllamaEmbeddings
+from langchain_ollama import OllamaEmbeddings  # <-- Revert to this
 from langchain_chroma import Chroma
 from langchain_ollama import ChatOllama
 from langchain.prompts import ChatPromptTemplate
 from langchain_core.runnables import RunnablePassthrough
 from langchain.chains.combine_documents import create_stuff_documents_chain
 
-# --- Flask App Setup ---
-app = Flask(__name__, template_folder='templates', static_folder='assets')
-
-# --- RAG System Initialization (runs once on app startup) ---
-rag_chain = None
-vectorstore = None
-text_splitter = None
-ollama_embeddings = None
+# Core modules
+from core.config import (
+    LLM_MODEL, LLM_TEMPERATURE, EMBEDDING_MODEL,
+    INPUT_DIR, CHROMA_DB_DIR, SYSTEM_PROMPT
+)
+from core.loaders import JsonPlaintextLoader
 
 def initialize_rag_system():
-    global rag_chain, vectorstore, text_splitter, ollama_embeddings
-
+    """
+    Initializes and returns a complete RAG system.
+    Returns: A tuple containing (rag_chain, vectorstore, text_splitter, ollama_embeddings).
+    """
     # Adjust paths to be relative to the project root
     project_root = Path(__file__).parent.parent
     input_dir_path = project_root / INPUT_DIR
@@ -67,7 +55,9 @@ def initialize_rag_system():
     chunks = text_splitter.split_documents(documents)
 
     # 3. Generate Embeddings and Store in a Vector Database
+    # Use the LangChain OllamaEmbeddings class
     ollama_embeddings = OllamaEmbeddings(model=EMBEDDING_MODEL)
+
     if not chroma_db_dir_path.exists() or not os.listdir(chroma_db_dir_path):
         print(f"Vector store not found. Creating new one at {chroma_db_dir_path}...")
         vectorstore = Chroma.from_documents(
@@ -102,37 +92,4 @@ def initialize_rag_system():
     )
     print("RAG chain assembled and ready.")
 
-# --- Routes ---
-@app.route("/")
-def index():
-    """Render the main chat interface."""
-    return render_template("index.html")
-
-@app.route("/api/chat", methods=["POST"])
-def chat():
-    """Handle chat requests and return AI responses."""
-    user_input = request.json.get("message")
-    if not user_input:
-        return jsonify({"error": "No message provided"}), 400
-
-    try:
-        # Handle '/ingest' command
-        if user_input.lower().startswith("/ingest "):
-            ingest_path = user_input[len("/ingest "):].strip()
-            # Call the ingestion function from core/ingestion.py
-            ingest_documents(ingest_path, vectorstore, text_splitter, ollama_embeddings)
-            response_text = f"Successfully ingested documents from '{ingest_path}'. Knowledge base updated."
-        else:
-            # Invoke the RAG chain for a regular query
-            response = rag_chain.invoke(user_input)
-            response_text = response
-
-        return jsonify({"response": response_text})
-    except Exception as e:
-        print(f"Error during RAG processing: {e}")
-        return jsonify({"error": "An error occurred while processing your request."}), 500
-
-# Run the app
-if __name__ == "__main__":
-    initialize_rag_system()
-    app.run(debug=True, port=4303)
+    return rag_chain, vectorstore, text_splitter, ollama_embeddings

@@ -3,7 +3,7 @@ import os
 from pathlib import Path
 from langchain_community.document_loaders import DirectoryLoader, UnstructuredMarkdownLoader, UnstructuredFileLoader, TextLoader
 from langchain.text_splitter import RecursiveCharacterTextSplitter
-from langchain_ollama import OllamaEmbeddings
+from langchain_ollama import OllamaEmbeddings # <-- Revert to this
 from langchain_chroma import Chroma
 
 # Import the custom loader
@@ -34,7 +34,7 @@ def ingest_documents(path_to_ingest: str, vectorstore: Chroma, text_splitter: Re
                 ingested_documents.extend(loader.load())
             elif path.suffix.lower() == ".json":
                 print(f"\033[1;34m[INFO]\033[0m Detected .json file. Loading with custom JSON plaintext loader.")
-                loader = JsonPlaintextLoader(str(path)) # Use the new loader
+                loader = JsonPlaintextLoader(str(path))
                 ingested_documents.extend(loader.load())
             else:
                 print(f"\033[1;34m[INFO]\033[0m Attempting to load with UnstructuredFileLoader for unknown type.")
@@ -56,10 +56,9 @@ def ingest_documents(path_to_ingest: str, vectorstore: Chroma, text_splitter: Re
             json_files = list(path.glob("**/*.json"))
             for json_file in json_files:
                 print(f"\033[1;34m[INFO]\033[0m Found JSON file: '{json_file}'. Loading with custom JSON plaintext loader.")
-                json_loader = JsonPlaintextLoader(str(json_file)) # Use the new loader
+                json_loader = JsonPlaintextLoader(str(json_file))
                 ingested_documents.extend(json_loader.load())
 
-            # Check if any files were found by these specific loaders
             if not (ingested_documents):
                 print(f"\033[1;33m[NOTE]\033[0m No .md, .txt, or .json files found in '{path_to_ingest}'.")
         else:
@@ -75,7 +74,7 @@ def ingest_documents(path_to_ingest: str, vectorstore: Chroma, text_splitter: Re
         print(f"\033[1;34m[INFO]\033[0m Split into {len(new_chunks)} chunks.")
 
         print(f"\033[1;34m[INFO]\033[0m Adding new chunks to vector store...")
-        vectorstore.add_documents(new_chunks)
+        vectorstore.add_documents(new_chunks, embedding=embeddings)
         print(f"\033[1;34m[INFO]\033[0m Successfully ingested {len(new_chunks)} chunks from '{path_to_ingest}'. Data is now persistent.")
 
     except Exception as e:

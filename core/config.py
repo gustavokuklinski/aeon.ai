@@ -14,6 +14,13 @@ try:
         config = json.load(f)
     LLM_MODEL = config["llm_config"]["model"]
     LLM_TEMPERATURE = config["llm_config"]["temperature"]
+
+    VLM_MODEL = config["vlm_config"]["model"]
+    VLM_MODEL_WIDTH = config["vlm_config"]["width"]
+    VLM_MODEL_HEIGHT = config["vlm_config"]["height"]
+    VLM_MODEL_HARDWARE = config["vlm_config"]["hardware"]
+    VLM_MODEL_NEGATIVE_PROMPT = config["vlm_config"]["negative_prompt"]
+
     EMBEDDING_MODEL = config["embedding_model"]
     SYSTEM_PROMPT = config.get("system_prompt", "You are a helpful AI assistant.\nContext: {context}")
 
@@ -25,8 +32,16 @@ except FileNotFoundError:
             "model": "<YOUR_MODEL_HERE>",
             "temperature": 0.7
         },
+        "vlm_config": {
+            "model": "<YOUR_IMAGE_MODEL_HERE>",
+            "width": 512,
+            "height": 512,
+            "hardware":"<CUDA_FOR_GPU__CPU_FOR_PC>",
+            "torch_dtype": 32,
+            "negative_prompt":"low quality, deformed, blurry, watermark, text"
+        },
         "embedding_model": "<YOUR_EMBED_MODEL_HERE>",
-        "system_prompt": "You are a helpful AI assistant.\nContext: {context}"
+        "system_prompt": "You are a helpful AI assistant. Your name is Aeon.\nContext: {context}"
     }, indent=2))
     exit()
 except KeyError as e:

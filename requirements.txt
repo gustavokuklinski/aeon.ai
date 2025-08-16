@@ -2,7 +2,12 @@ Flask
 langchain-chroma
 langchain-community
 langchain-core
-langchain-ollama
-ollama
+langchain-huggingface
 markdown
 unstructured
+transformers
+accelerate
+torch
+sentence-transformers
+diffusers
+bitsandbytes

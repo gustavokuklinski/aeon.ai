@@ -1,15 +1,14 @@
-# core/ingestion.py
 import os
 from pathlib import Path
 from langchain_community.document_loaders import DirectoryLoader, UnstructuredMarkdownLoader, UnstructuredFileLoader, TextLoader
 from langchain.text_splitter import RecursiveCharacterTextSplitter
-from langchain_ollama import OllamaEmbeddings
 from langchain_chroma import Chroma
+from langchain_community.embeddings import HuggingFaceEmbeddings
 
 # Import the custom loader
 from core.loaders import JsonPlaintextLoader
 
-def ingest_documents(path_to_ingest: str, vectorstore: Chroma, text_splitter: RecursiveCharacterTextSplitter, embeddings: OllamaEmbeddings):
+def ingest_documents(path_to_ingest: str, vectorstore: Chroma, text_splitter: RecursiveCharacterTextSplitter, embeddings: HuggingFaceEmbeddings):
     """
     Loads documents from a given path (file or directory), splits them,
     generates embeddings, and adds them to the Chroma vector store.

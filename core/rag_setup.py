@@ -1,17 +1,20 @@
-# core/rag_setup.py
 import os
 import sys
 from pathlib import Path
+import torch
 
 # Langchain modules
 from langchain_community.document_loaders import DirectoryLoader, UnstructuredMarkdownLoader, TextLoader
 from langchain.text_splitter import RecursiveCharacterTextSplitter
-from langchain_ollama import OllamaEmbeddings
 from langchain_chroma import Chroma
-from langchain_ollama import ChatOllama
-from langchain.prompts import ChatPromptTemplate
 from langchain_core.runnables import RunnablePassthrough
 from langchain.chains.combine_documents import create_stuff_documents_chain
+from langchain.prompts import PromptTemplate
+
+# Hugging Face imports
+from langchain_huggingface import HuggingFaceEmbeddings
+from langchain_huggingface import HuggingFacePipeline
+from transformers import AutoModelForCausalLM, AutoTokenizer, pipeline
 
 # Core modules
 from core.config import (
@@ -55,33 +58,60 @@ def initialize_rag_system():
     chunks = text_splitter.split_documents(documents)
 
     # 3. Generate Embeddings and Store in a Vector Database
-    ollama_embeddings = OllamaEmbeddings(model=EMBEDDING_MODEL)
+    print(f"Loading embedding model: {EMBEDDING_MODEL}")
+    embedding_model = HuggingFaceEmbeddings(model_name=EMBEDDING_MODEL)
 
     if not chroma_db_dir_path.exists() or not os.listdir(chroma_db_dir_path):
-        print(f"Vector store not found. Creating new one at {chroma_db_dir_path}...")
-        vectorstore = Chroma.from_documents(
-            documents=chunks,
-            embedding=ollama_embeddings,
-            persist_directory=str(chroma_db_dir_path)
-        )
+        # Check if chunks is empty.
+        if not chunks:
+            print(f"No initial documents found. Creating an empty vector store at {chroma_db_dir_path}...")
+            # Create an empty vector store
+            vectorstore = Chroma(
+                persist_directory=str(chroma_db_dir_path),
+                embedding_function=embedding_model
+            )
+        else:
+            print(f"Vector store not found. Creating new one at {chroma_db_dir_path}...")
+            vectorstore = Chroma.from_documents(
+                documents=chunks,
+                embedding=embedding_model,
+                persist_directory=str(chroma_db_dir_path)
+            )
     else:
         print(f"Loading existing vector store from {chroma_db_dir_path}...")
         vectorstore = Chroma(
             persist_directory=str(chroma_db_dir_path),
-            embedding_function=ollama_embeddings
+            embedding_function=embedding_model
         )
 
     retriever = vectorstore.as_retriever()
 
     # 4. Set up the LLM and Prompt Templates
-    llm = ChatOllama(model=LLM_MODEL, temperature=LLM_TEMPERATURE)
-    qa_system_prompt = SYSTEM_PROMPT
-    qa_prompt = ChatPromptTemplate.from_messages(
-        [
-            ("system", qa_system_prompt),
-            ("human", "{input}"),
-        ]
+    print(f"Loading LLM: {LLM_MODEL}")
+    tokenizer = AutoTokenizer.from_pretrained(LLM_MODEL)
+    model = AutoModelForCausalLM.from_pretrained(LLM_MODEL, trust_remote_code=True, torch_dtype=torch.float16, device_map="auto")
+    tokenizer.pad_token_id = tokenizer.eos_token_id
+    pipe = pipeline(
+        "text-generation",
+        model=model,
+        tokenizer=tokenizer,
+        max_new_tokens=512,
+        temperature=LLM_TEMPERATURE,
+        return_full_text=False
     )
+    llm = HuggingFacePipeline(pipeline=pipe)
+
+    # Use the tokenizer's chat template for correct formatting
+    chat_template = tokenizer.apply_chat_template(
+        [
+            {"role": "system", "content": SYSTEM_PROMPT.format(context="{context}")},
+            {"role": "user", "content": "{input}"},
+        ],
+        tokenize=False,
+        add_generation_prompt=True
+    )
+
+    qa_prompt = PromptTemplate.from_template(chat_template)
 
     # 5. Assemble the Stateless RAG Chain
     document_combiner = create_stuff_documents_chain(llm, qa_prompt)
@@ -91,4 +121,4 @@ def initialize_rag_system():
     )
     print("RAG chain assembled and ready.")
 
-    return rag_chain, vectorstore, text_splitter, ollama_embeddings
+    return rag_chain, vectorstore, text_splitter, embedding_model

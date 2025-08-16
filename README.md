@@ -1,11 +1,12 @@
-<img src="https://raw.githubusercontent.com/gustavokuklinski/aeon.ai/refs/heads/main/web/assets/img/aeon.png">
+<img src="https://raw.githubusercontent.com/gustavokuklinski/aeon.ai/refs/heads/main/web/assets/img/aeon.png" />
 
-AEON is a simple, stateless Retrieval-Augmented Generation (RAG) chatbot designed to answer questions based on a provided set of Markdown (.md), Text (.txt), and JSON (.json) documents. It leverages local Large (or Small) Language Models (LLMs and SLMs) and embedding models all powered by Ollama. Chroma is used for its vector database.
+**AEON** is a simple, stateless Retrieval-Augmented Generation (**RAG**) chatbot designed to answer questions based on a provided set of Markdown (`.md`), Text (`.txt`), and JSON (`.json`) documents. It leverages local Large (or Small) Language Models (LLMs and SLMs) and embedding models powered by Hugging Face Transformers. **Chroma** is used for its vector database.
 
-The main focus is to be simple and lightweight to run on CPU with at least 8GB Ram and i3 processors, typically using models like *smollm2:135m*, *gemma3:270m* and *tinyllama* with *nomic-embed-text*.
+The main focus is to be simple and lightweight, capable of running on a **CPU with at least 8GB of RAM**. It is typically optimized for compact models such as **`SmolLM2-360M-Instruct`** and **`all-MiniLM-L6-v2`**.
 
 ### Summary
-[Installation](#installation)<br />
+
+[Installation]()<br />
 [Setup LLM](#setup-llm)<br />
 [Configuration](#configuration)<br />
 [Start AEON](#start-aeon)<br />
@@ -14,55 +15,72 @@ The main focus is to be simple and lightweight to run on CPU with at least 8GB R
 [Web Chat Interface](#web-chat-interface)<br />
 [Running on VPS](#running-on-vps)
 
-## Installation
-Install [Ollama](https://ollama.com/) on your machine first.
+-----
 
-Use the script ```./aeon.sh``` to set your ```.venv``` in Python and install pip dependencies
+## Installation
+
+AEON uses Python and requires a virtual environment. Use the script `./aeon.sh` to set up your virtual environment and install all necessary pip dependencies from `requirements.txt`.
 
 ```shell
 $ chmod +x ./aeon.sh
 $ ./aeon.sh
-``` 
-
-## Setup LLM
-Pull the LLM you want from Ollama, recomended: ```gemma3:270m``` due lightweight and the embedding model: ```nomic-embed-text```
-
-```bash
-$ ollama pull nomic-embed-text
-$ ollama pull gemma3:270m
 ```
 
+-----
+
+## Setup LLM
+
+AEON will automatically download the required models from the Hugging Face Hub based on your `config.json` file. No manual download is required. Ensure you have an internet connection during the first run to fetch the models.
+
+-----
+
 ## Configuration
-Edit ```config.json``` to fit your needs
+
+Edit `config.json` to fit your needs. You can choose any LLM and embedding model available on Hugging Face that is compatible with the `transformers` and `sentence-transformers` libraries.
 
 ```json
 {
   "llm_config": {
-    "model": "gemma3:270m", <-- Choose your LLM
-    "temperature": 0.2
+    "model": "HuggingFaceTB/SmolLM2-360M-Instruct",
+    "temperature": 0.5
   },
-  "embedding_model": "nomic-embed-text",
-  "system_prompt": "You are a helpful AI assistant.\n\nContext: {context}"
-
+  "vlm_config": {
+    "model": "segmind/tiny-sd",
+    "width": 512,
+    "height": 512,
+    "hardware":"cpu",
+    "torch_dtype": "torch.float32",
+    "negative_prompt":"low quality, deformed, blurry, watermark, text"
+  },
+  "embedding_model": "sentence-transformers/all-MiniLM-L6-v2",
+  "system_prompt": "You are a helpful AI assistant."
 }
 ```
 
-## Start AEON
-Make sure you have all dependencies like: Ollama, python and dependencies installed on your machine and run:
+-----
 
-<img src="https://raw.githubusercontent.com/gustavokuklinski/aeon.ai/refs/heads/main/web/assets/img/aeon-1.png">
+## Start AEON
+
+Make sure you have all dependencies installed and then run the launcher script. The script will handle all setup and model loading for you.
+
+<img src="https://raw.githubusercontent.com/gustavokuklinski/aeon.ai/refs/heads/main/web/assets/img/aeon-1.png" />
 
 ```shell
 $ chmod +x ./aeon.sh
 $ ./aeon.sh
-``` 
+```
+
+-----
 
 ## Data RAG
-All data is stored in: ```/data/*``` 
-  * ```/data/cerebrum``` Place your own Markdown, Text and JSON files. 
-  * ```/data/synapse``` Chroma vector database
 
-To use your own JSON files, follow the example in: ```/data/cerebrum/example.json``` :
+All data is stored in the `/data/` directory:
+
+  * `/data/cerebrum`: Place your own Markdown, Text, and JSON files here. These are the documents AEON will use as its knowledge base.
+  * `/data/synapse`: This directory stores the Chroma vector database, which is automatically created or loaded by AEON.
+
+To use your own JSON files, follow the example in `/data/cerebrum/example.json`:
+
 ```json
 [
   {
@@ -73,27 +91,34 @@ To use your own JSON files, follow the example in: ```/data/cerebrum/example.jso
 ]
 ```
 
+-----
+
 ## AEON Chat command
 
-<img src="https://raw.githubusercontent.com/gustavokuklinski/aeon.ai/refs/heads/main/web/assets/img/aeon-terminal.png">
+<img src="https://raw.githubusercontent.com/gustavokuklinski/aeon.ai/refs/heads/main/web/assets/img/aeon-terminal.png"/>
 
-Command can be placed on chat
-  * ```/ingest <path_to_file_or_directory>``` To insert new files or folders
-  * ```/quit, /bye, /exit``` To close AEON
+Commands can be placed directly in the chat interface:
+
+  * `/image <prompt_to_generate_image>`: Use Stable Diffusion Models to generate images.
+  * `/ingest <path_to_file_or_directory>`: To insert new files or folders into the knowledge base.
+  * `/quit`, `/bye`, `/exit`: To close AEON.
+
+-----
 
 ## Web Chat Interface
 
-<img src="https://raw.githubusercontent.com/gustavokuklinski/aeon.ai/refs/heads/main/web/assets/img/aeon-web.png">
+<img src="https://raw.githubusercontent.com/gustavokuklinski/aeon.ai/refs/heads/main/web/assets/img/aeon-web.png" />
 
-Open your browser at: ```localhost:4303```
+Open your browser at `localhost:4303` to access the web interface.
+You can upload your own files here using the `/ingest` command. Valid formats are `.txt`, `.md`, and `.json`.
 
-To upload your own files use: ```/ingest <path_to_file_or_directory>```
-Valid formats: TXT, MD and JSON
+-----
 
 ## Running on VPS
-Aeon can also be uploaded to a VPS processing data as a personal business AI.
 
-Running on VPS:
+AEON can be run on a VPS to function as a personal or business AI.
+
+To set up AEON on a VPS:
 
 ```shell
 $ git clone https://github.com/gustavokuklinski/aeon.ai.git
@@ -101,11 +126,18 @@ $ chmod +x ./aeon.sh
 $ ./aeon.sh
 ```
 
-Remember to setup your ```config.json``` and install (Ollama)[https://ollama.com]
+Remember to configure your `config.json` with the desired Hugging Face models.
 
-To use locally with Ngrok ```$ ngrok http 4303```
+To access your VPS instance locally using Ngrok:
+
+```shell
+$ ngrok http 4303
+```
+
+-----
 
 ### Tested on
-| OS                 | CPU               | GPU | RAM  |
-|--------------------|-------------------|-----|------|
-| Ubuntu 24.04.2 LTS | Intel i7 - 10510U | -   | 16GB |
+
+| OS | CPU | GPU | RAM |
+|:---|:---|:---|:---|
+| Ubuntu 24.04.2 LTS | Intel i7 - 10510U | - | 16GB |

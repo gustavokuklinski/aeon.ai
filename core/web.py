@@ -2,21 +2,24 @@
 import os
 import sys
 from pathlib import Path
-from flask import Flask, render_template, request, jsonify
+from flask import Flask, render_template, request, jsonify, url_for, send_from_directory
 
 # Add the parent directory to the Python path to import from 'core'
-sys.path.append('..')
+#sys.path.append('..')
+project_root = Path(__file__).parent.parent
+sys.path.append(str(project_root))
 
 # Import core modules from your project
 from core.config import (
-    LLM_MODEL, EMBEDDING_MODEL
+    LLM_MODEL, EMBEDDING_MODEL, OUTPUT_DIR
 )
-from core.ingestion import ingest_documents
-from core.rag_setup import initialize_rag_system # New import
+from core.rag_setup import initialize_rag_system
+from core.image_gen import generate_image_from_prompt
 
 # Flask App Setup
-app = Flask(__name__, template_folder='../web/templates', static_folder='../web/assets')
-
+# app = Flask(__name__, template_folder='../web/templates', static_folder='../web/assets')
+app = Flask(__name__, template_folder=str(project_root / 'web' / 'templates'), static_folder=str(project_root / 'web' / 'assets'))
+abs_output_dir = str(project_root / OUTPUT_DIR)
 # RAG System Initialization (runs once on app startup)
 rag_chain = None
 vectorstore = None
@@ -36,29 +39,65 @@ def index():
     """Render the main chat interface."""
     return render_template("index.html")
 
-@app.route("/api/chat", methods=["POST"])
+@app.route("/chat", methods=["POST"])
 def chat():
-    """Handle chat requests and return AI responses."""
-    user_input = request.json.get("message")
+    """Handle chat requests, process with RAG, and return a response."""
+    data = request.get_json()
+    user_input = data.get("message", "").strip()
+    
     if not user_input:
-        return jsonify({"error": "No message provided"}), 400
+        return jsonify({"response": "No message provided."}), 400
 
+    # Handle the /image command
+    if user_input.startswith('/image'):
+        image_prompt = user_input.replace('/image', '', 1).strip()
+        if not image_prompt:
+            return jsonify({"response": "Please provide a prompt for image generation, e.g., /image a cat on a beach."}), 400
+
+        try:
+            image_path = generate_image_from_prompt(image_prompt, OUTPUT_DIR)
+            if image_path:
+                # Get the filename from the path
+                image_filename = os.path.basename(image_path)
+                # Create a URL to the image using Flask's static folder
+                image_url = url_for('static_images', filename=image_filename)
+                # Return the URL in a specific format for the frontend to handle
+                return jsonify({"response": f"Image generated: {image_prompt}", "image_url": image_url})
+            else:
+                return jsonify({"response": "Failed to generate image."}), 500
+        except Exception as e:
+            print(f"Error during image generation: {e}", file=sys.stderr)
+            return jsonify({"response": "An error occurred during image generation. Please try again."}), 500
+
+    # If not an image command, process with RAG
     try:
-        # Handle '/ingest' command
-        if user_input.lower().startswith("/ingest "):
-            ingest_path = user_input[len("/ingest "):].strip()
-            ingest_documents(ingest_path, vectorstore, text_splitter, ollama_embeddings)
-            response_text = f"Successfully ingested documents from '{ingest_path}'. Knowledge base updated."
+        response = rag_chain.invoke(user_input)
+        # ... (rest of the chat logic remains the same)
+        if isinstance(response, list) and response:
+            ai_response_content = response[0].get("generated_text", "")
         else:
-            response = rag_chain.invoke(user_input)
-            response_text = response
+            ai_response_content = str(response)
 
-        return jsonify({"response": response_text})
+        # Remove chat template tags
+        clean_response = ai_response_content.replace("<|im_start|>system", "").replace("<|im_end|>", "").replace("<|im_start|>user", "").replace("<|im_start|>assistant", "").strip()
+        clean_response = clean_response.lstrip('\n ').strip()
+        clean_response = '\n'.join([line for line in clean_response.split('\n') if line.strip()])
+
+        return jsonify({"response": clean_response})
     except Exception as e:
-        print(f"Error during RAG processing: {e}")
-        return jsonify({"error": "An error occurred while processing your request."}), 500
+        print(f"Error during RAG processing: {e}", file=sys.stderr)
+        return jsonify({"response": "An error occurred. Please try again."}), 500
+
+# Add a route to serve the generated images
+@app.route('/images/<path:filename>')
+def static_images(filename):
+    """Serve generated images from the output directory."""
+    return send_from_directory(abs_output_dir, filename)
+
 
 # Run the app
 if __name__ == "__main__":
     initialize_rag_system_for_web()
+    # Ensure the output directory exists
+    os.makedirs(abs_output_dir, exist_ok=True)
     app.run(debug=True, port=4303)

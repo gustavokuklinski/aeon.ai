@@ -30,31 +30,26 @@ $ ./aeon.sh
 
 ## Setup LLM
 
-AEON will automatically download the required models from the Hugging Face Hub based on your `config.json` file. No manual download is required. Ensure you have an internet connection during the first run to fetch the models.
+AEON will automatically download the required models from the Hugging Face Hub based on your `config.yml` file and save into ```~/.cache/huggingface/hub/```. No manual download is required. Ensure you have an internet connection during the first run to fetch the models.
 
 -----
 
 ## Configuration
 
-Edit `config.json` to fit your needs. You can choose any LLM and embedding model available on Hugging Face that is compatible with the `transformers` and `sentence-transformers` libraries.
+Edit `config.yml` to fit your needs. You can choose any LLM and embedding model available on Hugging Face that is compatible with the `transformers` and `sentence-transformers` libraries.
 
-```json
-{
-  "llm_config": {
-    "model": "HuggingFaceTB/SmolLM2-360M-Instruct",
-    "temperature": 0.5
-  },
-  "vlm_config": {
-    "model": "segmind/tiny-sd",
-    "width": 512,
-    "height": 512,
-    "hardware":"cpu",
-    "torch_dtype": "torch.float32",
-    "negative_prompt":"low quality, deformed, blurry, watermark, text"
-  },
-  "embedding_model": "sentence-transformers/all-MiniLM-L6-v2",
-  "system_prompt": "You are a helpful AI assistant."
-}
+```yaml
+llm_config:
+  model: HuggingFaceTB/SmolLM2-360M-Instruct
+  temperature: 0.5
+img_config:
+  model: segmind/tiny-sd
+  width: 512
+  height: 512
+  hardware: cpu
+  negative_prompt: low quality, deformed, blurry, watermark, text
+embedding_model: sentence-transformers/all-MiniLM-L6-v2
+system_prompt: "You are a helpful AI assistant. Your name is Aeon.\nContext: {context}"
 ```
 
 -----
@@ -99,7 +94,7 @@ To use your own JSON files, follow the example in `/data/cerebrum/example.json`:
 
 Commands can be placed directly in the chat interface:
 
-  * `/image <prompt_to_generate_image>`: Use Stable Diffusion Models to generate images.
+  * `/image <prompt_to_generate_image>`: Use Stable Diffusion Model to generate images.
   * `/ingest <path_to_file_or_directory>`: To insert new files or folders into the knowledge base.
   * `/quit`, `/bye`, `/exit`: To close AEON.
 
@@ -110,7 +105,8 @@ Commands can be placed directly in the chat interface:
 <img src="https://raw.githubusercontent.com/gustavokuklinski/aeon.ai/refs/heads/main/web/assets/img/aeon-web.png" />
 
 Open your browser at `localhost:4303` to access the web interface.
-You can upload your own files here using the `/ingest` command. Valid formats are `.txt`, `.md`, and `.json`.
+
+  * `/image <prompt_to_generate_image>`: Use Stable Diffusion Model to generate images.
 
 -----
 

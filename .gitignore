@@ -2,5 +2,9 @@ venv
 .venv
 core/__pycache__/
 
-/data/synapse/
-/data/synapse/chroma.sqlite3
+/data/output/*.png
+
+/data/cerebrum/memory/*.md
+
+/data/synapse/*/
+/data/synapse/*.sqlite3

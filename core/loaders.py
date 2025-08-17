@@ -5,7 +5,7 @@ import os
 from langchain_core.documents import Document
 
 class JsonPlaintextLoader:
-    def __init__(self, file_path: str): # Removed hide_messages parameter
+    def __init__(self, file_path: str):
         self.file_path = file_path
 
     def _print_info_line(self, message: str):

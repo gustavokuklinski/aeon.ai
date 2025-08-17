@@ -47,7 +47,7 @@ print("\033[1;32m[CMD]\033[0m Type '/quit', '/exit' or '/bye' to end the convers
 print("                                    ")
 print("\033[1;33m[NOTE]\033[0m AEON will not remember previous conversations.")
 print("                                    ")
-print("\033[1;31m[START AEON]\033[0m")
+print("\033[1;31m[STARTING AEON]\033[0m")
 
 while True:
     user_input = input("\n\033[92m[>>>>]:\033[0m ").strip()

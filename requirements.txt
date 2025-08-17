@@ -11,3 +11,4 @@ torch
 sentence-transformers
 diffusers
 bitsandbytes
+pyyaml

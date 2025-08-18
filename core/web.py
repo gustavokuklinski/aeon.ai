@@ -3,6 +3,7 @@ import os
 import sys
 from pathlib import Path
 from flask import Flask, render_template, request, jsonify, url_for, send_from_directory
+from werkzeug.utils import secure_filename
 
 # Add the parent directory to the Python path to import from 'core'
 #sys.path.append('..')
@@ -11,15 +12,18 @@ sys.path.append(str(project_root))
 
 # Import core modules from your project
 from core.config import (
-    LLM_MODEL, EMBEDDING_MODEL, OUTPUT_DIR
+    LLM_MODEL, EMBEDDING_MODEL, OUTPUT_DIR, INPUT_DIR
 )
 from core.rag_setup import initialize_rag_system
 from core.image_gen import generate_image_from_prompt
+from core.ingestion import ingest_documents # Import the ingestion function
 
 # Flask App Setup
 # app = Flask(__name__, template_folder='../web/templates', static_folder='../web/assets')
 app = Flask(__name__, template_folder=str(project_root / 'web' / 'templates'), static_folder=str(project_root / 'web' / 'assets'))
 abs_output_dir = str(project_root / OUTPUT_DIR)
+abs_input_dir = str(project_root / INPUT_DIR)
+
 # RAG System Initialization (runs once on app startup)
 rag_chain = None
 vectorstore = None
@@ -87,6 +91,31 @@ def chat():
     except Exception as e:
         print(f"Error during RAG processing: {e}", file=sys.stderr)
         return jsonify({"response": "An error occurred. Please try again."}), 500
+
+# New route for file upload and ingestion
+@app.route("/upload_and_ingest", methods=["POST"])
+def upload_and_ingest_file():
+    if 'file' not in request.files:
+        return jsonify({"message": "No file part in the request."}), 400
+    file = request.files['file']
+    if file.filename == '':
+        return jsonify({"message": "No selected file."}), 400
+    
+    if file:
+        filename = secure_filename(file.filename)
+        filepath = os.path.join(abs_input_dir, filename)
+        
+        try:
+            # Save the file to the input directory
+            file.save(filepath)
+            
+            # Ingest the saved file using the existing function
+            ingest_documents(filepath, vectorstore, text_splitter, ollama_embeddings)
+            
+            return jsonify({"message": f"File '{filename}' ingested successfully!"}), 200
+        except Exception as e:
+            print(f"Error during file ingestion: {e}", file=sys.stderr)
+            return jsonify({"message": f"An error occurred during ingestion: {e}"}), 500
 
 # Add a route to serve the generated images
 @app.route('/images/<path:filename>')

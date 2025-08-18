@@ -18,6 +18,13 @@
             </div>
         </div>
         <p id="info-txt">Version: <strong><code>0.0.0</code></strong> | AEON.ai<strong><code></code></strong></p>
+        
+        <div class="ingest-form">
+            <form id="ingest-form" enctype="multipart/form-data">
+                <input type="file" id="ingest-file" name="ingest-file" accept=".md,.txt,.json">
+                <button type="submit">Upload</button>
+            </form>
+        </div>
         <form id="chat-form">
             <input type="text" id="user-input" placeholder="Ask a question..." autocomplete="off">
             <button type="submit">Send</button>

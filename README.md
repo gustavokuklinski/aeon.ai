@@ -19,11 +19,10 @@ The main focus is to be simple and lightweight, capable of running on a **CPU wi
 
 ## Installation
 
-AEON uses Python and requires a virtual environment. Use the script `./aeon.sh` to set up your virtual environment and install all necessary pip dependencies from `requirements.txt`.
+AEON uses Python and requires a virtual environment. Use the script `./aeon.py` to set up your virtual environment and install all necessary pip dependencies from `requirements.txt`.
 
 ```shell
-$ chmod +x ./aeon.sh
-$ ./aeon.sh
+$ python3 ./aeon.py
 ```
 
 -----
@@ -61,8 +60,7 @@ Make sure you have all dependencies installed and then run the launcher script. 
 <img src="https://raw.githubusercontent.com/gustavokuklinski/aeon.ai/refs/heads/main/web/assets/img/aeon-1.png" />
 
 ```shell
-$ chmod +x ./aeon.sh
-$ ./aeon.sh
+$ python3 ./aeon.py
 ```
 
 -----
@@ -118,11 +116,10 @@ To set up AEON on a VPS:
 
 ```shell
 $ git clone https://github.com/gustavokuklinski/aeon.ai.git
-$ chmod +x ./aeon.sh
-$ ./aeon.sh
+$ python3 ./aeon.py
 ```
 
-Remember to configure your `config.json` with the desired Hugging Face models.
+Remember to configure your `config.yml` with the desired Hugging Face models.
 
 To access your VPS instance locally using Ngrok:
 

@@ -108,3 +108,34 @@ button {
 button:hover {
     background-color: #e96f79;
 }
+
+/* Add this new section for the ingest form */
+.ingest-form form {
+    display: flex; /* Makes the children align in a row */
+    align-items: center; /* Vertically centers the items */
+    padding: 20px;
+    background: #242424;
+}
+
+.ingest-form input[type="file"] {
+    flex-grow: 1; /* Allows the file input to take up available space */
+    padding: 7px;
+    border: 1px solid #ccc;
+    outline: none;
+    font-size: 16px;
+    transition: border-color 0.3s;
+    background-color: #353535; /* Match the main container's background for a seamless look */
+    color: #fff;
+}
+
+/* Re-use the existing button style for the upload button */
+.ingest-form button {
+    padding: 12px 25px;
+    margin-left: 10px;
+    background-color: #d31c2b;
+    color: white;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s;
+}

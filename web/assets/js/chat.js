@@ -66,3 +66,58 @@ document.getElementById('chat-form').addEventListener('submit', function (e) {
         chatWindow.scrollTop = chatWindow.scrollHeight;
     });
 });
+
+
+// New code for file ingestion
+document.getElementById('ingest-form').addEventListener('submit', function (e) {
+    e.preventDefault();
+
+    const fileInput = document.getElementById('ingest-file');
+    const file = fileInput.files[0];
+
+    if (!file) {
+        alert("Please select a file to ingest.");
+        return;
+    }
+
+    const chatWindow = document.getElementById('chat-window');
+
+    // Display AEON's thinking message
+    const thinkingMessageDiv = document.createElement('div');
+    thinkingMessageDiv.className = 'message system loading';
+    thinkingMessageDiv.innerHTML = `<p><strong>[AEON] </strong> Ingesting file: <strong>${file.name}</strong>...</p>`;
+    chatWindow.appendChild(thinkingMessageDiv);
+    chatWindow.scrollTop = chatWindow.scrollHeight;
+
+    const formData = new FormData();
+    formData.append('file', file);
+
+    fetch('/upload_and_ingest', {
+        method: 'POST',
+        body: formData,
+    })
+    .then(response => response.json())
+    .then(data => {
+        // Remove the loading message
+        chatWindow.removeChild(thinkingMessageDiv);
+
+        // Display the AEON's response
+        const aeonMessageDiv = document.createElement('div');
+        aeonMessageDiv.className = 'message system';
+        aeonMessageDiv.innerHTML = `<p><strong>[AEON] </strong> ${data.message}</p>`;
+        chatWindow.appendChild(aeonMessageDiv);
+        chatWindow.scrollTop = chatWindow.scrollHeight;
+
+        // Clear the file input
+        fileInput.value = '';
+    })
+    .catch(error => {
+        console.error('Error during file ingestion:', error);
+        chatWindow.removeChild(thinkingMessageDiv);
+        const errorDiv = document.createElement('div');
+        errorDiv.className = 'message system error';
+        errorDiv.innerHTML = `<p><strong>[AEON] </strong> Failed to ingest file. Check the console for details.</p>`;
+        chatWindow.appendChild(errorDiv);
+        chatWindow.scrollTop = chatWindow.scrollHeight;
+    });
+});

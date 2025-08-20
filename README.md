@@ -22,7 +22,11 @@ The main focus is to be simple and lightweight, capable of running on a **CPU wi
 
 AEON uses Python and requires a virtual environment. Use the script `./aeon.py` to set up your virtual environment and install all necessary pip dependencies from `requirements.txt`.
 
+Before cloning, make sure you have GIT LFS installed
+
 ```shell
+$ git lfs install
+$ git clone https://github.com/gustavokuklinski/aeon.ai.git
 $ python3 ./aeon.py
 ```
 

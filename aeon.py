@@ -1,3 +1,4 @@
+# aeon.py
 import os
 import sys
 import subprocess
@@ -19,7 +20,7 @@ FLASK_APP_PATH = "core/web.py"
 REQUIREMENTS_FILE = "requirements.txt"
 
 # Path to config.json (not directly used by this script, but kept for consistency)
-CONFIG_FILE = "config.json"
+CONFIG_FILE = "config.yml"
 
 # --- Helper Functions for Colored Output ---
 def colored_print(message, color_code):
@@ -84,36 +85,32 @@ def manage_virtual_environment():
     os.environ["PYTHONPATH"] = os.getcwd() + os.pathsep + os.environ.get("PYTHONPATH", "")
 
 # --- Pre-flight Checks ---
+# --- Pre-flight Checks ---
 def run_preflight_checks():
     """Runs checks for external tools and Python dependencies."""
     print_boot_msg(" Running pre-flight checks...")
 
-    # 1. Verify 'jq' installation
-    print_info_msg(" Checking for 'jq' (JSON processor)...")
-    if not shutil.which("jq"):
-        print_error_msg(textwrap.dedent("""
-            The 'jq' tool is not installed or not in your system's PATH.
-            'jq' is required to parse the config.json file (though not directly by this script,
-            it might be a dependency for your AEON application).
-            Please install it using your system's package manager (e.g., 'sudo apt-get install jq' or 'brew install jq').
-        """))
-    print_ok_msg(" 'jq' is installed.")
-
-    # 2. Verify Python requirements for Hugging Face (a lighter check)
-    print_info_msg(" Checking for Hugging Face libraries...")
+    # 1. Verify 'config.yml' exists
+    print_info_msg(f" Checking for '{CONFIG_FILE}'...")
+    if not os.path.exists(CONFIG_FILE):
+        print_error_msg(f" Configuration file '{CONFIG_FILE}' not found. Please create it based on the example provided in the documentation.")
+    print_ok_msg(f" '{CONFIG_FILE}' found.")
+    
+    # 2. Verify core Python libraries (`llama-cpp-python` and others)
+    print_info_msg(" Checking for core Python dependencies...")
     try:
         # Use the python executable from the virtual environment
         python_executable = os.path.join(VENV_DIR, "bin", "python")
         subprocess.run(
-            [python_executable, "-c", "import transformers, torch, sentence_transformers, accelerate, diffusers, bitsandbytes"],
+            [python_executable, "-c", "import llama_cpp, llama_cpp.llama_cpp, langchain_chroma, diffusers, torch"],
             check=True,
             capture_output=True, # Suppress stdout/stderr
             text=True
         )
-        print_ok_msg(" Hugging Face libraries found.")
+        print_ok_msg(" All core dependencies found.")
     except subprocess.CalledProcessError as e:
         print_error_msg(textwrap.dedent(f"""
-            Hugging Face dependencies are not installed or are incomplete within the virtual environment.
+            Core dependencies are not installed or are incomplete within the virtual environment.
             Error: {e.stderr.strip()}
             Please ensure you have run: 'pip install -r {REQUIREMENTS_FILE}' successfully.
         """))
@@ -177,6 +174,7 @@ def display_menu_and_execute():
 
 # --- Main Execution Flow ---
 if __name__ == "__main__":
+    os.environ["LLAMA_LOG_LEVEL"] = "0"
     os.system("clear" if os.name == "posix" else "cls") # Clear screen
     print_boot_msg(" Booting AEON")
 

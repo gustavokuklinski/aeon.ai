@@ -14,6 +14,7 @@ try:
         config = yaml.safe_load(f)
     LLM_MODEL = config["llm_config"]["model"]
     LLM_TEMPERATURE = config["llm_config"]["temperature"]
+    LLM_N_CTX = config["llm_config"]["n_ctx"]
 
     VLM_MODEL = config["img_config"]["model"]
     VLM_MODEL_WIDTH = config["img_config"]["width"]
@@ -28,15 +29,15 @@ except FileNotFoundError:
     print(f"\033[91m[ERROR]\033[0m {CONFIG_FILE} not found. Please create it with LLM, embedding model, and image settings.")
     print("\033[91m[ERROR]\033[0m Example config.yml:")
     print("""llm_config:
-  model: HuggingFaceTB/SmolLM2-135M
+  model: ./llm/gemma-3-270m-it-Q8_0.gguf
   temperature: 0.5
 img_config:
-  model: segmind/tiny-sd
+  model: ./llm/segmind-tiny-sd/snapshots/cad0bd7495fa6c4bcca01b19a723dc91627fe84f
   width: 512
   height: 512
   hardware: cpu
   negative_prompt: low quality, deformed, blurry, watermark, text
-embedding_model: sentence-transformers/all-MiniLM-L6-v2
+embedding_model: ./llm/nomic-embed-text-v1.5.Q8_0.gguf
 system_prompt: "You are a helpful AI assistant. Your name is Aeon.\nContext: {context}"
 """)
     exit()

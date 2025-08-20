@@ -1,7 +1,6 @@
 import os
 import sys
 from pathlib import Path
-import torch
 
 # Langchain modules
 from langchain_community.document_loaders import DirectoryLoader, UnstructuredMarkdownLoader, TextLoader
@@ -11,29 +10,27 @@ from langchain_core.runnables import RunnablePassthrough
 from langchain.chains.combine_documents import create_stuff_documents_chain
 from langchain.prompts import PromptTemplate
 
-
-# Hugging Face imports
-from langchain_huggingface import HuggingFaceEmbeddings
-from langchain_huggingface import HuggingFacePipeline
-from transformers import AutoModelForCausalLM, AutoTokenizer, pipeline
+# New LlamaCpp and LlamaCpp Embeddings imports
+from langchain_community.llms import LlamaCpp
+from langchain_community.embeddings import LlamaCppEmbeddings
 
 # Core modules
 from core.config import (
     LLM_MODEL, LLM_TEMPERATURE, EMBEDDING_MODEL,
-    INPUT_DIR, CHROMA_DB_DIR, SYSTEM_PROMPT
+    INPUT_DIR, CHROMA_DB_DIR, SYSTEM_PROMPT, LLM_N_CTX
 )
 from core.loaders import JsonPlaintextLoader
 
 def initialize_rag_system():
     """
-    Initializes and returns a complete RAG system.
-    Returns: A tuple containing (rag_chain, vectorstore, text_splitter, ollama_embeddings).
+    Initializes and returns a complete RAG system using LlamaCpp.
+    Returns: A tuple containing (rag_chain, vectorstore, text_splitter, llama_embeddings).
     """
     # Adjust paths to be relative to the project root
     project_root = Path(__file__).parent.parent
     input_dir_path = project_root / INPUT_DIR
     chroma_db_dir_path = project_root / CHROMA_DB_DIR
-
+    
     # 1. Load Initial Documents
     if not os.path.exists(input_dir_path):
         print(f"Error: Directory '{input_dir_path}' not found. Please create it.")
@@ -60,59 +57,47 @@ def initialize_rag_system():
 
     # 3. Generate Embeddings and Store in a Vector Database
     print(f"Loading embedding model: {EMBEDDING_MODEL}")
-    embedding_model = HuggingFaceEmbeddings(model_name=EMBEDDING_MODEL)
+    # Use LlamaCppEmbeddings for GGUF embeddings
+    llama_embeddings = LlamaCppEmbeddings(
+        model_path=EMBEDDING_MODEL,
+        verbose=False
+    )
 
     if not chroma_db_dir_path.exists() or not os.listdir(chroma_db_dir_path):
-        # Check if chunks is empty.
         if not chunks:
             print(f"No initial documents found. Creating an empty vector store at {chroma_db_dir_path}...")
-            # Create an empty vector store
             vectorstore = Chroma(
                 persist_directory=str(chroma_db_dir_path),
-                embedding_function=embedding_model
+                embedding_function=llama_embeddings
             )
         else:
             print(f"Vector store not found. Creating new one at {chroma_db_dir_path}...")
             vectorstore = Chroma.from_documents(
                 documents=chunks,
-                embedding=embedding_model,
+                embedding=llama_embeddings,
                 persist_directory=str(chroma_db_dir_path)
             )
     else:
         print(f"Loading existing vector store from {chroma_db_dir_path}...")
         vectorstore = Chroma(
             persist_directory=str(chroma_db_dir_path),
-            embedding_function=embedding_model
+            embedding_function=llama_embeddings
         )
 
     retriever = vectorstore.as_retriever()
 
     # 4. Set up the LLM and Prompt Templates
     print(f"Loading LLM: {LLM_MODEL}")
-    tokenizer = AutoTokenizer.from_pretrained(LLM_MODEL)
-    model = AutoModelForCausalLM.from_pretrained(LLM_MODEL, trust_remote_code=True, torch_dtype=torch.float16, device_map="auto")
-    tokenizer.pad_token_id = tokenizer.eos_token_id
-    pipe = pipeline(
-        "text-generation",
-        model=model,
-        tokenizer=tokenizer,
-        max_new_tokens=512,
+    # Use LlamaCpp for GGUF LLMs
+    llm = LlamaCpp(
+        model_path=LLM_MODEL,
         temperature=LLM_TEMPERATURE,
-        return_full_text=False
-    )
-    llm = HuggingFacePipeline(pipeline=pipe)
-
-    # Use the tokenizer's chat template for correct formatting
-    chat_template = tokenizer.apply_chat_template(
-        [
-            {"role": "system", "content": SYSTEM_PROMPT.format(context="{context}")},
-            {"role": "user", "content": "{input}"},
-        ],
-        tokenize=False,
-        add_generation_prompt=True
+        n_ctx=LLM_N_CTX,
+        stop=["\nQuestion:", "Question:", "Answer:", "\nContext:", "You are a helpful AI assistant."],
+        verbose=False
     )
 
-    qa_prompt = PromptTemplate.from_template(chat_template)
+    qa_prompt = PromptTemplate.from_template(SYSTEM_PROMPT + "\nQuestion: {input}\nAnswer:")
 
     # 5. Assemble the Stateless RAG Chain
     document_combiner = create_stuff_documents_chain(llm, qa_prompt)
@@ -122,4 +107,4 @@ def initialize_rag_system():
     )
     print("RAG chain assembled and ready.")
 
-    return rag_chain, vectorstore, text_splitter, embedding_model
+    return rag_chain, vectorstore, text_splitter, llama_embeddings

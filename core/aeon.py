@@ -83,7 +83,7 @@ while True:
 
         # --- REVISED CODE TO CLEAN UP THE RESPONSE ---
         clean_response = ai_response_content.replace("<|im_start|>system", "").replace("<|im_end|>", "").replace("<|im_start|>user", "").replace("<|im_start|>assistant", "").strip()
-        
+        clean_response = clean_response.replace("Question:", "").replace("Answer:", "")
         # Remove any leading newlines or spaces that remain
         clean_response = clean_response.lstrip('\n ').strip()
         # Clean up any leftover blank lines in the response

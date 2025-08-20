@@ -2,6 +2,7 @@
 import os
 import hashlib
 from pathlib import Path
+from transformers import CLIPTextModel
 from diffusers import StableDiffusionPipeline
 import torch
 from core.config import (VLM_MODEL, VLM_MODEL_WIDTH, 
@@ -15,8 +16,11 @@ def generate_image_from_prompt(prompt: str, output_dir: str):
     """
     print("\033[1;34m[INFO]\033[0m Initializing image generation pipeline...")
     try:
-        # Load the model with standard float32 precision for CPU compatibility
-        pipe = StableDiffusionPipeline.from_pretrained(VLM_MODEL)
+      
+        pipe = StableDiffusionPipeline.from_pretrained(
+            VLM_MODEL,
+            local_files_only=True
+        )
         pipe = pipe.to(VLM_MODEL_HARDWARE)
         print("\033[1;32m[SUCCESS]\033[0m Image generation model loaded.")
     except Exception as e:

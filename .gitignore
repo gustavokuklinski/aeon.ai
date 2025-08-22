@@ -5,7 +5,7 @@ core/__pycache__/
 /llm/custom
 
 /data/output/*.png
-/data/output/backup/*/
+/data/output/backup/*.zip
 
 /data/cerebrum/memory/*/
 /data/cerebrum/memory/*.json

@@ -3,8 +3,9 @@ import yaml
 from pathlib import Path
 
 # Configuration
-INPUT_DIR = "./data/cerebrum"
-CHROMA_DB_DIR = "./data/synapse"
+INPUT_DIR = "./data/cerebrum/system"
+MEMORY_DIR = "./data/cerebrum/memory"
+CHROMA_DB_DIR = "./data/cerebrum/memory"
 OUTPUT_DIR = "./data/output"
 CONFIG_FILE = "./config.yml"
 
@@ -16,11 +17,13 @@ try:
     LLM_TEMPERATURE = config["llm_config"]["temperature"]
     LLM_N_CTX = config["llm_config"]["n_ctx"]
 
-    VLM_MODEL = config["img_config"]["model"]
-    VLM_MODEL_WIDTH = config["img_config"]["width"]
-    VLM_MODEL_HEIGHT = config["img_config"]["height"]
-    VLM_MODEL_HARDWARE = config["img_config"]["hardware"]
-    VLM_MODEL_NEGATIVE_PROMPT = config["img_config"]["negative_prompt"]
+    IMG_MODEL = config["img_config"]["model"]
+    IMG_MODEL_WIDTH = config["img_config"]["width"]
+    IMG_MODEL_HEIGHT = config["img_config"]["height"]
+    IMG_MODEL_HARDWARE = config["img_config"]["hardware"]
+    IMG_MODEL_NEGATIVE_PROMPT = config["img_config"]["negative_prompt"]
+
+    VLM_MODEL = config["vlm_config"]["model"]
 
     EMBEDDING_MODEL = config["embedding_model"]
     SYSTEM_PROMPT = config.get("system_prompt", "You are a helpful AI assistant.\nContext: {context}")

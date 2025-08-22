@@ -5,9 +5,9 @@ from pathlib import Path
 from transformers import CLIPTextModel
 from diffusers import StableDiffusionPipeline
 import torch
-from core.config import (VLM_MODEL, VLM_MODEL_WIDTH, 
-VLM_MODEL_HEIGHT, VLM_MODEL_HARDWARE, 
-VLM_MODEL_NEGATIVE_PROMPT)
+from core.config import (IMG_MODEL, IMG_MODEL_WIDTH, 
+IMG_MODEL_HEIGHT, IMG_MODEL_HARDWARE, 
+IMG_MODEL_NEGATIVE_PROMPT)
 
 def generate_image_from_prompt(prompt: str, output_dir: str):
     """
@@ -18,10 +18,10 @@ def generate_image_from_prompt(prompt: str, output_dir: str):
     try:
       
         pipe = StableDiffusionPipeline.from_pretrained(
-            VLM_MODEL,
+            IMG_MODEL,
             local_files_only=True
         )
-        pipe = pipe.to(VLM_MODEL_HARDWARE)
+        pipe = pipe.to(IMG_MODEL_HARDWARE)
         print("\033[1;32m[SUCCESS]\033[0m Image generation model loaded.")
     except Exception as e:
         print(f"\033[91m[ERROR]\033[0m Failed to load image generation model: {e}")
@@ -33,12 +33,12 @@ def generate_image_from_prompt(prompt: str, output_dir: str):
 
     print("\033[1;34m[INFO]\033[0m Generating image...")
     try:
-        negative_prompt = VLM_MODEL_NEGATIVE_PROMPT
+        negative_prompt = IMG_MODEL_NEGATIVE_PROMPT
         image = pipe(
             prompt=prompt,
             negative_prompt=negative_prompt,
-            width=VLM_MODEL_WIDTH,
-            height=VLM_MODEL_HEIGHT,
+            width=IMG_MODEL_WIDTH,
+            height=IMG_MODEL_HEIGHT,
         ).images[0]
 
         # Generate a unique filename using an MD5 hash of the prompt and a timestamp

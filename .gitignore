@@ -2,9 +2,14 @@ venv
 .venv
 core/__pycache__/
 
+/llm/custom
+
 /data/output/*.png
 
-/data/cerebrum/memory/*.md
+/data/cerebrum/memory/*/
+/data/cerebrum/memory/*.json
+/data/cerebrum/memory/*.sqlite3
 
-/data/synapse/*/
-/data/synapse/*.sqlite3
+/data/cerebrum/temp/*.json
+/data/cerebrum/temp/*.txt
+/data/cerebrum/temp/*.md

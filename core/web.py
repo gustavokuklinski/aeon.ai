@@ -110,7 +110,7 @@ def upload_and_ingest_file():
             file.save(filepath)
             
             # Ingest the saved file using the existing function
-            ingest_documents(filepath, vectorstore, text_splitter, ollama_embeddings)
+            ingest_documents(filepath, vectorstore, text_splitter, llama_embeddings)
             
             return jsonify({"message": f"File '{filename}' ingested successfully!"}), 200
         except Exception as e:

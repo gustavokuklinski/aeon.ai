@@ -1,3 +1,4 @@
+# core/rag_setup.py
 import os
 import sys
 from pathlib import Path
@@ -49,21 +50,24 @@ def initialize_rag_system():
 
     # 2. Split Documents into Chunks
     text_splitter = RecursiveCharacterTextSplitter(
-        chunk_size=1000,
-        chunk_overlap=200,
+        chunk_size=300,
+        chunk_overlap=100,
         length_function=len,
     )
     chunks = text_splitter.split_documents(documents)
 
     # 3. Generate Embeddings and Store in a Vector Database
     print(f"Loading embedding model: {EMBEDDING_MODEL}")
-    # Use LlamaCppEmbeddings for GGUF embeddings
     llama_embeddings = LlamaCppEmbeddings(
         model_path=EMBEDDING_MODEL,
+        n_ctx=2048,
         verbose=False
     )
-
+    
+    batch_size = 32
+    
     if not chroma_db_dir_path.exists() or not os.listdir(chroma_db_dir_path):
+        # First-time load: Use a single batch
         if not chunks:
             print(f"No initial documents found. Creating an empty vector store at {chroma_db_dir_path}...")
             vectorstore = Chroma(
@@ -71,18 +75,37 @@ def initialize_rag_system():
                 embedding_function=llama_embeddings
             )
         else:
-            print(f"Vector store not found. Creating new one at {chroma_db_dir_path}...")
-            vectorstore = Chroma.from_documents(
-                documents=chunks,
-                embedding=llama_embeddings,
-                persist_directory=str(chroma_db_dir_path)
+            print(f"Vector store not found. Creating a new one with {len(chunks)} chunks at {chroma_db_dir_path}...")
+            # Use a loop to add documents in batches
+            vectorstore = Chroma(
+                persist_directory=str(chroma_db_dir_path),
+                embedding_function=llama_embeddings
             )
+            for i in range(0, len(chunks), batch_size):
+                batch = chunks[i:i + batch_size]
+                try:
+                    vectorstore.add_documents(batch)
+                    print(f"[INFO] Ingested chunks {i+1} to {min(i + batch_size, len(chunks))}.")
+                except Exception as e:
+                    print(f"[ERROR] Failed to ingest batch starting at index {i}: {e}")
+            print("Initial document ingestion complete.")
     else:
+        # Subsequent loads: Use the one-by-one method for added documents
         print(f"Loading existing vector store from {chroma_db_dir_path}...")
         vectorstore = Chroma(
             persist_directory=str(chroma_db_dir_path),
             embedding_function=llama_embeddings
         )
+        if chunks:
+            print(f"Adding {len(chunks)} new chunks to the existing vector store.")
+            # Use a loop to add documents one-by-one to prevent decode errors
+            for i, chunk in enumerate(chunks, start=1):
+                try:
+                    vectorstore.add_documents([chunk])
+                    if i % 20 == 0 or i == len(chunks):
+                        print(f"[INFO] Added {i}/{len(chunks)} chunks.")
+                except Exception as e:
+                    print(f"[ERROR] Failed on chunk {i}: {e}")
 
     retriever = vectorstore.as_retriever()
 
@@ -93,11 +116,18 @@ def initialize_rag_system():
         model_path=LLM_MODEL,
         temperature=LLM_TEMPERATURE,
         n_ctx=LLM_N_CTX,
-        stop=["\nQuestion:", "Question:", "Answer:", "\nContext:", "You are a helpful AI assistant."],
+        chat_format="gemma",
+        stop=["<end_of_turn>"],
         verbose=False
     )
 
-    qa_prompt = PromptTemplate.from_template(SYSTEM_PROMPT + "\nQuestion: {input}\nAnswer:")
+    qa_prompt = PromptTemplate.from_template(
+        "<start_of_turn>user\n"
+        f"{SYSTEM_PROMPT}\n"  # System prompt is included in the user turn
+        "Context: {context}\n\n"
+        "Question: {input}<end_of_turn>\n"
+        "<start_of_turn>model\n"
+    )
 
     # 5. Assemble the Stateless RAG Chain
     document_combiner = create_stuff_documents_chain(llm, qa_prompt)
@@ -106,5 +136,12 @@ def initialize_rag_system():
         | document_combiner
     )
     print("RAG chain assembled and ready.")
+
+    try:
+        test_vector = llama_embeddings.embed_query("Sanity check for embeddings.")
+        print(f"[INFO] Embedding model loaded successfully. Vector length = {len(test_vector)}")
+    except Exception as e:
+        print(f"[ERROR] Failed to run embeddings: {e}")
+        sys.exit(1)
 
     return rag_chain, vectorstore, text_splitter, llama_embeddings

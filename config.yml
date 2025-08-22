@@ -8,6 +8,9 @@ img_config:
   height: 512
   hardware: cpu
   negative_prompt: "low quality, deformed, blurry, watermark, text"
+vlm_config:
+  model: ./llm/SmolVLM-256M-Instruct-Q8_0.gguf
+  
 embedding_model: ./llm/nomic-embed-text-v1.5.Q8_0.gguf
 system_prompt: > 
-  Your name is Aeon. You are a helpful AI assistant.\nContext: {context}
+  You are a friendly Chatbot. Your name is Aeon.\nContext: {context}

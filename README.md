@@ -6,15 +6,17 @@ The main focus is to be simple and lightweight, capable of running on a **CPU wi
 
 ### Summary
 
-[Installation](installation)<br />
-[Setup Local Models](setup-local-models)<br />
-[Configuration](configuration)<br />
-[Start AEON](start-aeon)<br />
-[Data RAG](data-rag)<br />
-[AEON Chat Command](aeon-chat-command)<br />
-[Web Chat Interface](web-chat-interface)<br />
-[AEON Image Generator](aeon-image-generator)<br />
-[Running on VPS](running-on-vps)
+[Installation](#installation)<br />
+[Setup Local Models](#setup-local-models)<br />
+[Using Other Models](#using-other-models)<br />
+[Configuration](#configuration)<br />
+[Start AEON](#start-aeon)<br />
+[Data RAG](#data-rag)<br />
+[AEON Chat Command](#aeon-chat-command)<br />
+[Web Chat Interface](#web-chat-interface)<br />
+[AEON Image Generator](#aeon-image-generator)<br />
+[Running on VPS](#running-on-vps)<br />
+[Acknowledgements](#acknowledgements)
 
 -----
 
@@ -41,6 +43,19 @@ AEON is designed to run entirely locally, meaning all models must be downloaded 
 2.  **Download Embedding Model (GGUF file):** Download a GGUF-compatible embedding model. Place the `.gguf` file in the `./llm/` directory.
 
 3.  **Download Image Generation Model:** Clone a `text-to-image` model in the `./llm/image/` directory.
+
+-----
+
+## Using other models
+
+Cou can use GGUF downloaded models at:
+(HuggingFace.co)[https://huggingface.co/models?search=gguf]
+
+For image generation, download clone all repository with `git lfs`
+
+_Smallest_
+(tiny-sd)[https://huggingface.co/segmind/tiny-sd] 
+(openjourney)[https://huggingface.co/prompthero/openjourney] 
 
 -----
 
@@ -78,10 +93,11 @@ $ python3 ./aeon.py
 
 All data is stored in the `/data/` directory:
 
-  * `/data/cerebrum`: Place your own Markdown, Text, and JSON files here. These are the documents AEON will use as its knowledge base.
-  * `/data/synapse`: This directory stores the Chroma vector database, which is automatically created or loaded by AEON.
+  * `/data/cerebrum/system`: Basic prompting for AI assistence.
+  * `/data/cerebrum/temp`: Place your own Markdown, Text, and JSON files here. These are the documents AEON will use as its knowledge base.
+  * `/data/cerebrum/memory`: This directory stores the Chroma vector database, which is automatically created or loaded by AEON as store the conversarion JSON.
 
-To use your own JSON files, follow the example in `/data/cerebrum/example.json`:
+To use your own JSON files, follow the example in `/data/cerebrum/temp/example.json`:
 
 ```json
 [
@@ -141,6 +157,35 @@ To access your VPS instance locally using Ngrok:
 ```shell
 $ ngrok http 4303
 ```
+-----
+## Acknowledgements
+
+**LLMs**
+
+```tex
+@article{gemma_2025,
+    title={Gemma 3},
+    url={https://arxiv.org/abs/2503.19786},
+    publisher={Google DeepMind},
+    author={Gemma Team},
+    year={2025}
+}
+```
+
+```tex
+@misc{nussbaum2024nomic,
+      title={Nomic Embed: Training a Reproducible Long Context Text Embedder}, 
+      author={Zach Nussbaum and John X. Morris and Brandon Duderstadt and Andriy Mulyar},
+      year={2024},
+      eprint={2402.01613},
+      archivePrefix={arXiv},
+      primaryClass={cs.CL}
+}
+```
+
+**Images**
+
+(tiny-sd)[https://huggingface.co/segmind/tiny-sd]
 
 -----
 

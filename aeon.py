@@ -167,7 +167,7 @@ def display_menu_and_execute():
         print_boot_msg(" Exiting AEON. Goodbye!")
     else:
         print_error_msg(" Invalid choice. Please enter 1, 2, or 3.", exit_script=False)
-
+ 
     return choice # Return the choice to handle final messages
 
 # --- Main Execution Flow ---

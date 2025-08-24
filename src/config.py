@@ -1,6 +1,8 @@
-# core/config.py
+# src/config.py
 import yaml
 from pathlib import Path
+
+from src.utils.messages import *
 
 # Configuration
 INPUT_DIR = "./data/cerebrum/system"
@@ -16,6 +18,17 @@ try:
     LLM_MODEL = config["llm_config"]["model"]
     LLM_TEMPERATURE = config["llm_config"]["temperature"]
     LLM_N_CTX = config["llm_config"]["n_ctx"]
+    LLM_TOP_K = config["llm_config"]["top_k"]
+    LLM_TOP_P = config["llm_config"]["top_p"]
+    SYSTEM_PROMPT = config["llm_config"]["llm_prompt"]
+
+    VLM_MODEL = config["vlm_config"]["model"]
+    VLM_MODEL_MMPROJ = config["vlm_config"]["mmproj"]
+    VLM_TEMPERATURE = config["vlm_config"]["temperature"]
+    VLM_N_CTX = config["vlm_config"]["n_ctx"]
+    VLM_TOP_K = config["vlm_config"]["top_k"]
+    VLM_TOP_P = config["vlm_config"]["top_p"]
+    VLM_PROMPT = config["vlm_config"]["vlm_prompt"]
 
     IMG_MODEL = config["img_config"]["model"]
     IMG_MODEL_WIDTH = config["img_config"]["width"]
@@ -23,26 +36,11 @@ try:
     IMG_MODEL_HARDWARE = config["img_config"]["hardware"]
     IMG_MODEL_NEGATIVE_PROMPT = config["img_config"]["negative_prompt"]
 
-    VLM_MODEL = config["vlm_config"]["model"]
-
     EMBEDDING_MODEL = config["embedding_model"]
-    SYSTEM_PROMPT = config.get("system_prompt", "You are a helpful AI assistant.\nContext: {context}")
 
 except FileNotFoundError:
-    print(f"\033[91m[ERROR]\033[0m {CONFIG_FILE} not found. Please create it with LLM, embedding model, and image settings.")
-    print("\033[91m[ERROR]\033[0m Example config.yml:")
-    print("""llm_config:
-  model: ./llm/gemma-3-270m-it-Q8_0.gguf
-  temperature: 0.5
-img_config:
-  model: ./llm/segmind-tiny-sd/snapshots/cad0bd7495fa6c4bcca01b19a723dc91627fe84f
-  width: 512
-  height: 512
-  hardware: cpu
-  negative_prompt: low quality, deformed, blurry, watermark, text
-embedding_model: ./llm/nomic-embed-text-v1.5.Q8_0.gguf
-system_prompt: "You are a helpful AI assistant. Your name is Aeon.\nContext: {context}"
-""")
+    print_error_message(f"Config file not found: {CONFIG_FILE}")
+
     exit()
 except KeyError as e:
     print(f"\033[91m[ERROR]\033[0m Missing key in {CONFIG_FILE}: {e}.")

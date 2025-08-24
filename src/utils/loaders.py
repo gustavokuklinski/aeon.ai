@@ -1,4 +1,5 @@
-# core/loaders.py
+# src/utils/loaders.py
+
 import json
 import sys
 import os
@@ -9,9 +10,6 @@ class JsonPlaintextLoader:
         self.file_path = file_path
 
     def _print_info_line(self, message: str):
-        """
-        Prints a single info line to the console.
-        """
         terminal_width = 80
         try:
             terminal_width = os.get_terminal_size().columns
@@ -23,9 +21,6 @@ class JsonPlaintextLoader:
         sys.stdout.flush()
 
     def _count_string_nodes(self, obj) -> int:
-        """
-        Recursively counts the total number of string nodes within a JSON object.
-        """
         count = 0
         if isinstance(obj, dict):
             for v in obj.values():
@@ -38,9 +33,6 @@ class JsonPlaintextLoader:
         return count
 
     def load(self) -> list[Document]:
-        """
-        Loads the JSON file, extracts all string values, and returns them as a list of Document objects.
-        """
         try:
             with open(self.file_path, 'r', encoding='utf-8') as f:
                 data = json.load(f)
@@ -70,22 +62,17 @@ class JsonPlaintextLoader:
 
             _extract_strings_recursively(data)
 
-            print() # Print a final newline for cleaner output
-
             if not documents:
                 print(f"\033[1;33m[WARN]\033[0m No string content found in '{self.file_path}'.")
 
             return documents
 
         except json.JSONDecodeError as e:
-            # Errors are critical, always print
             print(f"\033[91m[ERROR]\033[0m Invalid JSON file '{self.file_path}': {e}")
             return []
         except FileNotFoundError:
-            # Errors are critical, always print
             print(f"\033[91m[ERROR]\033[0m File not found: '{self.file_path}'")
             return []
         except Exception as e:
-            # Errors are critical, always print
             print(f"\033[91m[ERROR]\033[0m Error loading JSON file '{self.file_path}': {e}")
             return []

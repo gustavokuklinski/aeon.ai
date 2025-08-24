@@ -1,4 +1,4 @@
-# core/web.py
+# src/web.py
 import os
 import sys
 from pathlib import Path
@@ -11,7 +11,7 @@ project_root = Path(__file__).parent.parent
 sys.path.append(str(project_root))
 
 # Import core modules from your project
-from core.config import (
+from src.config import (
     LLM_MODEL, EMBEDDING_MODEL, OUTPUT_DIR, INPUT_DIR
 )
 from core.rag_setup import initialize_rag_system

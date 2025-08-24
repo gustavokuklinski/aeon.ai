@@ -1,8 +1,8 @@
 # AEON
 
-**AEON** is a simple, stateless Retrieval-Augmented Generation (**RAG**) chatbot designed to answer questions based on a provided set of Markdown (`.md`), Text (`.txt`), and JSON (`.json`) documents. It leverages local Large (or Small) Language Models (**LLMs** and **SLMs**) in the **GGUF format** and local image generation models in the **SafeTensor format**. **Chroma** is used for its vector database.
+**AEON** is a simple, stateless Retrieval-Augmented Generation (**RAG**) chatbot designed to answer questions based on a provided set of Markdown (`.md`), Text (`.txt`), and JSON (`.json`) documents. It leverages local Large (or Small) Language Models (**LLMs** and **SLMs**) in the **GGUF format** and local image generation models in the **SafeTensor format**.
 
-The main focus is to be simple and lightweight, capable of running on a **CPU with at least 8GB of RAM**. It is typically optimized for compact GGUF models and lightweight image generators.
+The main focus is to be simple and lightweight, capable of running on a **CPU with at least 8GB of RAM** locally.
 
 ### Summary
 
@@ -16,7 +16,6 @@ The main focus is to be simple and lightweight, capable of running on a **CPU wi
 [Web Chat Interface](#web-chat-interface)<br />
 [AEON Image Generator](#aeon-image-generator)<br />
 [Running on VPS](#running-on-vps)<br />
-[Acknowledgements](#acknowledgements)
 
 -----
 
@@ -53,10 +52,6 @@ Cou can use GGUF downloaded models at:
 
 For image generation, download clone all repository with `git lfs`
 
-_Smallest_
-(tiny-sd)[https://huggingface.co/segmind/tiny-sd] 
-(openjourney)[https://huggingface.co/prompthero/openjourney] 
-
 -----
 
 ## Configuration
@@ -65,16 +60,46 @@ Edit `config.yml` to fit your needs. You must specify the **file paths** to your
 
 ```yaml
 llm_config:
-  model: ./llm/gemma-3-270-it-Q8_0.gguf
+  model: ./llm/SmolLM2-360M-Instruct-Q8_0.gguf
   temperature: 0.5
+  n_ctx: 4096
+  top_k: 40
+  top_p: 0.8
+  llm_prompt: >
+    You are Aeon, a friendly, helpful, and conversational AI assistant.
+    Your favorite color is Red, and you absolutely love the planet Mars!
+    You enjoy chatting and helping out!
+    Your goal is to be engaging and helpful in every interaction.
+    ALWAYS respond in plain, natural language ONLY.
+    Do NOT use any special formatting, quotes around the entire response, or prefixes like 'Response:'.
+    Engage in natural, polite, and friendly dialogue, using appropriate greetings and chitchat when relevant.
+    Your primary goal is to provide helpful and engaging responses, drawing from the provided CONTEXT or your general knowledge, always in a warm and approachable tone.
+    If a QUESTION requires specific information from the CONTEXT, you will prioritize and use it to formulate your response.
+    If the information for a factual QUESTION is not available in the CONTEXT, you MUST state: 'I don't know about it. Can we /search?'
+    For all other QUESTIONS, you will respond naturally and conversationally, even if there is no context.
+    You will ensure your response does not echo the QUESTION or CONTEXT in your final answer.\nCONTEXT: {context}
+
+vlm_config:
+  model: ./llm/vlm/SmolVLM-256M-Instruct-Q8_0.gguf
+  mmproj: ./llm/vlm/mmproj-SmolVLM-256M-Instruct-Q8_0.gguf
+  temperature: 0.2
+  n_ctx: 4096
+  top_k: 30
+  top_p: 0.7
+  vlm_prompt: >
+    You are a highly observant and precise image analysis assistant.
+    Your sole purpose is to describe the visual content of the images I provide.
+    Focus only on what is explicitly visible in the image.
+    Do not make assumptions, invent details, or engage in conversation beyond fulfilling the request.
+
 img_config:
   model: ./llm/image/tiny-sd
   width: 512
   height: 512
   hardware: cpu
-  negative_prompt: low quality, deformed, blurry, watermark, text
-embedding_model: ./llm/nomic-embed-text-v1.5.Q8_0.gguf
-system_prompt: "You are a helpful AI assistant. Your name is Aeon.\nContext: {context}"
+  negative_prompt: "low quality, deformed, blurry, watermark, text"
+
+embedding_model: ./llm/all-MiniLM-L6-v2-Q8_0.gguf
 ```
 
 -----
@@ -96,18 +121,6 @@ All data is stored in the `/data/` directory:
   * `/data/cerebrum/system`: Basic prompting for AI assistence.
   * `/data/cerebrum/temp`: Place your own Markdown, Text, and JSON files here. These are the documents AEON will use as its knowledge base.
   * `/data/cerebrum/memory`: This directory stores the Chroma vector database, which is automatically created or loaded by AEON as store the conversarion JSON.
-
-To use your own JSON files, follow the example in `/data/cerebrum/temp/example.json`:
-
-```json
-[
-  {
-    "query": "What is your name?",
-    "context": "The AI assistant is asked its name, how it may be called",
-    "answer": "Hello! My name is Aeon!"
-  }
-]
-```
 
 -----
 
@@ -157,36 +170,6 @@ To access your VPS instance locally using Ngrok:
 ```shell
 $ ngrok http 4303
 ```
------
-## Acknowledgements
-
-**LLMs**
-
-```tex
-@article{gemma_2025,
-    title={Gemma 3},
-    url={https://arxiv.org/abs/2503.19786},
-    publisher={Google DeepMind},
-    author={Gemma Team},
-    year={2025}
-}
-```
-
-```tex
-@misc{nussbaum2024nomic,
-      title={Nomic Embed: Training a Reproducible Long Context Text Embedder}, 
-      author={Zach Nussbaum and John X. Morris and Brandon Duderstadt and Andriy Mulyar},
-      year={2024},
-      eprint={2402.01613},
-      archivePrefix={arXiv},
-      primaryClass={cs.CL}
-}
-```
-
-**Images**
-
-(tiny-sd)[https://huggingface.co/segmind/tiny-sd]
-
 -----
 
 ### Tested on

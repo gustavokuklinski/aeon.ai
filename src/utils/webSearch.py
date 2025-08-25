@@ -1,4 +1,4 @@
-# src/external/webSearch.py
+# src/utils/webSearch.py
 
 import sys
 from ddgs import DDGS
@@ -18,7 +18,7 @@ from src.config import (
     LLM_TOP_K,
     LLM_N_CTX,
 )
-from src.utils.messages import *
+from src.libs.messages import *
 
 def webSearch(search_query: str, llm_instance: LlamaCpp, text_splitter: RecursiveCharacterTextSplitter, vectorstore: Chroma) -> str:
 

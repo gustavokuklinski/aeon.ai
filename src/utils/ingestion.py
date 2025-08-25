@@ -1,4 +1,4 @@
-# src/utils/ingestion.py
+# src/libs/ingestion.py
 
 import os
 from pathlib import Path
@@ -8,9 +8,9 @@ from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain_chroma import Chroma
 from langchain_community.embeddings import LlamaCppEmbeddings
 
-from src.utils.loaders import JsonPlaintextLoader
+from src.libs.loaders import JsonPlaintextLoader
 
-from src.utils.messages import *
+from src.libs.messages import *
 
 
 def ingestDocuments(path_to_ingest: str, vectorstore: Chroma, text_splitter: RecursiveCharacterTextSplitter, embeddings: LlamaCppEmbeddings, batch_size: int = 32):

@@ -5,13 +5,10 @@ import os
 from datetime import datetime
 from pathlib import Path
 
-from src.utils.messages import *
+from src.libs.messages import *
 
-def saveConversation(user_message: str, aeon_message: str, memory_dir: str, filename: str):
-    memory_path = Path(memory_dir)
-    memory_path.mkdir(parents=True, exist_ok=True)
-    
-    file_path = memory_path / filename
+def saveConversation(user_message: str, aeon_message: str, memory_dir: Path, filename: str):   
+    file_path = memory_dir / filename
 
     new_turn = {
         "user": user_message,
@@ -41,8 +38,8 @@ def saveConversation(user_message: str, aeon_message: str, memory_dir: str, file
         print_error_message(f"Failed to save conversation to '{filename}': {e}")
 
 
-def loadConversation(memory_dir: str, filename: str) -> list:
-    file_path = Path(memory_dir) / filename
+def loadConversation(memory_dir: Path, filename: str) -> list:
+    file_path = memory_dir / filename
     
     if not file_path.exists() or os.path.getsize(file_path) == 0:
         return []

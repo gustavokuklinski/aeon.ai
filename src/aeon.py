@@ -6,76 +6,124 @@ from datetime import datetime
 from pathlib import Path
 import re
 import shutil
+import hashlib
 from ddgs import DDGS
 from langchain_chroma import Chroma
 from langchain.text_splitter import RecursiveCharacterTextSplitter
+from langchain_core.documents import Document
 
 from src.config import (
     LLM_MODEL, 
-    EMBEDDING_MODEL,
+    EMB_MODEL,
     INPUT_DIR, 
     OUTPUT_DIR, 
+    BACKUP_DIR, 
     CHROMA_DB_DIR, 
     IMG_MODEL,
     MEMORY_DIR, 
     VLM_MODEL
 )
 
-from src.core.ragSystem import ragSystem, ragPersist
-from src.core.imageGenerator import imageGenerator
+from src.core.ragSystem import ragSystem
+from src.core.imgSystem import imgSystem
 from src.core.vlmSystem import vlmSystem
-from src.core.webSearch import webSearch
 
 from src.utils.ingestion import ingestDocuments, ingestConversationHistory
-from src.utils.conversation import saveConversation, loadConversation
+from src.utils.webSearch import webSearch
 from src.utils.zipBackup import zipBackup
+from src.utils.conversation import saveConversation, loadConversation
+from src.utils.list import listConversations
+from src.utils.open import openConversation
+from src.utils.new import newConversation
+from src.utils.load import loadIngestConversation
 
-from src.utils.messages import *
+from src.libs.messages import *
+from src.libs.termLayout import printAeonLayout, printAeonCmd, printAeonModels
 
+os.environ["LLAMA_LOG_LEVEL"] = "0"
 
-
-def printHelpLayout():
-    print("                                    ")
-    print("\033[38;5;196m █████╗ ███████╗ ██████╗ ███╗   ██╗ \033[0m")
-    print("\033[38;5;197m██╔══██╗██╔════╝██╔═══██╗████╗  ██║ \033[0m")
-    print("\033[38;5;160m███████║█████╗  ██║   ██║██╔██╗ ██║ \033[0m")
-    print("\033[38;5;124m██╔══██║██╔══╝  ██║   ██║██║╚██╗██║ \033[0m")
-    print("\033[38;5;88m██║  ██║███████╗╚██████╔╝██║ ╚████║ \033[0m")
-    print("\033[38;5;52m╚═╝  ╚═╝╚══════╝ ╚═════╝ ╚═╝  ╚═══╝ \033[0m")
-    print_info_message(f"Models loaded:\nLLM: \033[36m{LLM_MODEL}\033[0m\nIMG: \033[36m{IMG_MODEL}\033[0m\nVLM: \033[36m{VLM_MODEL}\033[0m\nEMB: \033[36m{EMBEDDING_MODEL}\033[0m")
-    print("Commands to use:")
-    print_command_message("'/help' show this screen.")
-    print_command_message("'/paths' display Aeon directory paths")
-    print_command_message("'/search <TERMS>' make web search with DuckDuckGo")
-    print_command_message("'/load <PATH><filename.json>' to load previous conversation.")
-    print_command_message("'/ingest <PATH> | <PATH><filename.json,txt,md>' to add documents to RAG.")
-    print_command_message("'/image <PROMPT>' to generate image.")
-    print_command_message("'/view <PATH><filename.png, jpg> <PROMPT>' to visualize image.")
-    print_command_message("'/zip' backup contents to a timestamped zip file.")
-    print_command_message("'/restart' to restart")
-    print_command_message("'/quit', '/exit' or '/bye' to end the conversation.")
+def startup_prompt(memory_dir_path: Path):
+    """
+    Presents the user with an option to start a new conversation or continue an existing one.
+    Returns the user's choice.
+    """
+    printAeonLayout()
+    print_info_message("Welcome to AEON.")
+    print_info_message("Please choose an option:")
+    
+    conversation_dirs = [d for d in memory_dir_path.iterdir() if d.is_dir() and not d.name.startswith('.')]
+    
+    if not conversation_dirs:
+        print_note_message("No previous conversations found.")
+        print_command_message("[1] Start a new conversation.")
+        choice = input("\n\033[92m[OPTN]:\033[0m ").strip()
+        if choice != "1":
+            return "1"  # Default to starting a new one if no other option exists
+        return choice
+    
+    print_info_message("Existing conversations:")
+    for i, conv_dir in enumerate(conversation_dirs):
+        print_chat_message(f"[{i+1}] {conv_dir.name}")
+    
+    print_command_message(f"[{len(conversation_dirs) + 1}] New conversation.")
+    
+    choice = input("\033[92m[OPTN]:\033[0m ").strip()
+    return choice
 
 def main():
     project_root = Path(__file__).parent.parent
     input_dir_path = project_root / INPUT_DIR
     output_dir_path = project_root / OUTPUT_DIR
     memory_dir_path = project_root / MEMORY_DIR
-    temp_zip_dir = output_dir_path / "backup"
+    temp_zip_dir = project_root / BACKUP_DIR
 
-    print_boot_message("Initializing RAG system...")
-    rag_chain, vectorstore, text_splitter, llama_embeddings, llm_instance = ragSystem()
-    print_boot_message("Vector store ready.")
-    print_boot_message("Stateless RAG chain assembled.")
+    session_vars = None
+    
+    user_choice = startup_prompt(memory_dir_path)
 
-    conversation_filename = f"conversation_{datetime.now().strftime('%Y-%m-%d_%H-%M-%S')}.json"
-    current_conversation_history = []
+    try:
+        choice_int = int(user_choice)
+        conversation_dirs = [d for d in memory_dir_path.iterdir() if d.is_dir() and not d.name.startswith('.')]
+        
+        if 1 <= choice_int <= len(conversation_dirs):
+            selected_hash = conversation_dirs[choice_int - 1].name
+            session_vars = openConversation(str(choice_int), memory_dir_path, None, None, None, None, None)
+            
+        elif choice_int == len(conversation_dirs) + 1 or len(conversation_dirs) == 0 and choice_int == 1:
+            session_vars = newConversation(memory_dir_path)
+            
+        else:
+            print_error_message("Invalid choice. Exiting.")
+            sys.exit()
 
-    printHelpLayout()
+    except (ValueError, IndexError):
+        print_error_message("Invalid input. Please enter a number.")
+        sys.exit()
+    
+    if not session_vars:
+        print_error_message("Failed to initialize AEON. Exiting.")
+        sys.exit()
 
+    #session_vars = newConversation(memory_dir_path)
+
+    rag_chain = session_vars["rag_chain"]
+    vectorstore = session_vars["vectorstore"]
+    text_splitter = session_vars["text_splitter"]
+    llama_embeddings = session_vars["llama_embeddings"]
+    llm_instance = session_vars["llm_instance"]
+    current_memory_path = session_vars["current_memory_path"]
+    conversation_filename = session_vars["conversation_filename"]
+    current_conversation_history = session_vars["current_conversation_history"]
+    user_prompt_string = session_vars["user_prompt_string"]
+
+    printAeonLayout()
+    printAeonModels()
+    print("\033[1;31m[Type /help to show commands]\033[0m")
     print("\033[1;31m[STARTING AEON]\033[0m")
 
+
     while True:
-        user_input = input("\n\033[92m[>>>>]:\033[0m ").strip()
+        user_input = input(user_prompt_string).strip()
 
         if user_input.lower() in ["/quit", "/exit", "/bye"]:
             print_aeon_message("Goodbye!")
@@ -89,9 +137,50 @@ def main():
             continue
 
         if user_input.lower().startswith("/help"):
-            printHelpLayout()
+            printAeonCmd()
+            continue
+
+        if user_input.lower().startswith("/list"):
+            listConversations(memory_dir_path)
             continue
         
+        if user_input.lower().startswith("/open "):
+            conv_id = user_input[len("/open "):].strip()
+            updated_vars = openConversation(
+                conv_id,
+                memory_dir_path,
+                rag_chain,
+                vectorstore,
+                text_splitter,
+                llama_embeddings,
+                llm_instance
+            )
+            if updated_vars:
+                rag_chain = updated_vars["rag_chain"]
+                vectorstore = updated_vars["vectorstore"]
+                text_splitter = updated_vars["text_splitter"]
+                llama_embeddings = updated_vars["llama_embeddings"]
+                llm_instance = updated_vars["llm_instance"]
+                current_memory_path = updated_vars["current_memory_path"]
+                conversation_filename = updated_vars["conversation_filename"]
+                current_conversation_history = updated_vars["current_conversation_history"]
+                user_prompt_string = updated_vars["user_prompt_string"]
+            continue
+        
+        if user_input.lower().startswith("/new"):
+            updated_vars = newConversation(memory_dir_path)
+            if updated_vars:
+                rag_chain = updated_vars["rag_chain"]
+                vectorstore = updated_vars["vectorstore"]
+                text_splitter = updated_vars["text_splitter"]
+                llama_embeddings = updated_vars["llama_embeddings"]
+                llm_instance = updated_vars["llm_instance"]
+                current_memory_path = updated_vars["current_memory_path"]
+                conversation_filename = updated_vars["conversation_filename"]
+                current_conversation_history = updated_vars["current_conversation_history"]
+                user_prompt_string = updated_vars["user_prompt_string"]
+            continue
+
         if user_input.lower() == "/paths":
             print_info_message("Displaying AEON's important directory paths:")
             print(f"\033[1;36mInput Directory:\033[0m {input_dir_path.resolve()}")
@@ -109,56 +198,40 @@ def main():
         if user_input.lower().startswith("/image "):
             image_prompt = user_input[len("/image "):].strip()
             print_info_message("Processing image generation request...")
-            imageGenerator(image_prompt, OUTPUT_DIR)
+            image_output_path = current_memory_path / "output"
+            imgSystem(image_prompt, image_output_path)
             continue
-
 
         if user_input.lower() == "/zip":
             print_info_message("Zipping memory folder contents...")
-            
             try:
-                archive_path = zipBackup(MEMORY_DIR, OUTPUT_DIR)
+                archive_path = zipBackup(current_memory_path, OUTPUT_DIR)
                 if archive_path:
-                    print_info_message(f"Memory folder successfully zipped.")
+                    print_info_message(f"Conversation successfully zipped to {archive_path}.")
                 else:
-                    print_error_message(f"Failed to zip memory folder.")
-
+                    print_error_message(f"Failed to zip conversation folder.")
             except Exception as e:
                 print_error_message(f"An error occurred during zipping: {e}")
             continue
 
         if user_input.lower().startswith("/load "):
-            load_filename = user_input[len("/load "):].strip()
-            loaded_history = loadConversation(MEMORY_DIR, load_filename)
-
-            if loaded_history:
-                current_conversation_history = loaded_history
-                conversation_filename = load_filename
-
-                file_prefix = os.path.splitext(load_filename)[0]
-                user_prompt_string = f"\n\033[92m[{file_prefix}@>>>>]:\033[0m "
-
-                print_info_message(f"Successfully loaded conversation from '{load_filename}'.")
-
-                file_path_to_ingest = os.path.join(MEMORY_DIR, load_filename)
-                print_info_message(f"Ingesting loaded conversation history from '{file_path_to_ingest}' into AEON's knowledge base...")
-                ingestDocuments(file_path_to_ingest, vectorstore, text_splitter, llama_embeddings)
-
-                print_info_message("Conversation history ingestion complete. It is now part of the RAG system.")
-                print_info_message("Conversation loaded.")
-
-            else:
-                print_error_message(f"Could not load conversation from '{load_filename}'. No history loaded.")
-                current_conversation_history = []
-            continue       
+            conv_id = user_input[len("/load "):].strip()
+            loadIngestConversation(
+                conv_id,
+                memory_dir_path,
+                vectorstore,
+                text_splitter,
+                llama_embeddings
+            )
+            continue
 
         if user_input.lower().startswith("/search "):
             search_query = user_input[len("/search "):].strip()
             summarized_search_results = webSearch(search_query, llm_instance, text_splitter, vectorstore) 
-            clean_ai_response = summarized_search_results           
+            clean_ai_response = summarized_search_results
             print_aeon_message(f"{clean_ai_response}")
             
-            saveConversation(user_input, clean_ai_response, MEMORY_DIR, conversation_filename)
+            saveConversation(user_input, clean_ai_response, current_memory_path, conversation_filename)
             current_conversation_history.append({"user": user_input, "aeon": clean_ai_response})
             continue
 
@@ -179,15 +252,42 @@ def main():
         
             try:
                 vlm_response = vlmSystem(image_path, view_prompt)
-
-                print_info_message("VLM response received. Sending to RAG chain for final processing...")
-                
+                print_info_message("VLM response received. Sending to RAG chain for final processing...")               
                 final_ai_response = rag_chain.invoke(vlm_response)
                 clean_ai_response = str(final_ai_response)
                 
-                print_aeon_message(f"{clean_ai_response}")
 
-                saveConversation(user_input, clean_ai_response, MEMORY_DIR, conversation_filename)
+                print_info_message("Ingesting VLM final response into Chroma DB (chunk by chunk)...")
+                try:
+                    aeon_doc = Document(
+                        page_content=clean_ai_response,
+                        metadata={"source": "view_response", "query": view_prompt, "image_path": image_path}
+                    )
+                    aeon_chunks = text_splitter.split_documents([aeon_doc])
+
+                    if aeon_chunks:
+                        print_info_message(f"Generated {len(aeon_chunks)} chunks for ingestion.")
+                        success_count = 0
+                        for i, chunk in enumerate(aeon_chunks):
+                            try:
+                                vectorstore.add_documents([chunk])
+                                success_count += 1
+                                print_success_message(f"  Ingested chunk {i+1}/{len(aeon_chunks)} successfully.")
+                            except Exception as e_chunk_ingest:
+                                print_error_message(f"  FAILED to ingest chunk {i+1}/{len(aeon_chunks)}: {e_chunk_ingest}")
+                                
+                        if success_count > 0:
+                            print_success_message(f"Completed ingestion. Successfully ingested {success_count}/{len(aeon_chunks)} chunks from VLM response into Chroma DB.")
+                        else:
+                            print_error_message("No chunks were successfully ingested into Chroma DB.")
+                    else:
+                        print_note_message("No chunks generated from VLM response. Skipping Chroma addition.")
+                except Exception as e_ingest:
+                    print_error_message(f"FAILED TO INGEST Aeon's response into Chroma DB: {e_ingest}")
+                    pass
+
+                print_aeon_message(f"{clean_ai_response}")
+                saveConversation(user_input, clean_ai_response, current_memory_path, conversation_filename)
                 current_conversation_history.append({"user": user_input, "aeon": clean_ai_response})
                 
             except Exception as e:
@@ -203,9 +303,7 @@ def main():
 
             print_aeon_message(clean_ai_response)
 
-            ragPersist(vectorstore, llama_embeddings, user_input, clean_ai_response)
-
-            saveConversation(user_input, clean_ai_response, MEMORY_DIR, conversation_filename)
+            saveConversation(user_input, clean_ai_response, current_memory_path, conversation_filename)
             
             current_conversation_history.append({"user": user_input, "aeon": clean_ai_response})
 

@@ -19,4 +19,4 @@ sentence-transformers
 Pillow
 llama-cpp-python
 markdown
-duckduckgo_search
+ddgs

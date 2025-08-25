@@ -1,4 +1,4 @@
-# src/external/imageGenerator.py
+# src/external/imgSystem.py
 import os
 import hashlib
 from pathlib import Path
@@ -15,9 +15,9 @@ from src.config import (
     IMG_MODEL_NEGATIVE_PROMPT
 )
 
-from src.utils.messages import *
+from src.libs.messages import *
 
-def imageGenerator(prompt: str, output_dir: str):
+def imgSystem(prompt: str, output_dir: str):
     print_info_message(f"Initializing image generation pipeline...")
     try:
       
@@ -31,8 +31,9 @@ def imageGenerator(prompt: str, output_dir: str):
         print_error_message(f"Failed to load image generation model: {e}")
         return
 
-    output_path = Path(output_dir)
-    output_path.mkdir(parents=True, exist_ok=True)
+    # Use the passed output_dir (which is now a Path object)
+    # Ensure the directory exists
+    output_dir.mkdir(parents=True, exist_ok=True) 
 
     print_info_message("Generating image...")
     try:
@@ -46,7 +47,7 @@ def imageGenerator(prompt: str, output_dir: str):
 
         unique_name = hashlib.md5(prompt.encode('utf-8')).hexdigest()
         filename = f"image_{unique_name}.png"
-        filepath = output_path / filename
+        filepath = output_dir / filename
 
         image.save(filepath)
         print_success_message(f"Image saved to {filepath}")

@@ -2,12 +2,13 @@
 import yaml
 from pathlib import Path
 
-from src.utils.messages import *
+from src.libs.messages import *
 
 # Configuration
+MEMORY_DIR = "./data/memory"
 INPUT_DIR = "./data/cerebrum/system"
-MEMORY_DIR = "./data/cerebrum/memory"
 CHROMA_DB_DIR = "./data/cerebrum/memory"
+BACKUP_DIR = "./data/output/backup"
 OUTPUT_DIR = "./data/output"
 CONFIG_FILE = "./config.yml"
 
@@ -23,12 +24,8 @@ try:
     SYSTEM_PROMPT = config["llm_config"]["llm_prompt"]
 
     VLM_MODEL = config["vlm_config"]["model"]
-    VLM_MODEL_MMPROJ = config["vlm_config"]["mmproj"]
+    VLM_MODEL_HARDWARE = config["vlm_config"]["hardware"]
     VLM_TEMPERATURE = config["vlm_config"]["temperature"]
-    VLM_N_CTX = config["vlm_config"]["n_ctx"]
-    VLM_TOP_K = config["vlm_config"]["top_k"]
-    VLM_TOP_P = config["vlm_config"]["top_p"]
-    VLM_PROMPT = config["vlm_config"]["vlm_prompt"]
 
     IMG_MODEL = config["img_config"]["model"]
     IMG_MODEL_WIDTH = config["img_config"]["width"]
@@ -36,7 +33,10 @@ try:
     IMG_MODEL_HARDWARE = config["img_config"]["hardware"]
     IMG_MODEL_NEGATIVE_PROMPT = config["img_config"]["negative_prompt"]
 
-    EMBEDDING_MODEL = config["embedding_model"]
+    EMB_MODEL = config["emb_config"]["model"]
+    EMB_N_CTX = config["emb_config"]["n_ctx"]
+    EMB_CHUNK_SIZE = config["emb_config"]["chunk_size"]
+    EMB_CHUNK_OVERLAP = config["emb_config"]["chunk_overlap"]
 
 except FileNotFoundError:
     print_error_message(f"Config file not found: {CONFIG_FILE}")

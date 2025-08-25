@@ -13,26 +13,28 @@ from langchain.prompts import PromptTemplate
 from langchain_community.llms import LlamaCpp
 from langchain_community.embeddings import LlamaCppEmbeddings
 
-from src.utils.loaders import JsonPlaintextLoader
+from src.libs.loaders import JsonPlaintextLoader
 
 from src.config import (
     LLM_MODEL, 
     LLM_TEMPERATURE, 
-    EMBEDDING_MODEL,
+    EMB_MODEL,
+    EMB_N_CTX,
+    EMB_CHUNK_SIZE,
+    EMB_CHUNK_OVERLAP,
     INPUT_DIR, 
-    CHROMA_DB_DIR, 
+    MEMORY_DIR, 
     SYSTEM_PROMPT, 
     LLM_N_CTX,
     LLM_TOP_P,
     LLM_TOP_K
 )
-from src.utils.messages import *
+from src.libs.messages import *
 
 
-def ragSystem():
+def ragSystem(conversation_memory_path: Path, chroma_db_dir_path: Path, is_new_session: bool):
     project_root = Path(__file__).parent.parent.parent
     input_dir_path = project_root / INPUT_DIR
-    chroma_db_dir_path = project_root / CHROMA_DB_DIR
     
     if not os.path.exists(input_dir_path):
         print_error_message(f"Directory '{input_dir_path}' not found. Please create it.")
@@ -50,20 +52,21 @@ def ragSystem():
         documents.extend(json_loader.load())
 
     text_splitter = RecursiveCharacterTextSplitter(
-        chunk_size=300,
-        chunk_overlap=100,
+        chunk_size=EMB_CHUNK_SIZE,
+        chunk_overlap=EMB_CHUNK_OVERLAP,
         length_function=len,
     )
     chunks = text_splitter.split_documents(documents)
 
-    print_info_message(f"Loading embedding model: {EMBEDDING_MODEL}")
+    print_info_message(f"Loading embedding model: {EMB_MODEL}")
     llama_embeddings = LlamaCppEmbeddings(
-        model_path=EMBEDDING_MODEL,
+        model_path=EMB_MODEL,
+        n_ctx=EMB_N_CTX,
         verbose=False
     )
     
     batch_size = 32
-    
+   
     if not chroma_db_dir_path.exists() or not os.listdir(chroma_db_dir_path):
         if not chunks:
             print_info_message(f"No initial documents found. Creating an empty vector store at {chroma_db_dir_path}...")
@@ -71,6 +74,7 @@ def ragSystem():
                 persist_directory=str(chroma_db_dir_path),
                 embedding_function=llama_embeddings
             )
+            
         else:
             print_info_message(f"Vector store not found. Creating a new one with {len(chunks)} chunks at {chroma_db_dir_path}...")
             vectorstore = Chroma(
@@ -118,9 +122,14 @@ def ragSystem():
     qa_prompt = PromptTemplate.from_template(
         "<|im_start|>system\n"
         f"{SYSTEM_PROMPT}\n"
-        "Your responses should be in plain, natural language ONLY, without special formatting or prefixes."
-        "Prioritize using CONTEXT for factual questions. If context is unavailable for a factual question, state: 'I don't know about it. Can we /search?'. "
-        "For other questions, respond naturally and conversationally. Do not echo the QUESTION or CONTEXT."
+        "Your responses should be in plain, natural language ONLY."
+        "Determine the nature of the user's QUESTION. "
+        "If the question is factual, follow this process: "
+        "1. Scan the CONTEXT for all relevant facts."
+        "2. Combine these facts to form a single, comprehensive answer."
+        "3. If context is unavailable, state: 'I don't know about it. Can we /search?'."
+        "If the question is conversational or non-factual, respond naturally and conversationally, without referring to the CONTEXT."
+        "Do not echo the user's QUESTION or the CONTEXT."
         "<|im_end|>\n"
         "<|im_start|>user\n"
         "CONTEXT:{context}\n"
@@ -146,20 +155,3 @@ def ragSystem():
         sys.exit(1)
 
     return rag_chain, vectorstore, text_splitter, llama_embeddings, llm
-
-def ragPersist(vectorstore: Chroma, embeddings, question: str, answer: str):
-    """
-    Persists a user's question and the system's answer to the ChromaDB.
-    """
-    # print_info_message("Adding user interaction to the vector store...")
-    combined_text = f"user: {question}\naeon: {answer}"
-    
-    # Create a new document with the combined text
-    new_doc = Document(page_content=combined_text, metadata={"source": "user_interaction"})
-    
-    # Add the document to the vector store
-    try:
-        vectorstore.add_documents([new_doc])
-        # print_success_message("Interaction successfully persisted to ChromaDB.")
-    except Exception as e:
-        print_error_message(f"Failed to persist interaction to ChromaDB: {e}")

@@ -14,7 +14,7 @@ PYTHON_SCRIPT_DIR = "src"
 PYTHON_MAIN_MODULE = "aeon"
 
 # Path to the Flask app for web mode
-FLASK_APP_PATH = "src/core/web.py"
+FLASK_APP_PATH = "src/libs/webServer.py"
 
 # Path to requirements.txt
 REQUIREMENTS_FILE = "requirements.txt"

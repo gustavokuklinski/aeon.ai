@@ -1,4 +1,4 @@
-# src/web.py
+# src/utils/webServer.py
 import os
 import sys
 from pathlib import Path
@@ -12,7 +12,7 @@ sys.path.append(str(project_root))
 
 # Import core modules from your project
 from src.config import (
-    LLM_MODEL, EMBEDDING_MODEL, OUTPUT_DIR, INPUT_DIR
+    LLM_MODEL, EMB_MODEL, OUTPUT_DIR, INPUT_DIR
 )
 from core.rag_setup import initialize_rag_system
 from core.image_gen import generate_image_from_prompt

@@ -3,7 +3,7 @@
 ## Requirements:
 * Command line tool
 * GIT with GIT LFS
-* Python 3.11 or later
+* Python 3.11 or later (remember to `Add python to PATH` option enabled and `Disable path lenght limit` during install)
 * Microsoft C++ Build Tools - Install: `Desktop development with C++` package
 
 ---

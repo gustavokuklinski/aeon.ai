@@ -7,7 +7,7 @@ import textwrap
 # --- Configuration ---
 VENV_DIR = "./.venv"
 PYTHON_SCRIPT_DIR = "src"
-PYTHON_MAIN_MODULE = "aeon"
+PYTHON_MAIN_MODULE = "main"
 FLASK_APP_PATH = "src/libs/webServer.py"
 
 # --- Helper Functions for Colored Output ---

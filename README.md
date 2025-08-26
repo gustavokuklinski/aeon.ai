@@ -24,9 +24,16 @@ Before cloning, make sure you have GIT LFS installed
 ```shell
 $ git lfs install
 $ git clone https://github.com/gustavokuklinski/aeon.ai.git
+
+# Run check and install dependencies
+$ python3 ./install.py 
+
+# Start AEON
 $ python3 ./aeon.py
 ```
 -----
+
+To run on **Windows** check: [Windows setup](https://github.com/gustavokuklinski/aeon.ai/blob/main/docs/WINDOWS.md)
 
 ## Setup Local Models
 

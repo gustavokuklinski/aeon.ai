@@ -98,6 +98,10 @@ Commands can be placed directly in the chat interface:
 
 -----
 
+## Star History
+
+[![Star History Chart](https://api.star-history.com/svg?repos=gustavokuklinski/aeon.ai&type=Date)](https://www.star-history.com/#gustavokuklinski/aeon.ai&Date)
+
 ### Tested on
 
 | OS | CPU | GPU | RAM |

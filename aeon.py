@@ -49,7 +49,15 @@ def print_error_msg(message, exit_script=True):
 def manage_virtual_environment():
     """Checks, creates, and prepares the virtual environment."""
     print_boot_msg(" Checking virtual environment...")
-
+    
+    # Determine the correct virtual environment executable path based on OS
+    if sys.platform == "win32":
+        python_executable = os.path.join(VENV_DIR, "Scripts", "python.exe")
+        bin_dir = "Scripts"
+    else:
+        python_executable = os.path.join(VENV_DIR, "bin", "python")
+        bin_dir = "bin"
+    
     if not os.path.isdir(VENV_DIR):
         print_error_msg(f" Virtual environment not found at '{VENV_DIR}'.", exit_script=False)
         print_info_msg(" Creating virtual environment...")
@@ -62,33 +70,37 @@ def manage_virtual_environment():
             print_error_msg(" 'python3' command not found. Ensure Python 3 is installed and in your PATH. Aborting.")
 
         # Set the virtual environment's Python path for subsequent calls
-        python_in_venv = os.path.join(VENV_DIR, "bin", "python")
-        if not os.path.exists(python_in_venv):
-            print_error_msg(f" Python executable not found in virtual environment at '{python_in_venv}'. Aborting.")
+        if not os.path.exists(python_executable):
+            print_error_msg(f" Python executable not found in virtual environment at '{python_executable}'. Aborting.")
 
         print_info_msg(" Installing dependencies from 'requirements.txt'...")
         try:
-            subprocess.run([python_in_venv, "-m", "pip", "install", "-r", REQUIREMENTS_FILE], check=True)
+            subprocess.run([python_executable, "-m", "pip", "install", "-r", REQUIREMENTS_FILE], check=True)
             print_ok_msg(" Dependencies installed successfully.")
         except subprocess.CalledProcessError:
             print_error_msg(" Failed to install dependencies. Aborting.")
         except FileNotFoundError:
-            print_error_msg(f" '{python_in_venv}' not found. Virtual environment creation might have failed. Aborting.")
+            print_error_msg(f" '{python_executable}' not found. Virtual environment creation might have failed. Aborting.")
     else:
         print_ok_msg(" Virtual environment found. Preparing to use it...")
 
     # Ensure the virtual environment's python is used for subsequent commands
     # This modifies the PATH for this script's subprocesses
-    os.environ["PATH"] = os.path.join(VENV_DIR, "bin") + os.pathsep + os.environ["PATH"]
+    os.environ["PATH"] = os.path.join(VENV_DIR, bin_dir) + os.pathsep + os.environ["PATH"]
 
     # Add the current directory to PYTHONPATH so Python can find the 'core' package
     os.environ["PYTHONPATH"] = os.getcwd() + os.pathsep + os.environ.get("PYTHONPATH", "")
 
 # --- Pre-flight Checks ---
-# --- Pre-flight Checks ---
 def run_preflight_checks():
     """Runs checks for external tools and Python dependencies."""
     print_boot_msg(" Running pre-flight checks...")
+    
+    # Determine the correct virtual environment executable path based on OS
+    if sys.platform == "win32":
+        python_executable = os.path.join(VENV_DIR, "Scripts", "python.exe")
+    else:
+        python_executable = os.path.join(VENV_DIR, "bin", "python")
 
     # 1. Verify 'config.yml' exists
     print_info_msg(f" Checking for '{CONFIG_FILE}'...")
@@ -100,9 +112,8 @@ def run_preflight_checks():
     print_info_msg(" Checking for core Python dependencies...")
     try:
         # Use the python executable from the virtual environment
-        python_executable = os.path.join(VENV_DIR, "bin", "python")
         subprocess.run(
-            [python_executable, "-c", "import llama_cpp, llama_cpp.llama_cpp, langchain_chroma, diffusers, torch"],
+            [python_executable, "-c", "import llama_cpp, langchain_chroma, diffusers, torch"],
             check=True,
             capture_output=True, # Suppress stdout/stderr
             text=True
@@ -123,8 +134,8 @@ def run_preflight_checks():
 def display_menu_and_execute():
     """Displays the main menu and executes the chosen mode."""
     print("\n")
-    print("\033[38;5;196m █████╗ ███████╗ ██████╗ ███╗   ██╗ \033[0m")
-    print("\033[38;5;197m██╔══██╗██╔════╝██╔═══██╗████╗  ██║ \033[0m")
+    print("\033[38;5;196m █████╗ ███████╗ ██████╗ ███╗  ██╗ \033[0m")
+    print("\033[38;5;197m██╔══██╗██╔════╝██╔═══██╗████╗ ██║ \033[0m")
     print("\033[38;5;160m███████║█████╗  ██║   ██║██╔██╗ ██║ \033[0m")
     print("\033[38;5;124m██╔══██║██╔══╝  ██║   ██║██║╚██╗██║ \033[0m")
     print("\033[38;5;88m██║  ██║███████╗╚██████╔╝██║ ╚████║ \033[0m")
@@ -138,42 +149,49 @@ def display_menu_and_execute():
     except EOFError:
         choice = "3" # Handle cases where input is redirected/piped
     print("\n")
-
-    python_in_venv = os.path.join(VENV_DIR, "bin", "python")
+    
+    if sys.platform == "win32":
+        python_executable = os.path.join(VENV_DIR, "Scripts", "python.exe")
+    else:
+        python_executable = os.path.join(VENV_DIR, "bin", "python")
 
     if choice == "1":
         # Run in terminal mode
         main_module_path = os.path.join(PYTHON_SCRIPT_DIR, f"{PYTHON_MAIN_MODULE}.py")
         if not os.path.isfile(main_module_path):
             print_error_msg(f" Python main module '{main_module_path}' not found.\n"
-                            " Make sure the 'core' directory and 'aeon.py' exist within it.")
+                             " Make sure the 'core' directory and 'aeon.py' exist within it.")
         print_boot_msg(" Running AEON in Terminal mode...")
         try:
-            subprocess.run([python_in_venv, "-m", f"{PYTHON_SCRIPT_DIR}.{PYTHON_MAIN_MODULE}"], check=True)
+            subprocess.run([python_executable, "-m", f"{PYTHON_SCRIPT_DIR}.{PYTHON_MAIN_MODULE}"], check=True)
         except subprocess.CalledProcessError as e:
             print_error_msg(f" Terminal mode exited with an error: {e}")
     elif choice == "2":
         # Run in web mode
         if not os.path.isfile(FLASK_APP_PATH):
             print_error_msg(f" Flask app file '{FLASK_APP_PATH}' not found.\n"
-                            " Make sure 'web.py' exists within the 'core' directory.")
+                             " Make sure 'web.py' exists within the 'core' directory.")
         print_boot_msg(" Running AEON in Web mode...")
         print_boot_msg(" Access the web interface at: http://127.0.0.1:4303")
         try:
-            subprocess.run([python_in_venv, FLASK_APP_PATH], check=True)
+            subprocess.run([python_executable, FLASK_APP_PATH], check=True)
         except subprocess.CalledProcessError as e:
             print_error_msg(f" Web mode exited with an error: {e}")
     elif choice == "3":
         print_boot_msg(" Exiting AEON. Goodbye!")
     else:
         print_error_msg(" Invalid choice. Please enter 1, 2, or 3.", exit_script=False)
- 
+    
     return choice # Return the choice to handle final messages
 
 # --- Main Execution Flow ---
 if __name__ == "__main__":
     os.environ["LLAMA_LOG_LEVEL"] = "0"
-    os.system("clear" if os.name == "posix" else "cls") # Clear screen
+    if os.name == 'nt':
+        os.system('cls')
+    else:
+        os.system('clear')
+    
     print_boot_msg(" Booting AEON")
 
     manage_virtual_environment()

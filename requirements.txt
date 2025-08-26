@@ -20,3 +20,5 @@ Pillow
 llama-cpp-python
 markdown
 ddgs
+pytest
+flake8

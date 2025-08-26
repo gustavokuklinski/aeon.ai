@@ -1,5 +1,6 @@
 venv
 .venv
+.pytest_cache/
 src/__pycache__/
 src/core/__pycache__/
 src/utils/__pycache__/

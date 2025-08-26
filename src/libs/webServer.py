@@ -14,9 +14,9 @@ sys.path.append(str(project_root))
 from src.config import (
     LLM_MODEL, EMB_MODEL, OUTPUT_DIR, INPUT_DIR
 )
-from core.rag_setup import initialize_rag_system
-from core.image_gen import generate_image_from_prompt
-from core.ingestion import ingest_documents # Import the ingestion function
+from src.core.ragSystem import ragSystem
+from src.core.imgSystem import imgSystem
+from src.utils.ingestion import ingestDocuments
 
 # Flask App Setup
 # app = Flask(__name__, template_folder='../web/templates', static_folder='../web/assets')
@@ -28,14 +28,14 @@ abs_input_dir = str(project_root / INPUT_DIR)
 rag_chain = None
 vectorstore = None
 text_splitter = None
-ollama_embeddings = None
+llama_embeddings = None
 
-def initialize_rag_system_for_web():
+def ragSystem_for_web():
     """Wrapper function to initialize the RAG system for the web app."""
-    global rag_chain, vectorstore, text_splitter, ollama_embeddings
+    global rag_chain, vectorstore, text_splitter, llama_embeddings
     
     # Call the new shared function
-    rag_chain, vectorstore, text_splitter, ollama_embeddings = initialize_rag_system()
+    rag_chain, vectorstore, text_splitter, llama_embeddings = ragSystem()
 
 # Routes
 @app.route("/")
@@ -59,7 +59,7 @@ def chat():
             return jsonify({"response": "Please provide a prompt for image generation, e.g., /image a cat on a beach."}), 400
 
         try:
-            image_path = generate_image_from_prompt(image_prompt, OUTPUT_DIR)
+            image_path = imgSystem(image_prompt, OUTPUT_DIR)
             if image_path:
                 # Get the filename from the path
                 image_filename = os.path.basename(image_path)
@@ -110,7 +110,7 @@ def upload_and_ingest_file():
             file.save(filepath)
             
             # Ingest the saved file using the existing function
-            ingest_documents(filepath, vectorstore, text_splitter, llama_embeddings)
+            ingestDocuments(filepath, vectorstore, text_splitter, llama_embeddings)
             
             return jsonify({"message": f"File '{filename}' ingested successfully!"}), 200
         except Exception as e:
@@ -126,7 +126,7 @@ def static_images(filename):
 
 # Run the app
 if __name__ == "__main__":
-    initialize_rag_system_for_web()
+    ragSystem_for_web()
     # Ensure the output directory exists
     os.makedirs(abs_output_dir, exist_ok=True)
     app.run(debug=True, port=4303)

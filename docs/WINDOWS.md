@@ -33,5 +33,5 @@ Run: `C:\aeon.ai\> python aeon.py`
 ### Windows Specs
 
 | OS | CPU | GPU | RAM | SSD |
-|:---|:---|:---|:---|
+|:---|:---|:---|:---|:---|
 | Windows 11 Home Edition | Intel i7 - 10510U | - | 8GB | 80GB |

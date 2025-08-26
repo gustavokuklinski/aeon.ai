@@ -18,7 +18,6 @@ It will create the environment, activate the `.venv` and download all `pip` requ
 2. Create a .venv with: `C:\aeon.ai\> python -m venv .venv`
 3. Activate Python .venv: `C:\aeon.ai\> .\.venv\Scripts\activate.bat`
 4. Install pip dependencies: `(.venv) C:\aeon.ai\> pip install -r requirements.txt`
-5. Run `(.venv) C:\aeon.ai\> python src\aeon.py`
 
 ---
 

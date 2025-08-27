@@ -111,7 +111,7 @@ def main():
     llm_instance = session_vars["llm_instance"]
     current_memory_path = session_vars["current_memory_path"]
     conversation_filename = session_vars["conversation_filename"]
-    current_conversation_history = session_vars["current_conversation_history"]
+    current_chat_history = session_vars["current_chat_history"]
     user_prompt_string = session_vars["user_prompt_string"]
 
     printAeonLayout()
@@ -160,7 +160,7 @@ def main():
                 llm_instance = updated_vars["llm_instance"]
                 current_memory_path = updated_vars["current_memory_path"]
                 conversation_filename = updated_vars["conversation_filename"]
-                current_conversation_history = updated_vars["current_conversation_history"]
+                current_chat_history = updated_vars["current_chat_history"]
                 user_prompt_string = updated_vars["user_prompt_string"]
             continue
 
@@ -174,7 +174,7 @@ def main():
                 llm_instance = updated_vars["llm_instance"]
                 current_memory_path = updated_vars["current_memory_path"]
                 conversation_filename = updated_vars["conversation_filename"]
-                current_conversation_history = updated_vars["current_conversation_history"]
+                current_chat_history = updated_vars["current_chat_history"]
                 user_prompt_string = updated_vars["user_prompt_string"]
             continue
 
@@ -247,7 +247,7 @@ def main():
                 clean_ai_response,
                 current_memory_path,
                 conversation_filename)
-            current_conversation_history.append(
+            current_chat_history.append(
                 {"user": user_input, "aeon": clean_ai_response})
             continue
 
@@ -331,7 +331,7 @@ def main():
                     clean_ai_response,
                     current_memory_path,
                     conversation_filename)
-                current_conversation_history.append(
+                current_chat_history.append(
                     {"user": user_input, "aeon": clean_ai_response})
 
             except Exception as e:
@@ -354,7 +354,7 @@ def main():
                 current_memory_path,
                 conversation_filename)
 
-            current_conversation_history.append(
+            current_chat_history.append(
                 {"user": user_input, "aeon": clean_ai_response})
 
         except Exception as e:

@@ -18,7 +18,7 @@ def newConversation(memory_dir_path: Path):
 
     chroma_db_dir_path = current_memory_path / 'db'
     conversation_filename = f"conversation_{conversation_hash}.json"
-    current_conversation_history = []
+    current_chat_history = []
 
     (rag_chain, vectorstore, text_splitter,
      llama_embeddings, llm_instance) = ragSystem(
@@ -34,6 +34,6 @@ def newConversation(memory_dir_path: Path):
         "llm_instance": llm_instance,
         "current_memory_path": current_memory_path,
         "conversation_filename": conversation_filename,
-        "current_conversation_history": current_conversation_history,
+        "current_chat_history": current_chat_history,
         "user_prompt_string": f"\033[92m[\033[93m{conversation_hash}\033[92m@\033[92m>>>>]:\033[0m "
     }

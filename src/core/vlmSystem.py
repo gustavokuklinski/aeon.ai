@@ -62,8 +62,8 @@ def vlmSystem(image_path: str, prompt: str) -> str:
         return generated_text[0]
 
     except Exception as e:
-        error_msg = f"Error occurred during VLM processing: {
-            type(e).__name__}: {e}"
+        error_msg = ("Error occurred during VLM processing: "
+                     f"{type(e).__name__}: {e}")
         print_error_message(error_msg)
         return (f"Error occurred while processing the image:"
                 f"{error_msg}. Please try again.")

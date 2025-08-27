@@ -37,7 +37,7 @@ def openConversation(
              llama_embeddings, llm_instance) = ragSystem(
                 current_memory_path, chroma_db_dir_path, is_new_session=False)
 
-            current_conversation_history = loadConversation(
+            current_chat_history = loadConversation(
                 current_memory_path, conversation_filename)
 
             print_success_message(
@@ -52,8 +52,8 @@ def openConversation(
                 "llm_instance": llm_instance,
                 "current_memory_path": current_memory_path,
                 "conversation_filename": conversation_filename,
-                "current_conversation_history": current_conversation_history,
-                "user_prompt_string": "\033[92m[\033[93m{conversation_hash_name}\033[92m@\033[92m>>>>]:\033[0m "
+                "current_chat_history": current_chat_history,
+                "user_prompt_string": f"\033[92m[\033[93m{conversation_hash_name}\033[92m@\033[92m>>>>]:\033[0m "
             }
         else:
             print_error_message("Invalid conversation number.")

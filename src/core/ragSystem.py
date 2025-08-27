@@ -35,7 +35,7 @@ from src.libs.messages import (
 
 
 def ragSystem(conversation_memory_path: Path,
-               chroma_db_dir_path: Path, is_new_session: bool):
+              chroma_db_dir_path: Path, is_new_session: bool):
 
     project_root = Path(__file__).parent.parent.parent
     input_dir_path = project_root / INPUT_DIR

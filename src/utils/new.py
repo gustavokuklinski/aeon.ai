@@ -27,6 +27,7 @@ def newConversation(memory_dir_path: Path):
     print_success_message("New conversation started.")
 
     return {
+        "conv_id": conversation_hash,
         "rag_chain": rag_chain,
         "vectorstore": vectorstore,
         "text_splitter": text_splitter,

@@ -1,0 +1,6 @@
+aeon_plugin:
+  type: image-text
+  plugin: smolvlm-256m-instruct
+  model_path: ./model/
+  command: /view
+  parameters: <PATH> <PROMPT>

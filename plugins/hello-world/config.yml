@@ -1,0 +1,6 @@
+# plugins/hello-world/config.yml
+aeon_plugin:
+  plugin_name: Hello World Plugin
+  type: text-output
+  command: /hello
+  parameters: <PROMPT>

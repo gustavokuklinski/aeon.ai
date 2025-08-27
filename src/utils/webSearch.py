@@ -35,7 +35,7 @@ def _ingest_search_results(
         search_doc: Document,
         text_splitter: RecursiveCharacterTextSplitter,
         vectorstore: Chroma) -> bool:
-    """Splits and ingests a document into the Chroma vector store."""
+
     try:
         search_chunks = text_splitter.split_documents([search_doc])
         if not search_chunks:
@@ -114,18 +114,7 @@ def webSearch(
         llm_instance: LlamaCpp,
         text_splitter: RecursiveCharacterTextSplitter,
         vectorstore: Chroma) -> str:
-    """
-    Performs a web search, ingests results, and summarizes them using an LLM.
 
-    Args:
-        search_query (str): The query to search for.
-        llm_instance (LlamaCpp): The LLM to use for summarization.
-        text_splitter (RecursiveCharacterTextSplitter): The text splitter.
-        vectorstore (Chroma): The Chroma vector store for ingestion.
-
-    Returns:
-        str: The summarized search results or an error message.
-    """
     try:
         search_context = _perform_search_and_get_context(search_query)
 

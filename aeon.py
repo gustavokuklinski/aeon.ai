@@ -8,7 +8,7 @@ import textwrap
 VENV_DIR = "./.venv"
 PYTHON_SCRIPT_DIR = "src"
 PYTHON_MAIN_MODULE = "main"
-FLASK_APP_PATH = "src/libs/webServer.py"
+FLASK_APP_PATH = "src/web/webSystem.py"
 
 # --- Helper Functions for Colored Output ---
 def colored_print(message, color_code):

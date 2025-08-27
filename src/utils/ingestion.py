@@ -134,7 +134,7 @@ def ingestConversationHistory(
     # This function is fine and does not need to be changed
     documents_to_ingest = []
     for turn in conversation_history:
-        content = f"User: {turn.get('user', '')}\nAEON: {turn.get('aeon', '')}"
+        content = f"USER: {turn.get('user', '')}\nAEON: {turn.get('aeon', '')}"
         documents_to_ingest.append(Document(page_content=content))
 
     new_chunks = text_splitter.split_documents(documents_to_ingest)

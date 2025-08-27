@@ -5,14 +5,10 @@ from pathlib import Path
 from langchain_core.documents import Document
 
 from src.config import (
-    INPUT_DIR,
     OUTPUT_DIR,
-    BACKUP_DIR,
-    MEMORY_DIR
+    MEMORY_DIR,
+    PLUGINS_DIR
 )
-
-from src.core.imgSystem import imgSystem
-from src.core.vlmSystem import vlmSystem
 
 from src.utils.ingestion import ingestDocuments
 from src.utils.webSearch import webSearch
@@ -23,19 +19,18 @@ from src.utils.open import openConversation
 from src.utils.new import newConversation
 from src.utils.load import loadIngestConversation
 
+from src.libs.plugins import PluginManager
 from src.libs.messages import (
     print_info_message,
     print_note_message,
     print_command_message,
     print_error_message,
     print_aeon_message,
-    print_boot_message,
-    print_chat_message,
-    print_success_message
+    print_chat_message
 )
 from src.libs.termLayout import printAeonLayout, printAeonCmd, printAeonModels
 
-os.environ["LLAMA_LOG_LEVEL"] = "0"
+os.environ["LLAMA_LOG_LEVEL"] = "5"
 
 
 def startup_prompt(memory_dir_path: Path):
@@ -100,14 +95,6 @@ def _handle_ingest(user_input, session_vars):
     )
 
 
-def _handle_image(user_input, session_vars):
-
-    image_prompt = user_input[len("/image "):].strip()
-    print_info_message("Processing image generation request...")
-    image_output_path = session_vars["current_memory_path"] / "output"
-    imgSystem(image_prompt, image_output_path)
-
-
 def _handle_zip(session_vars):
 
     print_info_message("Zipping memory folder contents...")
@@ -155,54 +142,6 @@ def _handle_search(user_input, session_vars):
         {"user": user_input, "aeon": summarized_search_results})
 
 
-def _handle_view(user_input, session_vars):
-
-    parts = user_input.split(" ", 2)
-    if len(parts) < 3:
-        print_command_message("Usage: /view <PATH_TO_IMAGE> <PROMPT>")
-        return
-
-    image_path, view_prompt = parts[1], parts[2]
-    if not os.path.exists(image_path):
-        print_note_message(f"Image not found at: {image_path}")
-        return
-
-    print_info_message("Processing image with the Vision Language Model...")
-    try:
-        vlm_response = vlmSystem(image_path, view_prompt)
-        final_ai_response = session_vars["rag_chain"].invoke(vlm_response)
-        clean_ai_response = str(final_ai_response)
-        print_aeon_message(clean_ai_response)
-
-        # Ingest the VLM response into Chroma DB
-        aeon_doc = Document(
-            page_content=clean_ai_response,
-            metadata={
-                "source": "view_response",
-                "query": view_prompt,
-                "image_path": image_path})
-        aeon_chunks = session_vars["text_splitter"].split_documents([aeon_doc])
-        if aeon_chunks:
-            session_vars["vectorstore"].add_documents(aeon_chunks)
-            print_success_message(
-                f"Ingested {
-                    len(aeon_chunks)} chunks from VLM response.")
-        else:
-            print_note_message("No chunks generated from VLM response.")
-
-        saveConversation(
-            user_input,
-            clean_ai_response,
-            session_vars["current_memory_path"],
-            session_vars["conversation_filename"])
-        session_vars["current_chat_history"].append(
-            {"user": user_input, "aeon": clean_ai_response})
-
-    except Exception as e:
-        print_error_message(
-            f"Failed to process image with VLM or RAG chain: {e}")
-
-
 def _handle_rag_chat(user_input, session_vars):
 
     try:
@@ -223,10 +162,8 @@ def _handle_rag_chat(user_input, session_vars):
 
 def main():
     project_root = Path(__file__).parent.parent
-    input_dir_path = project_root / INPUT_DIR
     output_dir_path = project_root / OUTPUT_DIR
     memory_dir_path = project_root / MEMORY_DIR
-    temp_zip_dir = project_root / BACKUP_DIR
 
     session_vars = _initialize_session(memory_dir_path)
     if not session_vars:
@@ -236,38 +173,17 @@ def main():
     printAeonLayout()
     printAeonModels()
     print("\033[1;31m[Type /help to show commands]\033[0m")
+    plugin_manager = PluginManager(PLUGINS_DIR) 
     print("\033[1;31m[STARTING AEON]\033[0m")
 
     # Command handlers dictionary
     command_handlers = {
         "/help": lambda *_: printAeonCmd(),
         "/list": lambda *_: listConversations(memory_dir_path),
-        "/paths": lambda *_: (
-            print_info_message("Displaying AEON's important directory paths:"),
-            print(
-                f"\033[1;36mInput Directory:\033[0m {
-                    input_dir_path.resolve()}"),
-            print(
-                f"\033[1;36mOutput Directory:\033[0m {
-                    output_dir_path.resolve()}"),
-            print(
-                f"\033[1;36mMemory Directory:\033[0m {
-                    memory_dir_path.resolve()}"),
-            print(
-                f"\033[1;36mBackup Directory:\033[0m {
-                    temp_zip_dir.resolve()}"),
-            print_command_message("'/help' show all commands.")),
         "/ingest": _handle_ingest,
-        "/image": _handle_image,
         "/zip": _handle_zip,
         "/load": _handle_load,
         "/search": _handle_search,
-        "/view": _handle_view,
-        "/restart": lambda *_: (
-            print_boot_message("Restarting AEON..."),
-            os.execv(
-                sys.executable,
-                ['python'] + sys.argv)),
         "/open": lambda user_input,
         sv: (
             sv.update(
@@ -296,18 +212,44 @@ def main():
             print_aeon_message("Goodbye!")
             break
 
+        # Separate the command from its arguments
+        parts = user_input.split(" ", 1)
+        command = parts[0].lower()
+        query = parts[1] if len(parts) > 1 else ""
+
+        plugin = plugin_manager.get_plugin(command)
+        if plugin:
+            # Get the expected parameters from the plugin's config
+            param_string = plugin.get_parameters()
+            if param_string:
+                expected_params = param_string.split()
+                num_expected = len(expected_params)
+                
+                query_parts = query.split(" ", num_expected - 1)
+                
+                if len(query_parts) < num_expected:
+                    print_error_message(f"Usage: {command} {param_string}")
+                    continue
+                
+                # Pass *query_parts as args, and output_dir_path as kwargs
+                plugin_manager.execute_command(command, *query_parts, output_dir=output_dir_path)
+            else:
+                # No parameters expected, just pass the full query (if any)
+                plugin_manager.execute_command(command, query, output_dir=output_dir_path)
+            
+            continue
+
+
         command = user_input.lower().split(" ")[0]
         if command in command_handlers:
             if command in [
                 "/open",
                 "/ingest",
-                "/image",
                 "/load",
-                "/search",
-                    "/view"]:
+                "/search"]:
                 command_handlers[command](user_input, session_vars)
             elif command in ["/zip", "/new", "/help",
-                             "/list", "/paths", "/restart"]:
+                             "/list", "/paths"]:
                 command_handlers[command](session_vars)
             else:
                 command_handlers[command]()

@@ -3,34 +3,38 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AEON.ai</title>
-    <link rel="stylesheet" href="../assets/css/style.css">
+    <title>AEON</title>
+    <link rel="stylesheet" href="/assets/css/style.css">
 </head>
 <body>
-    
-    <div class="chat-container">
-        <div class="chat-header">
-            <h1><img src="../assets/img/aeon.png" alt="AEON.AI"/></h1>
-        </div>
-        <div class="chat-window" id="chat-window">
-            <div class="message system">
-                <p><strong>[AEON] </strong> Welcome!</p>
-            </div>
-        </div>
-        <p id="info-txt">Version: <strong><code>0.0.0</code></strong> | AEON.ai<strong><code></code></strong></p>
-        
-        <div class="ingest-form">
-            <form id="ingest-form" enctype="multipart/form-data">
-                <input type="file" id="ingest-file" name="ingest-file" accept=".md,.txt,.json">
-                <button type="submit">Upload</button>
-            </form>
-        </div>
-        <form id="chat-form">
-            <input type="text" id="user-input" placeholder="Ask a question..." autocomplete="off">
-            <button type="submit">Send</button>
-        </form>
+   
+    <div class="sidebar">
+        <h2><img src="/assets/img/aeon.png" /></h2>
+        <a class="links" href="https://github.com/gustavokuklinski/aeon.ai" target="_blank">[GITHUB]</a>
+        <button id="new-chat-button" class="sidebar-button">NEW CHAT</button>
+        <ul id="conversation-list" class="sidebar-list"></ul>
     </div>
 
-    <script src="../assets/js/chat.js"></script>
+    <div class="main-content">
+        <div class="container">
+            <div class="chat-box" id="chat-box">
+            </div>
+            
+            <div id="loading-spinner" class="loading-spinner"></div>
+
+            <div id="chat-controls-container" class="chat-controls-container">
+                <div class="input-container">
+                    <input type="text" id="message-input" placeholder="Type your message..." autofocus>
+                    <button id="send-button" class="main-button">Send</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+     <script>
+        window.currentConversationId = "{{ initial_conv_id }}";
+        window.initialHistory = {{ initial_history | tojson }};
+    </script>
+    <script src="/assets/js/chat.js"></script>
 </body>
 </html>

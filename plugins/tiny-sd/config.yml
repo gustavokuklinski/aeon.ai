@@ -1,0 +1,7 @@
+aeon_plugin:
+  plugin_name: tiny-sd
+  type: text-image
+  model_path: ./model/
+  command: /image
+  parameters: <PROMPT>
+

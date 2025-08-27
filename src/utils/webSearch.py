@@ -18,7 +18,7 @@ from src.libs.messages import (
 )
 
 
-def webSearch(
+def webSearch(  # noqa: C901
         search_query: str,
         llm_instance: LlamaCpp,
         text_splitter: RecursiveCharacterTextSplitter,

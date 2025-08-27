@@ -34,7 +34,7 @@ from src.libs.messages import (
 )
 
 
-def ragSystem(conversation_memory_path: Path,
+def ragSystem(conversation_memory_path: Path,  # noqa: C901
               chroma_db_dir_path: Path, is_new_session: bool):
 
     project_root = Path(__file__).parent.parent.parent

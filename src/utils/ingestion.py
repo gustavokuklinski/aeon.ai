@@ -21,7 +21,7 @@ from src.libs.messages import (
 )
 
 
-def ingestDocuments(
+def ingestDocuments(  # noqa: C901
         path_to_ingest: str,
         vectorstore: Chroma,
         text_splitter: RecursiveCharacterTextSplitter,
@@ -117,8 +117,9 @@ def ingestDocuments(
 
         print_info_message(
             "Ingestion finished. "
-            f"Success: {success}, Failed: {failed}, Total: {
-                len(new_chunks)}")
+            f"Success: {success},"
+            f" Failed: {failed}, "
+            f"Total: {len(new_chunks)}")
 
         sample = new_chunks[0].page_content[:100].replace("\n", " ")
         vec = embeddings.embed_query(sample)

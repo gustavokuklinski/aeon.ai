@@ -64,7 +64,7 @@ def startup_prompt(memory_dir_path: Path):
     return choice
 
 
-def main():
+def main():  # noqa: C901
     project_root = Path(__file__).parent.parent
     input_dir_path = project_root / INPUT_DIR
     output_dir_path = project_root / OUTPUT_DIR
@@ -181,17 +181,17 @@ def main():
         if user_input.lower() == "/paths":
             print_info_message("Displaying AEON's important directory paths:")
             print(
-                f"\033[1;36mInput Directory:\033[0m {
-                    input_dir_path.resolve()}")
+                "\033[1;36mInput Directory:\033[0m"
+                f" {input_dir_path.resolve()}")
             print(
-                f"\033[1;36mOutput Directory:\033[0m {
-                    output_dir_path.resolve()}")
+                "\033[1;36mOutput Directory:\033[0m"
+                f" {output_dir_path.resolve()}")
             print(
-                f"\033[1;36mMemory Directory:\033[0m {
-                    memory_dir_path.resolve()}")
+                "\033[1;36mMemory Directory:\033[0m"
+                f" {memory_dir_path.resolve()}")
             print(
-                f"\033[1;36mBackup Directory:\033[0m {
-                    temp_zip_dir.resolve()}")
+                "\033[1;36mBackup Directory:\033[0m"
+                f" {temp_zip_dir.resolve()}")
             print_command_message("'/help' show all commands.")
             continue
 

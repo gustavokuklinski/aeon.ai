@@ -36,7 +36,7 @@ class JsonPlaintextLoader:
             count += 1
         return count
 
-    def load(self) -> list[Document]:
+    def load(self) -> list[Document]:  # noqa: C901
         try:
             with open(self.file_path, 'r', encoding='utf-8') as f:
                 data = json.load(f)

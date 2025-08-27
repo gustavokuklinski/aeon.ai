@@ -4,6 +4,10 @@ import json
 import sys
 import os
 from langchain_core.documents import Document
+from src.libs.messages import (
+    print_error_message, print_warning_message
+)
+
 
 class JsonPlaintextLoader:
     def __init__(self, file_path: str):
@@ -38,17 +42,20 @@ class JsonPlaintextLoader:
                 data = json.load(f)
 
             documents = []
-            total_string_nodes = self._count_string_nodes(data)
             processed_string_nodes = 0
 
             def _extract_strings_recursively(obj, current_path=""):
                 nonlocal processed_string_nodes
                 if isinstance(obj, dict):
                     for k, v in obj.items():
-                        _extract_strings_recursively(v, f"{current_path}.{k}" if current_path else k)
+                        _extract_strings_recursively(
+                            v, f"{current_path}.{k}"
+                            if current_path else k)
                 elif isinstance(obj, list):
                     for i, item in enumerate(obj):
-                        _extract_strings_recursively(item, f"{current_path}[{i}]" if current_path else str(i))
+                        _extract_strings_recursively(
+                            item, f"{current_path}[{i}]"
+                            if current_path else str(i))
                 elif isinstance(obj, str):
                     documents.append(Document(
                         page_content=obj,
@@ -63,16 +70,17 @@ class JsonPlaintextLoader:
             _extract_strings_recursively(data)
 
             if not documents:
-                print(f"\033[1;33m[WARN]\033[0m No string content found in '{self.file_path}'.")
+                print_warning_message(
+                    f"No string content found in '{self.file_path}'.")
 
             return documents
 
         except json.JSONDecodeError as e:
-            print(f"\033[91m[ERROR]\033[0m Invalid JSON file '{self.file_path}': {e}")
+            print_error_message(f"Invalid JSON file '{self.file_path}': {e}")
             return []
         except FileNotFoundError:
-            print(f"\033[91m[ERROR]\033[0m File not found: '{self.file_path}'")
+            print_error_message(f"File not found '{self.file_path}'")
             return []
         except Exception as e:
-            print(f"\033[91m[ERROR]\033[0m Error loading JSON file '{self.file_path}': {e}")
+            print_error_message(f"Loading JSON file '{self.file_path}': {e}")
             return []

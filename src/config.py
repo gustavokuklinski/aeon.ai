@@ -2,7 +2,7 @@
 import yaml
 from pathlib import Path
 
-from src.libs.messages import *
+from src.libs.messages import print_error_message
 
 # Configuration
 MEMORY_DIR = "./data/memory"
@@ -43,7 +43,7 @@ except FileNotFoundError:
 
     exit()
 except KeyError as e:
-    print(f"\033[91m[ERROR]\033[0m Missing key in {CONFIG_FILE}: {e}.")
+    print_error_message(f"Missing key in {CONFIG_FILE}: {e}.")
     exit()
 
 # Ensure OUTPUT_DIR exists

@@ -1,26 +1,25 @@
-# src/external/imgSystem.py
-import os
+# src/core/imgSystem.py
+
 import hashlib
 from pathlib import Path
-
-from transformers import CLIPTextModel
 from diffusers import StableDiffusionPipeline
-import torch
 
 from src.config import (
     IMG_MODEL,
-    IMG_MODEL_WIDTH, 
-    IMG_MODEL_HEIGHT, 
-    IMG_MODEL_HARDWARE, 
+    IMG_MODEL_WIDTH,
+    IMG_MODEL_HEIGHT,
+    IMG_MODEL_HARDWARE,
     IMG_MODEL_NEGATIVE_PROMPT
 )
 
-from src.libs.messages import *
+from src.libs.messages import (print_info_message, print_success_message,
+                               print_error_message)
 
-def imgSystem(prompt: str, output_dir: str):
-    print_info_message(f"Initializing image generation pipeline...")
+
+def imgSystem(prompt: str, output_dir: Path) -> str:
+
+    print_info_message("Initializing image generation pipeline...")
     try:
-      
         pipe = StableDiffusionPipeline.from_pretrained(
             IMG_MODEL,
             local_files_only=True
@@ -29,11 +28,10 @@ def imgSystem(prompt: str, output_dir: str):
         print_success_message("Image generation model loaded.")
     except Exception as e:
         print_error_message(f"Failed to load image generation model: {e}")
-        return
+        return None
 
-    # Use the passed output_dir (which is now a Path object)
     # Ensure the directory exists
-    output_dir.mkdir(parents=True, exist_ok=True) 
+    output_dir.mkdir(parents=True, exist_ok=True)
 
     print_info_message("Generating image...")
     try:

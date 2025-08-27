@@ -5,6 +5,7 @@ from pathlib import Path
 from src.libs.messages import print_boot_message, print_success_message
 from src.core.ragSystem import ragSystem
 
+
 def newConversation(memory_dir_path: Path):
     print_boot_message("Starting a new conversation...")
 
@@ -19,8 +20,10 @@ def newConversation(memory_dir_path: Path):
     conversation_filename = f"conversation_{conversation_hash}.json"
     current_conversation_history = []
 
-    rag_chain, vectorstore, text_splitter, llama_embeddings, llm_instance = ragSystem(current_memory_path, chroma_db_dir_path, is_new_session=True)
-    
+    (rag_chain, vectorstore, text_splitter,
+     llama_embeddings, llm_instance) = ragSystem(
+        current_memory_path, chroma_db_dir_path, is_new_session=True)
+
     print_success_message("New conversation started.")
 
     return {

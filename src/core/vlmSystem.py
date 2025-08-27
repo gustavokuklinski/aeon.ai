@@ -1,20 +1,19 @@
 # src/external/vlmSystem.py
-import os
+
 from pathlib import Path
 
 from PIL import Image
 from transformers import AutoProcessor, AutoModelForVision2Seq
-import torch
 
 
 from src.config import (
     VLM_MODEL,
-    VLM_TEMPERATURE,
-    VLM_MODEL_HARDWARE,
-    VLM_TEMPERATURE,
+    VLM_MODEL_HARDWARE
 )
 
-from src.libs.messages import *
+from src.libs.messages import (print_success_message,
+                               print_info_message, print_error_message)
+
 
 def vlmSystem(image_path: str, prompt: str) -> str:
 
@@ -29,8 +28,10 @@ def vlmSystem(image_path: str, prompt: str) -> str:
         # Define the device
         device = VLM_MODEL_HARDWARE
 
-        processor = AutoProcessor.from_pretrained(VLM_MODEL, local_files_only=True)
-        model = AutoModelForVision2Seq.from_pretrained(VLM_MODEL, local_files_only=True)
+        processor = AutoProcessor.from_pretrained(
+            VLM_MODEL, local_files_only=True)
+        model = AutoModelForVision2Seq.from_pretrained(
+            VLM_MODEL, local_files_only=True)
         model.to(device)
 
         print_success_message("VLM model loaded.")
@@ -45,20 +46,24 @@ def vlmSystem(image_path: str, prompt: str) -> str:
                 ]
             },
         ]
-        prompt = processor.apply_chat_template(messages, add_generation_prompt=False)
-        inputs = processor(text=prompt, images=image, return_tensors="pt").to(device)
+        prompt = processor.apply_chat_template(
+            messages, add_generation_prompt=False)
+        inputs = processor(
+            text=prompt,
+            images=image,
+            return_tensors="pt").to(device)
 
         generated_ids = model.generate(**inputs, max_new_tokens=256)
         generated_text = processor.batch_decode(
-            generated_ids, 
+            generated_ids,
             skip_special_tokens=True
         )
 
-        # print(f"\033[1;34m[VLM]\033[0m", generated_text[0])
-        
         return generated_text[0]
 
     except Exception as e:
-        error_msg = f"An unexpected error occurred during VLM processing: {type(e).__name__}: {e}"
+        error_msg = f"Error occurred during VLM processing: {
+            type(e).__name__}: {e}"
         print_error_message(error_msg)
-        return f"I'm sorry, an unexpected error occurred while processing the image: {error_msg}. Please try again."
+        return (f"Error occurred while processing the image:"
+                f"{error_msg}. Please try again.")

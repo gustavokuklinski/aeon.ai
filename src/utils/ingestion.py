@@ -21,14 +21,53 @@ from src.libs.messages import (
 )
 
 
-def ingestDocuments(  # noqa: C901
+def _load_single_file(path: Path) -> list[Document]:
+    """Load a single document based on its file extension."""
+    if path.suffix.lower() == ".md":
+        loader = UnstructuredMarkdownLoader(str(path))
+    elif path.suffix.lower() == ".txt":
+        print_info_message("Detected .txt file. Loading as plain text.")
+        loader = TextLoader(str(path))
+    elif path.suffix.lower() == ".json":
+        print_info_message(
+            "Detected .json file. Loading with custom JSON plaintext loader.")
+        loader = JsonPlaintextLoader(str(path))
+    else:
+        print_info_message(
+            "Attempting to load with UnstructuredFileLoader for unknown type.")
+        loader = UnstructuredFileLoader(str(path))
+    return loader.load()
+
+
+def _load_directory_documents(path: Path) -> list[Document]:
+
+    all_documents = []
+
+    md_loader = DirectoryLoader(
+        str(path), glob="**/*.md", loader_cls=UnstructuredMarkdownLoader)
+    all_documents.extend(md_loader.load())
+
+    txt_loader = DirectoryLoader(
+        str(path), glob="**/*.txt", loader_cls=TextLoader)
+    all_documents.extend(txt_loader.load())
+
+    json_files = list(path.glob("**/*.json"))
+    for json_file in json_files:
+        print_info_message(
+            f"Found JSON file: '{json_file}'. "
+            "Loading with custom JSON plaintext loader.")
+        json_loader = JsonPlaintextLoader(str(json_file))
+        all_documents.extend(json_loader.load())
+
+    return all_documents
+
+
+def ingestDocuments(
         path_to_ingest: str,
         vectorstore: Chroma,
         text_splitter: RecursiveCharacterTextSplitter,
-        embeddings: LlamaCppEmbeddings,
-        batch_size: int = 32):
+        embeddings: LlamaCppEmbeddings):
 
-    ingested_documents = []
     path = Path(path_to_ingest)
 
     if not path.exists():
@@ -37,57 +76,16 @@ def ingestDocuments(  # noqa: C901
 
     try:
         if path.is_file():
-            print_info_message(f"Ingesting single file: '{path_to_ingest}'")
-            if path.suffix.lower() == ".md":
-                loader = UnstructuredMarkdownLoader(str(path))
-                ingested_documents.extend(loader.load())
-            elif path.suffix.lower() == ".txt":
-                print_info_message(
-                    "Detected .txt file. Loading as plain text.")
-                loader = TextLoader(str(path))
-                ingested_documents.extend(loader.load())
-            elif path.suffix.lower() == ".json":
-                print_info_message(
-                    "Detected .json file."
-                    " Loading with custom JSON plaintext loader.")
-                loader = JsonPlaintextLoader(str(path))
-                ingested_documents.extend(loader.load())
-            else:
-                print_info_message(
-                    "Attempting to load with"
-                    " UnstructuredFileLoader for unknown type.")
-                loader = UnstructuredFileLoader(str(path))
-                ingested_documents.extend(loader.load())
-
+            print_info_message(
+                f"Ingesting single file: '{path_to_ingest}'")
+            ingested_documents = _load_single_file(path)
         elif path.is_dir():
             print_info_message(
                 f"Ingesting documents from directory: '{path_to_ingest}'")
-
-            md_loader = DirectoryLoader(
-                str(path),
-                glob="**/*.md",
-                loader_cls=UnstructuredMarkdownLoader)
-            ingested_documents.extend(md_loader.load())
-
-            txt_loader = DirectoryLoader(
-                str(path), glob="**/*.txt", loader_cls=TextLoader)
-            ingested_documents.extend(txt_loader.load())
-
-            json_files = list(path.glob("**/*.json"))
-            for json_file in json_files:
-                print_info_message(
-                    f"Found JSON file: '{json_file}'. "
-                    "Loading with custom JSON plaintext loader.")
-                json_loader = JsonPlaintextLoader(str(json_file))
-                ingested_documents.extend(json_loader.load())
-
-            if not ingested_documents:
-                print_note_message(
-                    "No .md, .txt, or .json files found in "
-                    f"'{path_to_ingest}'.")
+            ingested_documents = _load_directory_documents(path)
         else:
             print_error_message(
-                f" Invalid path type: '{path_to_ingest}'. "
+                f"Invalid path type: '{path_to_ingest}'. "
                 "Please provide a file or a directory.")
             return
 
@@ -96,14 +94,13 @@ def ingestDocuments(  # noqa: C901
                 f"No documents found to ingest at '{path_to_ingest}'.")
             return
 
-        print_info_message(f" Loaded {len(ingested_documents)} new documents.")
+        print_info_message(f"Loaded {len(ingested_documents)} new documents.")
         new_chunks = text_splitter.split_documents(ingested_documents)
-        print_info_message(f" Split into {len(new_chunks)} chunks.")
+        print_info_message(f"Split into {len(new_chunks)} chunks.")
 
-        print_info_message(
-            " Adding new chunks to vector store (safe mode: 1 by 1)...")
+        print_info_message("Adding new chunks to "
+                           "vector store (safe mode: 1 by 1)...")
         success, failed = 0, 0
-
         for i, chunk in enumerate(new_chunks, start=1):
             try:
                 vectorstore.add_documents([chunk])
@@ -116,14 +113,13 @@ def ingestDocuments(  # noqa: C901
                 print_error_message(f" Failed on chunk {i}: {e}")
 
         print_info_message(
-            "Ingestion finished. "
-            f"Success: {success},"
-            f" Failed: {failed}, "
-            f"Total: {len(new_chunks)}")
+            f"Ingestion finished. Success: {success}, "
+            f"Failed: {failed}, Total: {len(new_chunks)}")
 
-        sample = new_chunks[0].page_content[:100].replace("\n", " ")
-        vec = embeddings.embed_query(sample)
-        print_info_message(f"Verified embedding vector size: {len(vec)}")
+        if new_chunks:
+            sample = new_chunks[0].page_content[:100].replace("\n", " ")
+            vec = embeddings.embed_query(sample)
+            print_info_message(f"Verified embedding vector size: {len(vec)}")
 
     except Exception as e:
         print_error_message(
@@ -135,7 +131,7 @@ def ingestConversationHistory(
         vectorstore,
         text_splitter,
         embeddings):
-
+    # This function is fine and does not need to be changed
     documents_to_ingest = []
     for turn in conversation_history:
         content = f"User: {turn.get('user', '')}\nAEON: {turn.get('aeon', '')}"
@@ -153,4 +149,5 @@ def ingestConversationHistory(
                 f"Failed to add conversation chunks to vector store: {e}")
     else:
         print_note_message(
-            "No new chunks were created from the conversation history.")
+            "No new chunks were created "
+            "from the conversation history.")

@@ -288,9 +288,8 @@ def main():  # noqa: C901
                     aeon_chunks = text_splitter.split_documents([aeon_doc])
 
                     if aeon_chunks:
-                        print_info_message(
-                            f"Generated {
-                                len(aeon_chunks)} chunks for ingestion.")
+                        print_info_message(f"Generated {len(aeon_chunks)} "
+                                           "chunks for ingestion.")
                         success_count = 0
                         for i, chunk in enumerate(aeon_chunks):
                             try:

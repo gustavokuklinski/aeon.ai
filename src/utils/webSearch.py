@@ -44,7 +44,10 @@ def webSearch(  # noqa: C901
             try:
                 search_doc = Document(
                     page_content=search_context,
-                    metadata={"source": "web_search", "query": search_query}
+                    metadata={
+                        "source": "web_search",
+                        "query": search_query
+                    }
                 )
                 search_chunks = text_splitter.split_documents([search_doc])
 

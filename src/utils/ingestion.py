@@ -146,8 +146,8 @@ def ingestConversationHistory(
         try:
             vectorstore.add_documents(new_chunks)
             print_success_message(
-                f"Successfully added {
-                    len(new_chunks)} conversation chunks to the vector store.")
+                f"Successfully added {len(new_chunks)} "
+                "conversation chunks to the vector store.")
         except Exception as e:
             print_error_message(
                 f"Failed to add conversation chunks to vector store: {e}")

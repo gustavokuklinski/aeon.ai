@@ -5,7 +5,7 @@
 The main focus is to be simple and lightweight, capable of running on a **CPU with at least 8GB of RAM** locally.
 
 ## Stats
-[![Python application](https://github.com/gustavokuklinski/aeon.ai/actions/workflows/python-app.yml/badge.svg)](https://github.com/gustavokuklinski/aeon.ai/actions/workflows/python-app.yml)
+[![Aeon build](https://github.com/gustavokuklinski/aeon.ai/actions/workflows/python-app.yml/badge.svg)](https://github.com/gustavokuklinski/aeon.ai/actions/workflows/python-app.yml)
 
 ### Summary
 

@@ -4,6 +4,8 @@ import sys
 import subprocess
 import shutil
 import textwrap
+import subprocess
+from pathlib import Path
 
 # --- Configuration ---
 VENV_DIR = "./.venv"
@@ -104,9 +106,34 @@ def run_preflight_checks(python_executable):
     print_boot_msg(" All pre-flight checks passed. Installation is complete.")
 
 
+PLUGINS_DIR = Path("plugins")
+
+
+def install_plugin_requirements():
+    print_boot_msg("Installing main application requirements...")
+    subprocess.run(["pip", "install", "-r", "requirements.txt"], check=True)
+
+    print_boot_msg("\nInstalling plugin requirements...")
+    if not PLUGINS_DIR.exists():
+        print_info_msg("No plugins directory found.")
+        return
+
+    for plugin_path in PLUGINS_DIR.iterdir():
+        if plugin_path.is_dir():
+            req_file = plugin_path / "requirements.txt"
+            if req_file.exists():
+                print_ok_msg(f"Installing dependencies for {plugin_path.name}...")
+                subprocess.run(["pip", "install", "-r", req_file], check=True)
+            else:
+                print_boot_msg(f"No requirements.txt found for {plugin_path.name}. Skipping.")
+
+
 if __name__ == "__main__":
     os.system("cls" if os.name == "nt" else "clear")
     print_boot_msg(" AEON Installer")
     
     python_executable, _ = manage_virtual_environment()
     run_preflight_checks(python_executable)
+    install_plugin_requirements()
+    print_boot_msg(" All installation done!")
+    print_boot_msg(" You can run: AEON with: > python ./aeon.py")

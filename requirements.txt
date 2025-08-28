@@ -10,13 +10,7 @@ beautifulsoup4
 python-magic
 filetype
 pyyaml
-diffusers
-transformers
-torch
-accelerate
-safetensors
 sentence-transformers
-Pillow
 llama-cpp-python
 markdown
 ddgs

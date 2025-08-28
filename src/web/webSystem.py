@@ -1,3 +1,4 @@
+# src/web/webSystem.py
 import os
 import sys
 from pathlib import Path
@@ -13,7 +14,6 @@ from src.config import (
     OUTPUT_DIR, MEMORY_DIR
 )
 from src.core.ragSystem import ragSystem
-from src.core.imgSystem import imgSystem
 from src.utils.new import newConversation
 from src.utils.conversation import loadConversation, saveConversation
 from src.libs.messages import print_info_message, print_error_message, print_success_message

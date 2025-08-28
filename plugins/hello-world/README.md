@@ -14,6 +14,7 @@ plugins/
 └── hello-world/
     ├── model/
     ├── config.yml
+    ├── requirements.txt
     └── main.py
 
 ```

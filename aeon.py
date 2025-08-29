@@ -2,7 +2,6 @@
 import os
 import sys
 import subprocess
-import textwrap
 
 # --- Configuration ---
 VENV_DIR = "./.venv"

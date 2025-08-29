@@ -2,7 +2,6 @@
 import os
 import sys
 import subprocess
-import shutil
 import textwrap
 import subprocess
 from pathlib import Path
@@ -11,6 +10,7 @@ from pathlib import Path
 VENV_DIR = "./.venv"
 REQUIREMENTS_FILE = "requirements.txt"
 CONFIG_FILE = "config.yml"
+PLUGINS_DIR = Path("plugins")
 
 # --- Helper Functions for Colored Output ---
 def colored_print(message, color_code):
@@ -74,41 +74,6 @@ def manage_virtual_environment():
 
     return python_executable, bin_dir
 
-def run_preflight_checks(python_executable):
-    """Runs checks for external tools and Python dependencies."""
-    print_boot_msg(" Running pre-flight checks...")
-
-    # 1. Verify 'config.yml' exists
-    print_info_msg(f" Checking for '{CONFIG_FILE}'...")
-    if not os.path.exists(CONFIG_FILE):
-        print_error_msg(f" Configuration file '{CONFIG_FILE}' not found. Please create it based on the example provided in the documentation.")
-    print_ok_msg(f" '{CONFIG_FILE}' found.")
-    
-    # 2. Verify core Python libraries (`llama-cpp-python` and others)
-    print_info_msg(" Checking for core Python dependencies...")
-    try:
-        subprocess.run(
-            [python_executable, "-c", "import llama_cpp, langchain_chroma, diffusers, torch"],
-            check=True,
-            capture_output=True,
-            text=True
-        )
-        print_ok_msg(" All core dependencies found.")
-    except subprocess.CalledProcessError as e:
-        print_error_msg(textwrap.dedent(f"""
-            Core dependencies are not installed or are incomplete within the virtual environment.
-            Error: {e.stderr.strip()}
-            Please ensure you have run: 'pip install -r {REQUIREMENTS_FILE}' successfully.
-        """))
-    except FileNotFoundError:
-        print_error_msg(f"Python executable not found at '{python_executable}'. Virtual environment might be corrupted.")
-
-    print_boot_msg(" All pre-flight checks passed. Installation is complete.")
-
-
-PLUGINS_DIR = Path("plugins")
-
-
 def install_plugin_requirements():
     print_boot_msg("Installing main application requirements...")
     subprocess.run(["pip", "install", "-r", "requirements.txt"], check=True)
@@ -127,6 +92,42 @@ def install_plugin_requirements():
             else:
                 print_boot_msg(f"No requirements.txt found for {plugin_path.name}. Skipping.")
 
+def run_preflight_checks(python_executable):
+    """Runs checks for external tools and Python dependencies."""
+    print_boot_msg(" Running pre-flight checks...")
+
+    # 1. Verify 'config.yml' exists
+    print_info_msg(f" Checking for '{CONFIG_FILE}'...")
+    if not os.path.exists(CONFIG_FILE):
+        print_error_msg(f" Configuration file '{CONFIG_FILE}' not found. "
+                        "Please create it based on the example provided in the documentation.")
+    print_ok_msg(f" '{CONFIG_FILE}' found.")
+    
+    # 2. Verify core Python libraries (`llama-cpp-python` and others)
+    print_info_msg(" Checking for core Python dependencies...")
+    try:
+        subprocess.run(
+            [python_executable, "-c", "import llama_cpp, langchain_chroma"],
+            check=True,
+            capture_output=True,
+            text=True
+        )
+        print_ok_msg(" All core dependencies found.")
+    except subprocess.CalledProcessError as e:
+        print_error_msg(textwrap.dedent(f"""
+            Core dependencies are not installed or are incomplete within the virtual environment.
+            Error: {e.stderr.strip()}
+            Please ensure you have run: 'pip install -r {REQUIREMENTS_FILE}' successfully.
+        """))
+    except FileNotFoundError:
+        print_error_msg("Python executable not found at "
+                        f"'{python_executable}'. Virtual environment "
+                        "might be corrupted.")
+
+    install_plugin_requirements()
+    print_boot_msg(" All pre-flight checks passed. Installation is complete.")
+
+
 
 if __name__ == "__main__":
     os.system("cls" if os.name == "nt" else "clear")
@@ -134,6 +135,3 @@ if __name__ == "__main__":
     
     python_executable, _ = manage_virtual_environment()
     run_preflight_checks(python_executable)
-    install_plugin_requirements()
-    print_boot_msg(" All installation done!")
-    print_boot_msg(" You can run: AEON with: > python ./aeon.py")

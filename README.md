@@ -9,11 +9,9 @@ Know more about Aeon: [DOCS](https://github.com/gustavokuklinski/aeon.ai/blob/ma
 
 ## Installation
 
-AEON uses Python and requires a virtual environment.
+AEON uses Python with virtual environment and `git lfs` installed.
 
-Use the script `./aeon.py` to set up your virtual environment and install all necessary pip dependencies.
-
-Before cloning, make sure you have `git lfs` installed.
+Use the script `./install.py` to set up your virtual environment and install all necessary pip dependencies.
 
 ```shell
 /$ git lfs install

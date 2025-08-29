@@ -23,7 +23,6 @@ hr {
     padding: 20px;
     display: flex;
     flex-direction: column;
-    border-right: 1px solid #750000;
 }
 .sidebar h2 {
     margin-top: 0;
@@ -93,7 +92,26 @@ hr {
     display: flex;
     flex-direction: column;
     scroll-behavior: auto;
+    /* Custom scrollbar for chat-box */
+    scrollbar-width: thin; /* Firefox */
+    scrollbar-color: #b30000 #1e1e1e; /* Firefox thumb and track color */
 }
+
+/* Webkit scrollbar styles for chat-box */
+.chat-box::-webkit-scrollbar {
+    width: 10px;
+}
+.chat-box::-webkit-scrollbar-track {
+    background: #1e1e1e; /* Darker track */
+    border-radius: 10px;
+}
+.chat-box::-webkit-scrollbar-thumb {
+    background-color: #b30000; /* Red thumb */
+    border-radius: 10px;
+    border: 2px solid #1e1e1e; /* Border around thumb */
+}
+
+
 .message {
     margin-bottom: 10px;
     padding: 8px 12px;

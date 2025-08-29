@@ -1,8 +1,8 @@
 # Windows 11
 
 ## Requirements:
-* Command line tool
-* GIT with GIT LFS
+* Command line tool (cmd)
+* GIT with GIT LFS enabled to download large files
 * Python 3.11 or later (remember to `Add python to PATH` option enabled and `Disable path lenght limit` during install)
 * Microsoft C++ Build Tools - Install: `Desktop development with C++` package
 

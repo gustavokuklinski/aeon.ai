@@ -1,9 +1,9 @@
-# src/web/webSystem.py
 import os
 import sys
 from pathlib import Path
 from flask import Flask, render_template, request, jsonify, url_for, send_from_directory, redirect
 import json
+import shutil 
 
 # Add the parent directory to the Python path to import from 'core' and 'utils'
 project_root = Path(__file__).parent.parent.parent
@@ -11,7 +11,10 @@ sys.path.append(str(project_root))
 
 # Import core modules from your project
 from src.config import (
-    OUTPUT_DIR, MEMORY_DIR
+    OUTPUT_DIR, 
+    MEMORY_DIR,
+    LLM_MODEL,
+    EMB_MODEL
 )
 from src.core.ragSystem import ragSystem
 from src.utils.new import newConversation
@@ -82,7 +85,14 @@ def initialize_rag_system(conv_id):
 @app.route("/")
 def index():
     """Render the main chat interface."""
-    return render_template("index.html", initial_conv_id=None, initial_history=[])
+    return render_template(
+        "index.html",
+        initial_conv_id=None,
+        initial_history=[],
+        llm_model=str(LLM_MODEL), # Pass as string
+        llm_embeding=str(EMB_MODEL), # Pass as string
+        config_memory_dir=str(MEMORY_DIR)   # Pass as string
+        )
 
 
 @app.route("/chat/<string:conv_id>")
@@ -113,7 +123,6 @@ def new_chat_route():
         print_error_message(f"An exception occurred while creating new conversation: {e}")
         return jsonify({"message": f"Failed to create new conversation: {e}"}), 500
 
-
 @app.route("/chat", methods=["POST"])
 def chat():
     data = request.get_json()
@@ -130,7 +139,9 @@ def chat():
             if not session_vars or "conv_id" not in session_vars:
                 return jsonify({"response": "Failed to create a new conversation for your message."}), 500
             conv_id = session_vars["conv_id"]
+
         except Exception as e:
+            print_error_message(f"Failed to create new conversation for your message: {e}")
             return jsonify({"response": f"Failed to create new conversation for your message: {e}"}), 500
     
     # Initialize RAG system for the current or new conversation
@@ -175,6 +186,21 @@ def get_conversation_history(conv_id):
     except Exception as e:
         return jsonify({"message": f"An error occurred while loading history: {e}"}), 500
 
+@app.route('/delete_conversation/<string:conv_id>', methods=["DELETE"])
+def delete_conversation_route(conv_id):
+    """Deletes a conversation folder and its contents."""
+    conv_dir_path = abs_memory_dir / conv_id
+    if not conv_dir_path.is_dir():
+        print_error_message(f"Conversation directory for ID '{conv_id}' not found for deletion.")
+        return jsonify({"message": "Conversation not found."}), 404
+    
+    try:
+        shutil.rmtree(conv_dir_path)
+        print_success_message(f"Successfully deleted conversation directory: {conv_id}")
+        return jsonify({"message": "Conversation deleted successfully."}), 200
+    except Exception as e:
+        print_error_message(f"Error deleting conversation '{conv_id}': {e}")
+        return jsonify({"message": f"Failed to delete conversation: {e}"}), 500
 
 @app.route('/serve_from_memory/<folder>/<path:filename>')
 def serve_from_memory(folder, filename):

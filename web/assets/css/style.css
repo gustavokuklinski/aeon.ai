@@ -7,6 +7,13 @@ body {
     display: flex;
     min-height: 100vh;
 }
+hr {
+    border-top: 1px solid #750000;
+  border-bottom: none;
+}
+.info-message-box {
+    color: #c0c0c0;
+}
 .links {
     color: #da0202
 }
@@ -35,12 +42,16 @@ body {
     cursor: pointer;
     color: #fff;
     text-transform: uppercase;
+    display: flex; /* Make it a flex container */
+    justify-content: space-between; /* Space out content and button */
+    align-items: center; /* Vertically align items */
+    border-radius: 8px;
 }
 .sidebar-list li:hover {
     background-color: #950000;
 }
 .sidebar-list .active {
-    background-color: #600; /* A lighter blue to indicate active state */
+    background-color: #600;
     font-weight: bold;
 }
 .sidebar-button {
@@ -52,6 +63,7 @@ body {
     cursor: pointer;
     margin-top: 10px;
     margin-bottom: 20px;
+    border-radius: 8px;
 }
 .sidebar-button:hover {
     background-color: #950000;
@@ -64,14 +76,14 @@ body {
     justify-content: center;
     padding: 20px;
     background: #222;
+
 }
 .container {
     width: 100%;
-    height: 100%;
-    border-radius: 8px;
     display: flex;
     flex-direction: column;
-    max-width: 80%;
+    max-width: 800px;
+    max-height: 90vh;
 }
 .chat-box {
     flex-grow: 1;
@@ -80,19 +92,47 @@ body {
     margin-bottom: 10px;
     display: flex;
     flex-direction: column;
+    scroll-behavior: auto;
 }
 .message {
     margin-bottom: 10px;
     padding: 8px 12px;
     line-height: 1.4;
+
+    display: flex;
+    align-items: flex-start; /* Aligns items to the top of the flex container */
+    gap: 8px; /* Gap between avatar/icon and text */
+    background: #2b2b2b; /* Background for the message bubble */
+    border-radius: 8px; /* Rounded corners for the message bubble */
+    max-width: 80%; /* Limit message width */
+    word-wrap: break-word; /* Ensure long words break */
+
 }
 .user-message {
-    color: #999999;
-    align-self: flex-start;
+    color: #c5c5c5;
+    align-self: flex-end;
 }
+
+
 .bot-message {
     color: #fff;
     align-self: flex-start;
+}
+.message-content-wrapper {
+    display: flex;
+    align-items: flex-start; /* Changed from center to flex-start */
+}
+.user-message-avatar {
+    width: 24px;
+    height: 24px;
+    /* margin-left: 8px; - Replaced by gap on .message */
+    flex-shrink: 0;
+}
+.aeon-message-icon {
+    width: 24px; /* Adjust size as needed */
+    height: 24px; /* Adjust size as needed */
+    margin-right: 8px; /* Space between icon and text */
+    margin-top: 0;
 }
 .chat-controls-container {
     display: flex;
@@ -102,6 +142,7 @@ body {
 .input-container {
     display: flex;
     gap: 10px;
+    
 }
 #message-input {
     flex-grow: 1;
@@ -109,10 +150,18 @@ body {
     border: none;
     background: #393939;
     color: #fff;
+    outline: none;
+    border-radius: 8px;
+    font-size:16px;
 }
+
+#message-input:disabled {
+    background: #393939;
+}
+
 .main-button {
     padding: 10px 15px;
-    background-color: #600;
+    background:none;
     color: #fff;
     border: none;
     cursor: pointer;
@@ -122,19 +171,39 @@ body {
 }
 
 .loading-spinner {
-    border: 4px solid rgba(0, 0, 0, 0.1);
-    width: 36px;
-    height: 36px;
+    border: 4px solid rgba(112, 112, 112, 0.555);
+    width: 20px;
+    height: 20px;
     border-radius: 50%;
-    border-left-color: #09f;
+    border-top-color: #950000;
     animation: spin 1s ease infinite;
-    display: none; /* Initially hidden */
-    margin: 10px auto;
+    display: block;
+    margin: 5px 0 5px 15px;
+    align-self: flex-start;
+    flex-shrink: 0;
+    box-sizing: content-box;
 }
+
+.delete-conversation-button {
+    background: none;
+    border: none;
+    color: #ffffff; /* Red color for trash icon */
+    cursor: pointer;
+    padding: 5px;
+    margin-left: 10px; /* Space between text and icon */
+    display: flex;
+    align-items: center;
+}
+
+.delete-conversation-button:hover {
+    color: #410909; /* Lighter red on hover */
+}
+
 @keyframes spin {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
 }
+
 img {
     max-width: 100%;
     border-radius: 8px;

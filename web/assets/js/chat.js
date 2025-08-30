@@ -4,8 +4,11 @@ const sendButton = document.getElementById('send-button');
 const loadingSpinner = document.getElementById('loading-spinner');
 const conversationList = document.getElementById('conversation-list');
 const newChatButton = document.getElementById('new-chat-button');
+const startButton = document.getElementById('start-button');
 const chatControlsContainer = document.getElementById('chat-controls-container');
 const infoMessageBox = document.getElementById('infoMessageBox'); // Get reference to the static div
+const menuButton = document.getElementById('hamburger-menu');
+const sidebar = document.querySelector('.sidebar');
 
 const originalMessagePlaceholder = messageInput.placeholder;
 
@@ -13,6 +16,9 @@ const originalMessagePlaceholder = messageInput.placeholder;
 // processed by the Jinja templating engine.
 let currentConversationId = window.currentConversationId;
 let initialHistory = window.initialHistory;
+
+// The start button now correctly navigates to the home page
+startButton.addEventListener('click', () => { window.location.href = '/'; });
 
 // Function to disable chat controls
 function disableControls() {
@@ -28,6 +34,7 @@ function enableControls() {
     messageInput.disabled = false;
     sendButton.disabled = false;
     messageInput.placeholder = originalMessagePlaceholder;
+    messageInput.focus(); // Added this line to automatically focus the input
     // fileInput.disabled = false; // Uncomment if you re-add file input
     // uploadButton.disabled = false; // Uncomment if you re-add file input
 }
@@ -126,6 +133,7 @@ async function sendMessage() {
         console.error('Error:', error);
         addMessage('An error occurred. Please try again.', 'bot');
     } finally {
+        // This is the key part: re-enable controls whether the request succeeded or failed
         loadingSpinner.style.display = 'none';
         enableControls(); // Always re-enable controls
     }
@@ -148,6 +156,18 @@ async function loadConversations() {
                 listItem.classList.add('conversation-item'); // Add class for styling
                 listItem.setAttribute('data-id', conv.id);
 
+                // Create avatar canvas for the sidebar list item
+                const userAvatarCanvas = document.createElement('canvas');
+                userAvatarCanvas.classList.add('user-message-avatar');
+                generateAvatar(userAvatarCanvas, conv.id); // Use conv.id as seed
+                
+                // Add click event to the avatar too
+                userAvatarCanvas.addEventListener('click', () => {
+                    window.location.href = `/chat/${conv.id}`;
+                });
+
+                listItem.appendChild(userAvatarCanvas);
+
                 const conversationName = document.createElement('span');
                 conversationName.textContent = conv.name;
                 conversationName.addEventListener('click', () => {
@@ -167,6 +187,8 @@ async function loadConversations() {
                     deleteConversation(conv.id);
                 });
                 listItem.appendChild(deleteButton);
+
+            
 
 
                 if (currentConversationId && currentConversationId !== 'None' && conv.id === currentConversationId) {
@@ -198,7 +220,31 @@ async function loadConversations() {
 
 // Function to handle deleting a conversation
 async function deleteConversation(convIdToDelete) {
-    if (!confirm(`Are you sure you want to delete conversation ${convIdToDelete}? This action cannot be undone.`)) {
+    const userConfirmed = await new Promise((resolve) => {
+        const modal = document.createElement('div');
+        modal.className = 'confirm-modal';
+        modal.innerHTML = `
+            <div class="confirm-modal-content">
+                <p>Are you sure you want to delete this conversation? This action cannot be undone.</p>
+                <div class="confirm-modal-buttons">
+                    <button id="confirm-yes">Yes</button>
+                    <button id="confirm-no">No</button>
+                </div>
+            </div>
+        `;
+        document.body.appendChild(modal);
+
+        document.getElementById('confirm-yes').onclick = () => {
+            document.body.removeChild(modal);
+            resolve(true);
+        };
+        document.getElementById('confirm-no').onclick = () => {
+            document.body.removeChild(modal);
+            resolve(false);
+        };
+    });
+
+    if (!userConfirmed) {
         return; // User cancelled
     }
 
@@ -219,11 +265,19 @@ async function deleteConversation(convIdToDelete) {
             }
         } else {
             const data = await response.json();
-            alert(data.message || 'Failed to delete conversation.');
+            const messageBox = document.createElement('div');
+            messageBox.className = 'info-message-box';
+            messageBox.textContent = data.message || 'Failed to delete conversation.';
+            chatBox.appendChild(messageBox);
+            setTimeout(() => chatBox.removeChild(messageBox), 3000); // Remove after 3 seconds
         }
     } catch (error) {
         console.error('Error deleting conversation:', error);
-        alert('An error occurred during deletion.');
+        const messageBox = document.createElement('div');
+        messageBox.className = 'info-message-box';
+        messageBox.textContent = 'An error occurred during deletion.';
+        chatBox.appendChild(messageBox);
+        setTimeout(() => chatBox.removeChild(messageBox), 3000); // Remove after 3 seconds
     } finally {
         loadingSpinner.style.display = 'none';
         enableControls(); // Always re-enable controls
@@ -265,6 +319,11 @@ messageInput.addEventListener('keypress', (e) => {
 });
 
 newChatButton.addEventListener('click', startNewChat);
+
+// Hamburger menu toggle
+menuButton.addEventListener('click', () => {
+    sidebar.classList.toggle('active');
+});
 
 // Load conversation on page load
 document.addEventListener('DOMContentLoaded', async () => { // Changed to async

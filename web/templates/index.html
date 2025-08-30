@@ -4,16 +4,36 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AEON</title>
-    <link rel="icon" href="/assets/img/aeon-icon.png" type="image/png">
+    <link rel="icon" href="/assets/img/aeon-favicon.png" type="image/png">
     <link rel="stylesheet" href="/assets/css/style.css">
 </head>
 <body>
-   
-    <div class="sidebar">
-        <h2><img src="/assets/img/aeon-logo.png" /></h2>
-        <a class="links" href="/">[START]</a>
-        <button id="new-chat-button" class="sidebar-button">NEW CHAT</button>
-        <ul id="conversation-list" class="sidebar-list"></ul>
+   <div id="hamburger-menu" class="hamburger-menu">
+        <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-menu">
+            <line x1="4" x2="20" y1="12" y2="12"></line>
+            <line x1="4" x2="20" y1="6" y2="6"></line>
+            <line x1="4" x2="20" y1="18" y2="18"></line>
+        </svg>
+    </div>
+     <div class="sidebar">
+        <h2><img src="/assets/img/aeon-logo.png" class="logo" /></h2>
+        
+        
+        <button id="new-chat-button" class="sidebar-button">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-plus">
+                <path d="M5 12h14"/>
+                <path d="M12 5v14"/>
+            </svg></button>
+        <div class="sidebar-list-wrapper">
+            <ul id="conversation-list" class="sidebar-list"></ul>
+        </div>
+
+        <button id="start-button" class="sidebar-button">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-home">
+                <path d="M3 12L12 3L21 12"/>
+                <path d="M7 15V21H17V15"/>
+            </svg>
+        </button>
     </div>
 
     <div class="main-content">
@@ -28,7 +48,10 @@
                             <strong>Welcome to AEON!</strong><br>
                             <p><strong>To get started:</strong></p>
                             <ul>
-                                <li>Click <b>'NEW CHAT'</b> in the sidebar to begin a new discussion.</li>
+                                <li>Click <b><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-plus">
+                <path d="M5 12h14"/>
+                <path d="M12 5v14"/>
+            </svg></b> in the sidebar to begin a new discussion.</li>
                                 <li>Your chats will be listed here, identified by unique IDs.</li>
                                 <li>Click on a chat ID to resume an existing conversation.</li>
                                 <li>Delete a conversation using the trash icon next to it.</li>

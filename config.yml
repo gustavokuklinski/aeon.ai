@@ -1,5 +1,5 @@
 llm_config:
-  model: ./data/cerebrum/llm/SmolLM2-360M-Instruct-Q8_0.gguf
+  model: ./data/model/SmolLM2-360M-Instruct-Q8_0.gguf
   temperature: 0.5
   n_ctx: 4096
   top_k: 40
@@ -19,7 +19,7 @@ llm_config:
     You will ensure your response does not echo the QUESTION or CONTEXT in your final answer.\nCONTEXT: {context}
 
 emb_config:
-  model: ./data/cerebrum/llm/all-MiniLM-L6-v2-Q8_0.gguf
+  model: ./data/model/all-MiniLM-L6-v2-Q8_0.gguf
   n_ctx: 256
   chunk_size: 20
   chunk_overlap: 0

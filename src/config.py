@@ -8,9 +8,9 @@ from src.libs.messages import (
 )
 
 # Configuration
-MEMORY_DIR = "./data/memory"
-INPUT_DIR = "./data/cerebrum/system"
-CHROMA_DB_DIR = "./data/cerebrum/memory"
+MEMORY_DIR = "./data/chats"
+INPUT_DIR = "./data/input"
+CHROMA_DB_DIR = "./data/chats"
 BACKUP_DIR = "./data/output/backup"
 OUTPUT_DIR = "./data/output"
 CONFIG_FILE = "./config.yml"

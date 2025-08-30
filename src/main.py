@@ -18,6 +18,7 @@ from src.utils.list import listConversations
 from src.utils.open import openConversation
 from src.utils.new import newConversation
 from src.utils.load import loadIngestConversation
+from src.utils.delete import deleteConversation
 
 from src.libs.plugins import PluginManager
 from src.libs.messages import (
@@ -159,6 +160,8 @@ def _handle_rag_chat(user_input, session_vars):
     except Exception as e:
         print_error_message(f"An error occurred during RAG processing: {e}")
 
+def _handle_delete(user_input, session_vars):
+    deleteConversation(user_input, session_vars)
 
 def main():
     project_root = Path(__file__).parent.parent
@@ -184,6 +187,7 @@ def main():
         "/zip": _handle_zip,
         "/load": _handle_load,
         "/search": _handle_search,
+        "/delete": _handle_delete,
         "/open": lambda user_input,
         sv: (
             sv.update(
@@ -246,6 +250,7 @@ def main():
                 "/open",
                 "/ingest",
                 "/load",
+                "/delete",
                 "/search"]:
                 command_handlers[command](user_input, session_vars)
             elif command in ["/zip", "/new", "/help",

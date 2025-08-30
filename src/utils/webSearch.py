@@ -19,16 +19,21 @@ from src.libs.messages import (
 def _perform_search_and_get_context(search_query: str) -> str:
 
     print_info_message(f"Searching DuckDuckGo for: '{search_query}'...")
-    search_results = DDGS().text(query=search_query,
-                                 safesearch='off', max_results=5)
+    search_results = DDGS().text(query=search_query, backend='duckduckgo',
+                                 safesearch='on', max_results=5)
     search_context = ""
+    search_links = []
     if search_results:
         for i, result in enumerate(search_results):
             if i >= 3:
                 break
             search_context += f"{result.get('body', 'N/A')}\n\n"
+            search_links.append({
+                "title": result.get('title', 'N/A'),
+                "href": result.get('href', 'N/A')
+            })
         print_info_message("DuckDuckGo search results obtained.")
-    return search_context
+    return search_context, search_links
 
 
 def _ingest_search_results(
@@ -106,8 +111,16 @@ def _generate_summary(
     )
     summary_response = llm_instance.invoke(formatted_summary_input)
     print_success_message("Search results summarized.")
+    
     return summary_response
 
+def _print_search_links(search_links: list):
+    """
+    Prints the search result titles and URLs in a formatted list.
+    """
+    for link in search_links:
+        print_info_message(f"[WEBSEARCH] {link['title']}")
+        print_info_message(f"[WEBSEARCH LINK] {link['href']}")
 
 def webSearch(
         search_query: str,
@@ -116,7 +129,7 @@ def webSearch(
         vectorstore: Chroma) -> str:
 
     try:
-        search_context = _perform_search_and_get_context(search_query)
+        search_context,search_links = _perform_search_and_get_context(search_query)
 
         if not search_context:
             print_info_message("No relevant search results found.")
@@ -135,7 +148,13 @@ def webSearch(
                 "the logs for details."
             )
 
-        return _generate_summary(search_context, search_query, llm_instance)
+        summary = _generate_summary(search_context, search_query, llm_instance)
+        
+        # Print the links after the summary is generated
+        _print_search_links(search_links)
+
+        return summary
+
 
     except Exception as e:
         print_error_message(

@@ -5,6 +5,7 @@ src/__pycache__/
 src/core/__pycache__/
 src/utils/__pycache__/
 src/libs/__pycache__/
+
 plugins/tiny-sd/__pycache__/
 plugins/smolvlm-256m-instruct/__pycache__/
 plugins/hello-world/__pycache__/
@@ -14,9 +15,9 @@ plugins/hello-world/__pycache__/
 /data/output/*.png
 /data/output/backup/*.zip
 
-/data/memory/*/
-/data/memory/*.json
-/data/memory/*.sqlite3
+/data/chats/*/
+/data/chats/*/*.json
+/data/chats/*/*.sqlite3
 
 /data/cerebrum/temp/*.json
 /data/cerebrum/temp/*.txt

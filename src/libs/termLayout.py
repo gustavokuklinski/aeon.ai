@@ -18,16 +18,17 @@ def printAeonLayout():
 def printAeonCmd():
     print("Commands to use:")
     print_command_message("'/help' show this screen.")
-    print_command_message("'/new' Create a new conversation.")
-    print_command_message("'/list' list all conversation.")
-    print_command_message("'/open <NUMBER>' open conversation.")
-    print_command_message("'/load <NUMBER>' ingest previous conversation.")
+    print_command_message("'/new' Create a new chat.")
+    print_command_message("'/list' list all chats.")
+    print_command_message("'/open <NUMBER>' open chat.")
+    print_command_message("'/load <NUMBER>' ingest previous chat.")
+    print_command_message("'/delete <NUMBER>' Delete selected chat.")
     print_command_message("'/ingest <PATH> | <PATH><filename.json,txt,md>'"
                           "to add documents to RAG.")
     print_command_message("'/zip' backup contents to a timestamped zip file.")
     print_command_message("'/search' <TERM>' make web search with DuckDuckGo")
     print_command_message("'/quit', '/exit' or '/bye'"
-                          "to end the conversation.")
+                          "to end the chat.")
 
 
 def printAeonModels():

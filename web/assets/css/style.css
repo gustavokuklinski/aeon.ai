@@ -33,24 +33,22 @@ hr {
 .sidebar-list-wrapper {
     flex-grow: 1;
     overflow-y: auto;
-    /* Custom scrollbar for sidebar */
-    scrollbar-width: thin; /* Firefox */
-    scrollbar-color: #b30000 #1e1e1e; /* Firefox thumb and track color */
+    scrollbar-width: thin;
+    scrollbar-color: #b30000 #1e1e1e;
     height: 0;
 }
 
-/* Webkit scrollbar styles for sidebar */
 .sidebar-list-wrapper::-webkit-scrollbar {
     width: 10px;
 }
 .sidebar-list-wrapper::-webkit-scrollbar-track {
-    background: #1e1e1e; /* Darker track */
+    background: #1e1e1e;
     border-radius: 10px;
 }
 .sidebar-list-wrapper::-webkit-scrollbar-thumb {
-    background-color: #b30000; /* Red thumb */
+    background-color: #b30000;
     border-radius: 10px;
-    border: 2px solid #1e1e1e; /* Border around thumb */
+    border: 2px solid #1e1e1e;
 }
 
 
@@ -66,9 +64,9 @@ hr {
     cursor: pointer;
     color: #fff;
     text-transform: uppercase;
-    display: flex; /* Make it a flex container */
-    justify-content: space-between; /* Space out content and button */
-    align-items: center; /* Vertically align items */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     border-radius: 8px;
 }
 .sidebar-list li:hover {
@@ -117,23 +115,21 @@ hr {
     display: flex;
     flex-direction: column;
     scroll-behavior: auto;
-    /* Custom scrollbar for chat-box */
-    scrollbar-width: thin; /* Firefox */
-    scrollbar-color: #b30000 #1e1e1e; /* Firefox thumb and track color */
+    scrollbar-width: thin;
+    scrollbar-color: #b30000 #1e1e1e;
 }
 
-/* Webkit scrollbar styles for chat-box */
 .chat-box::-webkit-scrollbar {
     width: 10px;
 }
 .chat-box::-webkit-scrollbar-track {
-    background: #1e1e1e; /* Darker track */
+    background: #1e1e1e;
     border-radius: 10px;
 }
 .chat-box::-webkit-scrollbar-thumb {
-    background-color: #b30000; /* Red thumb */
+    background-color: #b30000;
     border-radius: 10px;
-    border: 2px solid #1e1e1e; /* Border around thumb */
+    border: 2px solid #1e1e1e;
 }
 
 
@@ -143,12 +139,12 @@ hr {
     line-height: 1.4;
 
     display: flex;
-    align-items: flex-start; /* Aligns items to the top of the flex container */
-    gap: 8px; /* Gap between avatar/icon and text */
-    background: #2b2b2b; /* Background for the message bubble */
-    border-radius: 8px; /* Rounded corners for the message bubble */
-    max-width: 80%; /* Limit message width */
-    word-wrap: break-word; /* Ensure long words break */
+    align-items: flex-start;
+    gap: 8px;
+    background: #2b2b2b;
+    border-radius: 8px;
+    max-width: 80%;
+    word-wrap: break-word;
 
 }
 .user-message {
@@ -163,7 +159,7 @@ hr {
 }
 .message-content-wrapper {
     display: flex;
-    align-items: flex-start; /* Changed from center to flex-start */
+    align-items: flex-start;
 }
 .user-message-avatar {
     width: 24px;
@@ -172,9 +168,9 @@ hr {
     flex-shrink: 0;
 }
 .aeon-message-icon {
-    width: 24px; /* Adjust size as needed */
-    height: 24px; /* Adjust size as needed */
-    margin-right: 8px; /* Space between icon and text */
+    width: 24px;
+    height: 24px;
+    margin-right: 8px;
     margin-top: 0;
 }
 .chat-controls-container {
@@ -230,16 +226,16 @@ hr {
 .delete-conversation-button {
     background: none;
     border: none;
-    color: #ffffff; /* Red color for trash icon */
+    color: #ffffff;
     cursor: pointer;
     padding: 5px;
-    margin-left: 10px; /* Space between text and icon */
+    margin-left: 10px;
     display: flex;
     align-items: center;
 }
 
 .delete-conversation-button:hover {
-    color: #410909; /* Lighter red on hover */
+    color: #410909; 
 }
 
 @keyframes spin {
@@ -328,7 +324,7 @@ img {
     .sidebar {
         position: fixed;
         top: 0;
-        left: -280px; /* Hide sidebar */
+        left: -280px;
         height: 95vh;
         transition: left 0.3s ease-in-out;
         z-index: 99;
@@ -337,6 +333,6 @@ img {
         left: 0;
     }
     .main-content {
-        padding-top: 70px; /* Add space for hamburger menu */
+        padding-top: 70px;
     }
 }

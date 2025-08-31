@@ -53,17 +53,21 @@ if PLUGINS_DIR.is_dir():
                         # Store the entire aeon_plugin section
                         if "aeon_plugin" in plugin_config:
                             # Use plugin's command or a unique identifier as key
-                            cmd = plugin_config["aeon_plugin"].get("command", plugin_path.name)
+                            cmd = plugin_config["aeon_plugin"].get(
+                                "command", plugin_path.name)
                             PLUGINS_CONFIGS[cmd] = {
                                 "config_data": plugin_config["aeon_plugin"],
-                                "plugin_dir": plugin_path # Store the plugin's root directory
+                                "plugin_dir": plugin_path  # Store the plugin's root directory
                             }
                         else:
-                            print_error_message(f"Missing 'aeon_plugin' key in {plugin_config_file}.")
+                            print_error_message(
+                                f"Missing 'aeon_plugin' key in {plugin_config_file}.")
                 except (FileNotFoundError, KeyError, yaml.YAMLError) as e:
-                    print_error_message(f"Error loading plugin config '{plugin_config_file}': {e}")
+                    print_error_message(
+                        f"Error loading plugin config '{plugin_config_file}': {e}")
             else:
-                print_info_message(f"Skipping plugin '{plugin_path.name}': config.yml not found.")
+                print_info_message(
+                    f"Skipping plugin '{plugin_path.name}': config.yml not found.")
 else:
     print_info_message(f"Plugins directory not found at {PLUGINS_DIR}.")
 

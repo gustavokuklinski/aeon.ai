@@ -37,13 +37,16 @@ from src.libs.messages import (
 def _load_initial_documents(input_dir_path: Path) -> list:
     """Loads documents from a specified input directory."""
     if not os.path.exists(input_dir_path):
-        print_error_message(f"Directory '{input_dir_path}' not found. Please create it.")
+        print_error_message(
+            f"Directory '{input_dir_path}' not found. Please create it.")
         sys.exit(1)
 
     print_info_message(f"Loading initial documents from: {input_dir_path}")
     documents = []
-    documents.extend(DirectoryLoader(str(input_dir_path), glob="**/*.md", loader_cls=UnstructuredMarkdownLoader).load())
-    documents.extend(DirectoryLoader(str(input_dir_path), glob="**/*.txt", loader_cls=TextLoader).load())
+    documents.extend(DirectoryLoader(str(input_dir_path),
+                     glob="**/*.md", loader_cls=UnstructuredMarkdownLoader).load())
+    documents.extend(DirectoryLoader(str(input_dir_path),
+                     glob="**/*.txt", loader_cls=TextLoader).load())
     for json_file in input_dir_path.glob("**/*.json"):
         documents.extend(JsonPlaintextLoader(str(json_file)).load())
     return documents
@@ -53,10 +56,13 @@ def _get_or_create_vectorstore(chroma_db_dir_path: Path, chunks: list, embedding
     """Loads an existing Chroma vector store or creates a new one with chunks."""
     batch_size = 32
     if chroma_db_dir_path.exists() and os.listdir(chroma_db_dir_path):
-        print_info_message(f"Loading existing vector store from {chroma_db_dir_path}...")
-        vectorstore = Chroma(persist_directory=str(chroma_db_dir_path), embedding_function=embeddings)
+        print_info_message(
+            f"Loading existing vector store from {chroma_db_dir_path}...")
+        vectorstore = Chroma(persist_directory=str(
+            chroma_db_dir_path), embedding_function=embeddings)
         if chunks:
-            print_info_message(f"Adding {len(chunks)} new chunks to vector store.")
+            print_info_message(
+                f"Adding {len(chunks)} new chunks to vector store.")
             for i, chunk in enumerate(chunks, start=1):
                 try:
                     vectorstore.add_documents([chunk])
@@ -68,19 +74,24 @@ def _get_or_create_vectorstore(chroma_db_dir_path: Path, chunks: list, embedding
     else:
         print_info_message(
             f"Vector store not found. Creating a new one at {chroma_db_dir_path}...")
-        vectorstore = Chroma(persist_directory=str(chroma_db_dir_path), embedding_function=embeddings)
+        vectorstore = Chroma(persist_directory=str(
+            chroma_db_dir_path), embedding_function=embeddings)
         if chunks:
-            print_info_message(f"Ingesting {len(chunks)} chunks into new vector store...")
+            print_info_message(
+                f"Ingesting {len(chunks)} chunks into new vector store...")
             for i in range(0, len(chunks), batch_size):
                 batch = chunks[i:i + batch_size]
                 try:
                     vectorstore.add_documents(batch)
-                    print_info_message(f"Ingested chunks {i + 1} to {min(i + batch_size, len(chunks))}.")
+                    print_info_message(
+                        f"Ingested chunks {i + 1} to {min(i + batch_size, len(chunks))}.")
                 except Exception as e:
-                    print_error_message(f"Failed to ingest batch starting at index {i}: {e}")
+                    print_error_message(
+                        f"Failed to ingest batch starting at index {i}: {e}")
             print_success_message("Initial document ingestion complete.")
         else:
-            print_info_message("No initial documents to ingest. Creating an empty vector store.")
+            print_info_message(
+                "No initial documents to ingest. Creating an empty vector store.")
         return vectorstore
 
 
@@ -99,7 +110,8 @@ def _initialize_models_and_chain(retriever, llm_model_path, system_prompt_templa
 
     qa_prompt = PromptTemplate.from_template(system_prompt_template)
     document_combiner = create_stuff_documents_chain(llm, qa_prompt)
-    rag_chain = {"context": retriever, "question": RunnablePassthrough()} | document_combiner
+    rag_chain = {"context": retriever,
+                 "question": RunnablePassthrough()} | document_combiner
     print_success_message("RAG chain assembled and ready.")
     return llm, rag_chain
 
@@ -118,16 +130,20 @@ def ragSystem(conversation_memory_path: Path,
     chunks = text_splitter.split_documents(documents)
 
     print_info_message(f"Loading embedding model: {EMB_MODEL}")
-    llama_embeddings = LlamaCppEmbeddings(model_path=EMB_MODEL, n_ctx=EMB_N_CTX, verbose=False)
+    llama_embeddings = LlamaCppEmbeddings(
+        model_path=EMB_MODEL, n_ctx=EMB_N_CTX, verbose=False)
 
     try:
-        test_vector = llama_embeddings.embed_query("Sanity check for embeddings.")
-        print_info_message(f"Embedding model loaded successfully. Vector length = {len(test_vector)}")
+        test_vector = llama_embeddings.embed_query(
+            "Sanity check for embeddings.")
+        print_info_message(
+            f"Embedding model loaded successfully. Vector length = {len(test_vector)}")
     except Exception as e:
         print_error_message(f"Failed to run embeddings: {e}")
         sys.exit(1)
 
-    vectorstore = _get_or_create_vectorstore(chroma_db_dir_path, chunks, llama_embeddings)
+    vectorstore = _get_or_create_vectorstore(
+        chroma_db_dir_path, chunks, llama_embeddings)
     retriever = vectorstore.as_retriever()
     llm, rag_chain = _initialize_models_and_chain(
         retriever,

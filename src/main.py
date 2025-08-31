@@ -2,7 +2,6 @@
 import os
 import sys
 from pathlib import Path
-from langchain_core.documents import Document
 
 from src.config import (
     OUTPUT_DIR,
@@ -160,8 +159,10 @@ def _handle_rag_chat(user_input, session_vars):
     except Exception as e:
         print_error_message(f"An error occurred during RAG processing: {e}")
 
+
 def _handle_delete(user_input, session_vars):
     deleteConversation(user_input, session_vars)
+
 
 def main():
     project_root = Path(__file__).parent.parent
@@ -176,7 +177,7 @@ def main():
     printAeonLayout()
     printAeonModels()
     print("\033[1;31m[Type /help to show commands]\033[0m")
-    plugin_manager = PluginManager(PLUGINS_DIR) 
+    plugin_manager = PluginManager(PLUGINS_DIR)
     print("\033[1;31m[STARTING AEON]\033[0m")
 
     # Command handlers dictionary
@@ -228,21 +229,18 @@ def main():
             if param_string:
                 expected_params = param_string.split()
                 num_expected = len(expected_params)
-                
                 query_parts = query.split(" ", num_expected - 1)
-                
+
                 if len(query_parts) < num_expected:
                     print_error_message(f"Usage: {command} {param_string}")
                     continue
-                
-                # Pass *query_parts as args, and output_dir_path as kwargs
-                plugin_manager.execute_command(command, *query_parts, output_dir=output_dir_path)
-            else:
-                # No parameters expected, just pass the full query (if any)
-                plugin_manager.execute_command(command, query, output_dir=output_dir_path)
-            
-            continue
 
+                plugin_manager.execute_command(
+                    command, *query_parts, output_dir=output_dir_path)
+            else:
+                plugin_manager.execute_command(
+                    command, query, output_dir=output_dir_path)
+            continue
 
         command = user_input.lower().split(" ")[0]
         if command in command_handlers:
@@ -251,10 +249,9 @@ def main():
                 "/ingest",
                 "/load",
                 "/delete",
-                "/search"]:
+                    "/search"]:
                 command_handlers[command](user_input, session_vars)
-            elif command in ["/zip", "/new", "/help",
-                             "/list", "/paths"]:
+            elif command in ["/zip", "/new", "/help", "/list", "/paths"]:
                 command_handlers[command](session_vars)
             else:
                 command_handlers[command]()

@@ -111,8 +111,9 @@ def _generate_summary(
     )
     summary_response = llm_instance.invoke(formatted_summary_input)
     print_success_message("Search results summarized.")
-    
+
     return summary_response
+
 
 def _print_search_links(search_links: list):
     """
@@ -122,6 +123,7 @@ def _print_search_links(search_links: list):
         print_info_message(f"[WEBSEARCH] {link['title']}")
         print_info_message(f"[WEBSEARCH LINK] {link['href']}")
 
+
 def webSearch(
         search_query: str,
         llm_instance: LlamaCpp,
@@ -129,7 +131,8 @@ def webSearch(
         vectorstore: Chroma) -> str:
 
     try:
-        search_context,search_links = _perform_search_and_get_context(search_query)
+        search_context, search_links = _perform_search_and_get_context(
+            search_query)
 
         if not search_context:
             print_info_message("No relevant search results found.")
@@ -149,12 +152,11 @@ def webSearch(
             )
 
         summary = _generate_summary(search_context, search_query, llm_instance)
-        
+
         # Print the links after the summary is generated
         _print_search_links(search_links)
 
         return summary
-
 
     except Exception as e:
         print_error_message(

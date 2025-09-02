@@ -11,15 +11,6 @@ from src.libs.messages import (
 from src.config import MEMORY_DIR
 
 def deleteConversation(user_input: str, session_vars: dict):
-    """
-    Deletes a conversation directory and its contents.
-
-    Args:
-        user_input (str): The full user input string, e.g., "/delete 1".
-        session_vars (dict): The dictionary containing session variables like
-                             `memory_dir_path` and `current_memory_path`.
-    """
-    # Parse the conversation ID from the user input
     try:
         command_parts = user_input.split(" ")
         if len(command_parts) < 2:
@@ -35,9 +26,7 @@ def deleteConversation(user_input: str, session_vars: dict):
 
         conversation_dirs = [d for d in memory_dir_path.iterdir() if d.is_dir() and not d.name.startswith('.')]
         
-        # Check if the current conversation is in the list of deletable conversations.
         if session_vars.get("current_memory_path") and session_vars["current_memory_path"] in conversation_dirs:
-            # Remove the current conversation from the list to prevent self-deletion
             conversation_dirs.remove(session_vars["current_memory_path"])
 
         idx = int(conv_id) - 1
@@ -45,7 +34,6 @@ def deleteConversation(user_input: str, session_vars: dict):
         if 0 <= idx < len(conversation_dirs):
             selected_conv_path = conversation_dirs[idx]
             
-            # Prevent deletion of the current active session's directory.
             if selected_conv_path == session_vars.get("current_memory_path"):
                 print_error_message("Cannot delete the current active conversation.")
                 return

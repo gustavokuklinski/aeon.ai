@@ -13,7 +13,7 @@ Commands can be placed directly in the terminal chat interface:
 * `/quit`, `/exit`, `/bye`: End the conversation.
 
 
-## Plugins (Build in)
+## Plugins (Build-in)
 
 * `/hello <PROMPT>`: Simple Hello World plugin
 * `/image <PROMPT>`: Generate an image. Model: [segmind/tiny-sd](https://huggingface.co/segmind/tiny-sd)

@@ -17,7 +17,7 @@ def newConversation(memory_dir_path: Path):
     current_memory_path.mkdir(parents=True, exist_ok=True)
 
     chroma_db_dir_path = current_memory_path / 'db'
-    conversation_filename = f"conversation_{conversation_hash}.json"
+    conversation_filename = f"{conversation_hash}.json"
     current_chat_history = []
 
     (rag_chain, vectorstore, text_splitter,

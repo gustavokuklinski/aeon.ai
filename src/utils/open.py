@@ -30,8 +30,7 @@ def openConversation(
 
             current_memory_path = selected_conv_path
             chroma_db_dir_path = current_memory_path / "db"
-            conversation_filename = ("conversation_"
-                                     f"{conversation_hash_name}.json")
+            conversation_filename = (f"{conversation_hash_name}.json")
 
             (rag_chain, vectorstore, text_splitter,
              llama_embeddings, llm_instance) = ragSystem(

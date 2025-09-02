@@ -23,8 +23,7 @@ def loadIngestConversation(
         if 0 <= idx < len(conversation_dirs):
             selected_conv_path = conversation_dirs[idx]
             conversation_hash_name = selected_conv_path.name
-            conversation_filename = ("conversation_"
-                                     f"{conversation_hash_name}.json")
+            conversation_filename = (f"{conversation_hash_name}.json")
 
             print_info_message(
                 f"Loading conversation from: {conversation_hash_name}")

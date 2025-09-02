@@ -18,6 +18,7 @@ from src.utils.open import openConversation
 from src.utils.new import newConversation
 from src.utils.load import loadIngestConversation
 from src.utils.delete import deleteConversation
+from src.utils.rename import renameConversation
 
 from src.libs.plugins import PluginManager
 from src.libs.messages import (
@@ -53,6 +54,7 @@ def startup_prompt(memory_dir_path: Path):
         print_chat_message(f"[{i + 1}] {conv_dir.name}")
 
     print_command_message(f"[{len(conversation_dirs) + 1}] New conversation.")
+    print_note_message("To rename a conversation, type: /rename <NUMBER> <NEW_NAME>")
     return input("\033[92m[OPTN]:\033[0m ").strip()
 
 
@@ -163,6 +165,13 @@ def _handle_rag_chat(user_input, session_vars):
 def _handle_delete(user_input, session_vars):
     deleteConversation(user_input, session_vars)
 
+def _handle_rename(user_input, session_vars):
+    renameConversation(user_input, session_vars)
+    main()
+    
+def _handle_restart():
+    print_info_message("Restarting AEON...")
+    main()
 
 def main():
     project_root = Path(__file__).parent.parent
@@ -189,6 +198,8 @@ def main():
         "/load": _handle_load,
         "/search": _handle_search,
         "/delete": _handle_delete,
+        "/rename": _handle_rename,
+        "/restart": _handle_restart,
         "/open": lambda user_input,
         sv: (
             sv.update(
@@ -242,19 +253,8 @@ def main():
                     command, query, output_dir=output_dir_path)
             continue
 
-        command = user_input.lower().split(" ")[0]
         if command in command_handlers:
-            if command in [
-                "/open",
-                "/ingest",
-                "/load",
-                "/delete",
-                    "/search"]:
-                command_handlers[command](user_input, session_vars)
-            elif command in ["/zip", "/new", "/help", "/list", "/paths"]:
-                command_handlers[command](session_vars)
-            else:
-                command_handlers[command]()
+            command_handlers[command](user_input, session_vars)
         else:
             _handle_rag_chat(user_input, session_vars)
 

@@ -1,3 +1,4 @@
+# src/web/webSystem.py
 import os
 import sys
 from pathlib import Path
@@ -19,6 +20,7 @@ from src.config import (
 from src.core.ragSystem import ragSystem
 from src.utils.new import newConversation
 from src.utils.conversation import loadConversation, saveConversation
+from src.utils.rename import renameConversationForWeb
 from src.libs.messages import print_info_message, print_error_message, print_success_message
 
 # Flask App Setup
@@ -72,7 +74,7 @@ def initialize_rag_system(conv_id):
         llama_embeddings = llama_embeddings_temp
         llm_instance = llm_instance_temp
         current_memory_path = conv_dir_path
-        conversation_filename = f"conversation_{conv_id}.json"
+        conversation_filename = f"{conv_id}.json"
         current_conversation_id = conv_id
         print_success_message(f"Successfully loaded RAG system for conversation ID: {current_conversation_id}")
         return True
@@ -99,7 +101,7 @@ def index():
 def load_conversation_page(conv_id):
     """Render the chat interface for a specific conversation ID and load its history."""
     conv_history = []
-    history_file_path = abs_memory_dir / conv_id / f"conversation_{conv_id}.json"
+    history_file_path = abs_memory_dir / conv_id / f"{conv_id}.json"
     if history_file_path.exists():
         with open(history_file_path, "r") as f:
             conv_history = json.load(f)
@@ -173,12 +175,12 @@ def get_conversation_history(conv_id):
     if not conv_dir.is_dir():
         return jsonify({"message": "Conversation not found."}), 404
     
-    history_file_path = conv_dir / f"conversation_{conv_id}.json"
+    history_file_path = conv_dir / f"{conv_id}.json"
     if not history_file_path.exists():
         return jsonify({"message": "Conversation history file not found."}), 404
         
     try:
-        history = loadConversation(conv_dir, f"conversation_{conv_id}.json")
+        history = loadConversation(conv_dir, f"{conv_id}.json")
         if not initialize_rag_system(conv_id):
             return jsonify({"message": f"Failed to load RAG system for conversation: {conv_id}"}), 500
         
@@ -201,6 +203,27 @@ def delete_conversation_route(conv_id):
     except Exception as e:
         print_error_message(f"Error deleting conversation '{conv_id}': {e}")
         return jsonify({"message": f"Failed to delete conversation: {e}"}), 500
+
+
+# The route has been changed to accept a PATCH request and the conversation ID from the URL.
+@app.route('/rename_conversation/<string:conv_id>', methods=["PATCH"])
+def rename_conversation_route(conv_id):
+    """Renames a conversation using a PATCH request."""
+    data = request.get_json()
+    # The conv_id is now retrieved from the URL path.
+    new_name = data.get('name')  # The frontend sends 'name' not 'new_name'
+    
+    if not conv_id or not new_name:
+        return jsonify({"message": "Missing conversation ID or new name."}), 400
+
+    # The rename function is called with the correct parameters.
+    success, message = renameConversationForWeb(conv_id, new_name, abs_memory_dir)
+    
+    if success:
+        return jsonify({"message": "Conversation renamed successfully.", "new_name": message}), 200
+    else:
+        return jsonify({"message": message}), 500
+    
 
 @app.route('/serve_from_memory/<folder>/<path:filename>')
 def serve_from_memory(folder, filename):

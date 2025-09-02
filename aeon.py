@@ -96,7 +96,7 @@ def display_menu_and_execute():
 
 # --- Main Execution Flow ---
 if __name__ == "__main__":
-    os.environ["LLAMA_LOG_LEVEL"] = "0"
+    os.environ["LLAMA_LOG_LEVEL"] = "5"
     os.system("cls" if os.name == "nt" else "clear")
     
     print_boot_msg(" Booting AEON")

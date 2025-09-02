@@ -6,7 +6,8 @@ from pathlib import Path
 from src.config import (
     OUTPUT_DIR,
     MEMORY_DIR,
-    PLUGINS_DIR
+    PLUGINS_DIR,
+    BACKUP_DIR
 )
 
 from src.utils.ingestion import ingestDocuments
@@ -16,7 +17,7 @@ from src.utils.conversation import saveConversation
 from src.utils.list import listConversations
 from src.utils.open import openConversation
 from src.utils.new import newConversation
-from src.utils.load import loadIngestConversation
+from src.utils.load import loadBackup
 from src.utils.delete import deleteConversation
 from src.utils.rename import renameConversation
 
@@ -46,21 +47,43 @@ def startup_prompt(memory_dir_path: Path):
     if not conversation_dirs:
         print_note_message("No previous conversations found.")
         print_command_message("[1] Start a new conversation.")
+        # Add a note about loading a backup file
+        print_note_message("To open a backup file, type: /load <PATH_TO_ZIP>")
         choice = input("\n\033[92m[OPTN]:\033[0m ").strip()
-        return choice if choice != "1" else "1"
+        # If user presses ENTER, default to starting a new conversation
+        if not choice:
+            return "1"
+        return choice
 
     print_info_message("Existing conversations:")
     for i, conv_dir in enumerate(conversation_dirs):
         print_chat_message(f"[{i + 1}] {conv_dir.name}")
 
     print_command_message(f"[{len(conversation_dirs) + 1}] New conversation.")
-    print_note_message("To rename a conversation, type: /rename <NUMBER> <NEW_NAME>")
-    return input("\033[92m[OPTN]:\033[0m ").strip()
+    print_note_message(
+        "To rename a conversation, type: /rename <NUMBER> <NEW_NAME>")
+    # Add a note about loading a backup file
+    print_note_message("To open a backup file, type: /load <PATH_TO_ZIP>")
+
+    choice = input("\033[92m[OPTN]:\033[0m ").strip()
+    # If user presses ENTER, default to starting a new conversation
+    if not choice:
+        return str(len(conversation_dirs) + 1)
+    return choice
 
 
 def _initialize_session(memory_dir_path: Path):
 
     user_choice = startup_prompt(memory_dir_path)
+    if user_choice.startswith("/load"):
+        zip_path = user_choice[len("/load "):].strip()
+        success = loadBackup(zip_path, memory_dir_path)
+        if success:
+            return _initialize_session(memory_dir_path)
+        else:
+            print_error_message("Unzipping failed. Please try again.")
+            return _initialize_session(memory_dir_path)
+        
     try:
         choice_int = int(user_choice)
         conversation_dirs = [d for d in memory_dir_path.iterdir(
@@ -97,7 +120,7 @@ def _handle_ingest(user_input, session_vars):
     )
 
 
-def _handle_zip(session_vars):
+def _handle_zip(user_input, session_vars):
 
     print_info_message("Zipping memory folder contents...")
     try:
@@ -113,15 +136,8 @@ def _handle_zip(session_vars):
 
 
 def _handle_load(user_input, session_vars):
-
-    conv_id = user_input[len("/load "):].strip()
-    loadIngestConversation(
-        conv_id,
-        session_vars["memory_dir_path"],
-        session_vars["vectorstore"],
-        session_vars["text_splitter"],
-        session_vars["llama_embeddings"]
-    )
+    zip_path = user_input[len("/load "):].strip()
+    loadBackup(zip_path, session_vars)
 
 
 def _handle_search(user_input, session_vars):
@@ -165,13 +181,16 @@ def _handle_rag_chat(user_input, session_vars):
 def _handle_delete(user_input, session_vars):
     deleteConversation(user_input, session_vars)
 
+
 def _handle_rename(user_input, session_vars):
     renameConversation(user_input, session_vars)
     main()
-    
-def _handle_restart():
+
+
+def _handle_restart(user_input, session_vars):
     print_info_message("Restarting AEON...")
     main()
+
 
 def main():
     project_root = Path(__file__).parent.parent

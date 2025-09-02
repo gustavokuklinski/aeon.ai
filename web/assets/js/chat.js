@@ -6,9 +6,10 @@ const conversationList = document.getElementById('conversation-list');
 const newChatButton = document.getElementById('new-chat-button');
 const startButton = document.getElementById('start-button');
 const chatControlsContainer = document.getElementById('chat-controls-container');
-const infoMessageBox = document.getElementById('infoMessageBox'); // Get reference to the static div
+const infoMessageBox = document.getElementById('infoMessageBox');
 const menuButton = document.getElementById('hamburger-menu');
 const sidebar = document.querySelector('.sidebar');
+const uploadBackupButton = document.getElementById('upload-backup-button');
 
 const originalMessagePlaceholder = messageInput.placeholder;
 
@@ -20,28 +21,31 @@ let initialHistory = window.initialHistory;
 // The start button now correctly navigates to the home page
 startButton.addEventListener('click', () => { window.location.href = '/'; });
 
-// Function to disable chat controls
+/**
+ * Disables chat controls (input, send button) and shows a loading state.
+ */
 function disableControls() {
     messageInput.disabled = true;
     sendButton.disabled = true;
     messageInput.placeholder = "Thinking...";
-    // fileInput.disabled = true; // Uncomment if you re-add file input
-    // uploadButton.disabled = true; // Uncomment if you re-add file input
 }
 
-// Function to enable chat controls
+/**
+ * Enables chat controls and focuses the message input.
+ */
 function enableControls() {
     messageInput.disabled = false;
     sendButton.disabled = false;
     messageInput.placeholder = originalMessagePlaceholder;
-    messageInput.focus(); // Added this line to automatically focus the input
-    // fileInput.disabled = false; // Uncomment if you re-add file input
-    // uploadButton.disabled = false; // Uncomment if you re-add file input
+    messageInput.focus();
 }
 
-// Function to create and append a new message div
+/**
+ * Creates and appends a new message div to the chat box.
+ * @param {string} text - The message content.
+ * @param {string} sender - 'user' or 'bot'.
+ */
 function addMessage(text, sender) {
-    // Hide the info message box if a real message is being added
     if (infoMessageBox && !infoMessageBox.classList.contains('hidden')) {
         infoMessageBox.classList.add('hidden');
     }
@@ -49,82 +53,72 @@ function addMessage(text, sender) {
     const messageDiv = document.createElement('div');
     messageDiv.classList.add('message');
     messageDiv.classList.add(sender === 'user' ? 'user-message' : 'bot-message');
-    
-    const textSpan = document.createElement('span'); // Create text span
+
+    const textSpan = document.createElement('span');
     textSpan.textContent = text;
 
     if (sender === 'bot') {
         const aeonIcon = document.createElement('img');
-        aeonIcon.src = '/assets/img/aeon-icon.png'; // Path to your Aeon icon
+        aeonIcon.src = '/assets/img/aeon-icon.png';
         aeonIcon.alt = 'Aeon Icon';
         aeonIcon.classList.add('aeon-message-icon');
-        
-        // Bot message: Icon then Text
+
         messageDiv.appendChild(aeonIcon);
         messageDiv.appendChild(textSpan);
-
     } else if (sender === 'user') {
-        // Create a canvas for the user avatar
         const userAvatarCanvas = document.createElement('canvas');
         userAvatarCanvas.classList.add('user-message-avatar');
-        // Use currentConversationId as the seed for a consistent avatar per chat
+        // NOTE: The `generateAvatar` function is a dependency not included in this file.
+        // It must be defined elsewhere for this to work.
         if (currentConversationId && currentConversationId !== 'None') {
             generateAvatar(userAvatarCanvas, currentConversationId);
         } else {
-            // Fallback for initial load or if no conv ID for some reason
-            generateAvatar(userAvatarCanvas, "default-user-seed"); 
+            generateAvatar(userAvatarCanvas, "default-user-seed");
         }
-        
-        // User message: Text then Avatar (flex-direction: row-reverse will put avatar on right)
+
         messageDiv.appendChild(textSpan);
         messageDiv.appendChild(userAvatarCanvas);
     }
-    
+
     chatBox.appendChild(messageDiv);
-    chatBox.scrollTop = chatBox.scrollHeight; // Scroll to the bottom
+    chatBox.scrollTop = chatBox.scrollHeight;
 }
 
-// Function to handle sending a message
+/**
+ * Handles sending a message to the backend API.
+ */
 async function sendMessage() {
     const userMessage = messageInput.value.trim();
     if (userMessage === '') return;
 
     addMessage(userMessage, 'user');
     messageInput.value = '';
-    
-    // Show spinner and disable controls
+
     loadingSpinner.style.display = 'block';
     chatBox.appendChild(loadingSpinner);
     chatBox.scrollTop = chatBox.scrollHeight;
-    disableControls(); // Disable controls while thinking
+    disableControls();
 
     try {
         const payload = { message: userMessage };
-        // Only send conversation_id if it's a valid string (not "None")
-        if (currentConversationId && currentConversationId !== 'None') { 
+        if (currentConversationId && currentConversationId !== 'None') {
             payload.conversation_id = currentConversationId;
         }
 
         const response = await fetch('/chat', {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(payload),
         });
 
         const data = await response.json();
-        
-        loadingSpinner.style.display = 'none'; // Hide spinner
-        
+
         if (response.ok) {
             addMessage(data.response, 'bot');
-            // If the backend returns a new conversation_id (meaning a new chat was created),
-            // update the frontend's current ID and the browser's URL.
             if (data.conversation_id && data.conversation_id !== currentConversationId) {
                 currentConversationId = data.conversation_id;
                 window.history.pushState({}, '', `/chat/${currentConversationId}`);
-                loadConversations(); // Reload sidebar to highlight new active chat
+                loadConversations();
             }
         } else {
             addMessage(data.response, 'bot');
@@ -133,68 +127,81 @@ async function sendMessage() {
         console.error('Error:', error);
         addMessage('An error occurred. Please try again.', 'bot');
     } finally {
-        // This is the key part: re-enable controls whether the request succeeded or failed
         loadingSpinner.style.display = 'none';
-        enableControls(); // Always re-enable controls
+        enableControls();
     }
 }
 
-// Function to handle renaming a conversation
-async function renameConversationForweb(convIdToRename, currentName) {
-    const newName = await new Promise((resolve) => {
+/**
+ * Reusable function to create a modal with a custom message and buttons.
+ * @param {string} contentHtml - The HTML content for the modal.
+ * @returns {Promise<boolean|string|null>} A promise that resolves with the result of the user's action.
+ */
+function createModal(contentHtml) {
+    return new Promise((resolve) => {
         const modal = document.createElement('div');
-        modal.className = 'confirm-modal'; // Use the same class as the delete modal
-        modal.innerHTML = `
-            <div class="confirm-modal-content">
-                <p>Current name: <strong>${currentName}</strong></p>
-                <input type="text" id="rename-input" placeholder="New Conversation Name" autofocus>
-                <div class="confirm-modal-buttons">
-                    <button id="rename-update">Update</button>
-                    <button id="rename-cancel">Cancel</button>
-                </div>
-            </div>
-        `;
+        modal.className = 'confirm-modal';
+        modal.innerHTML = `<div class="confirm-modal-content">${contentHtml}</div>`;
         document.body.appendChild(modal);
 
-        const renameInput = document.getElementById('rename-input');
-        
-        // Live formatting for user input
-        renameInput.addEventListener('input', () => {
-            let value = renameInput.value;
-            value = value.toLowerCase();
-            value = value.replaceAll(' ', '-');
-            renameInput.value = value;
-        });
+        // Function to handle cleanup and resolution
+        const cleanup = (result) => {
+            document.body.removeChild(modal);
+            resolve(result);
+        };
 
-        document.getElementById('rename-update').onclick = () => {
-            let name = renameInput.value.trim();
-            name = name.replace(/[^a-z0-9-]/g, '');
-            document.body.removeChild(modal);
-            resolve(name);
-        };
-        document.getElementById('rename-cancel').onclick = () => {
-            document.body.removeChild(modal);
-            resolve(null);
-        };
-        renameInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') {
-                let name = renameInput.value.trim();
-                name = name.replace(/[^a-z0-9-]/g, '');
-                document.body.removeChild(modal);
-                resolve(name);
-            }
-        });
+        const yesButton = document.getElementById('confirm-yes');
+        const noButton = document.getElementById('confirm-no');
+        const updateButton = document.getElementById('rename-update');
+        const cancelButton = document.getElementById('rename-cancel');
+        const renameInput = document.getElementById('rename-input');
+
+        if (yesButton) yesButton.onclick = () => cleanup(true);
+        if (noButton) noButton.onclick = () => cleanup(false);
+
+        if (updateButton && renameInput) {
+            renameInput.addEventListener('input', () => {
+                let value = renameInput.value.toLowerCase().replaceAll(' ', '-');
+                renameInput.value = value;
+            });
+            updateButton.onclick = () => {
+                let name = renameInput.value.trim().replace(/[^a-z0-9-]/g, '');
+                cleanup(name);
+            };
+            cancelButton.onclick = () => cleanup(null);
+            renameInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    let name = renameInput.value.trim().replace(/[^a-z0-9-]/g, '');
+                    cleanup(name);
+                }
+            });
+        }
     });
+}
+
+/**
+ * Handles renaming a conversation via a modal prompt.
+ * @param {string} convIdToRename - The ID of the conversation to rename.
+ * @param {string} currentName - The current name of the conversation.
+ */
+async function renameConversationForweb(convIdToRename, currentName) {
+    const newName = await createModal(`
+        <p>Current name: <strong>${currentName}</strong></p>
+        <input type="text" id="rename-input" placeholder="New Conversation Name" autofocus>
+        <div class="confirm-modal-buttons">
+            <button id="rename-update">Update</button>
+            <button id="rename-cancel">Cancel</button>
+        </div>
+    `);
 
     if (!newName) {
-        return; // User cancelled
+        return;
     }
-    
-    // Log the ID and new name to the console to help debug
+
     console.log(`Attempting to rename conversation with ID: "${convIdToRename}" to new name: "${newName}"`);
 
     loadingSpinner.style.display = 'block';
-    disableControls(); // Disable controls during renaming
+    disableControls();
     try {
         const response = await fetch(`/rename_conversation/${convIdToRename}`, {
             method: 'PATCH',
@@ -203,61 +210,83 @@ async function renameConversationForweb(convIdToRename, currentName) {
         });
 
         if (response.ok) {
-            // Get the data from the successful response
             const data = await response.json();
-            // Update the URL to the new name if this is the currently viewed conversation
             if (currentConversationId === convIdToRename) {
-                // The backend now returns the new name as a field in the JSON response
                 window.history.pushState({}, '', `/chat/${data.new_name}`);
-                currentConversationId = data.new_name; // Update the frontend's internal state
+                currentConversationId = data.new_name;
             }
-            loadConversations(); // Refresh the list
+            loadConversations();
         } else {
             const data = await response.json();
-            const messageBox = document.createElement('div');
-            messageBox.className = 'info-message-box';
-            // Use the specific error message from the server if available
-            const errorMsg = data.message || 'The new name is invalid. Please try a different one.';
-            messageBox.textContent = `Error: ${errorMsg}`;
-            chatBox.appendChild(messageBox);
-            setTimeout(() => chatBox.removeChild(messageBox), 3000); // Remove after 3 seconds
+            showInfoMessage(data.message || 'The new name is invalid. Please try a different one.');
         }
     } catch (error) {
         console.error('Error renaming conversation:', error);
-        const messageBox = document.createElement('div');
-        messageBox.className = 'info-message-box';
-        messageBox.textContent = 'An unexpected network error occurred during renaming. Please check your connection and try again.';
-        chatBox.appendChild(messageBox);
-        setTimeout(() => chatBox.removeChild(messageBox), 3000); // Remove after 3 seconds
+        showInfoMessage('An unexpected network error occurred during renaming. Please check your connection and try again.');
     } finally {
         loadingSpinner.style.display = 'none';
-        enableControls(); // Always re-enable controls
+        enableControls();
     }
 }
 
+/**
+ * Shows a temporary info message in the chat box.
+ * @param {string} message - The message to display.
+ */
+function showInfoMessage(message) {
+    const messageBox = document.createElement('div');
+    messageBox.className = 'info-message-box';
+    messageBox.textContent = message;
+    chatBox.appendChild(messageBox);
+    setTimeout(() => chatBox.removeChild(messageBox), 3000);
+}
 
-// Function to fetch and display the list of conversations
+/**
+ * Zips a conversation for backup.
+ * @param {string} convId - The ID of the conversation to zip.
+ */
+function zipConversation(convId) {
+    showInfoMessage('Creating backup. Please wait...');
+    fetch(`/zip_backup/${convId}`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.zip_file) {
+                const downloadUrl = `/download_backup/${data.zip_file}`;
+                const messageBox = document.createElement('div');
+                messageBox.className = 'info-message-box';
+                messageBox.innerHTML = `Backup created successfully. <a href="${downloadUrl}" class="download-backup" download>Click to download.</a>`;
+                chatBox.appendChild(messageBox);
+            } else {
+                showInfoMessage(data.message || 'Failed to create backup.');
+            }
+        })
+        .catch(error => {
+            console.error('Error creating backup:', error);
+            showInfoMessage('An error occurred while creating the backup.');
+        });
+}
+
+/**
+ * Fetches and displays the list of conversations in the sidebar.
+ */
 async function loadConversations() {
     try {
         const response = await fetch('/conversations');
         const conversations = await response.json();
-        
-        conversationList.innerHTML = ''; // Clear the list
+
+        conversationList.innerHTML = '';
         if (conversations.length > 0) {
-            // Hide the info message box if conversations exist
             if (infoMessageBox) infoMessageBox.classList.add('hidden');
 
             conversations.forEach(conv => {
                 const listItem = document.createElement('li');
-                listItem.classList.add('conversation-item'); // Add class for styling
+                listItem.classList.add('conversation-item');
                 listItem.setAttribute('data-id', conv.id);
 
-                // Create avatar canvas for the sidebar list item
                 const userAvatarCanvas = document.createElement('canvas');
                 userAvatarCanvas.classList.add('user-message-avatar');
-                generateAvatar(userAvatarCanvas, conv.id); // Use conv.id as seed
-                
-                // Add click event to the avatar and name
+                generateAvatar(userAvatarCanvas, conv.id);
+
                 userAvatarCanvas.addEventListener('click', () => {
                     window.location.href = `/chat/${conv.id}`;
                 });
@@ -270,45 +299,50 @@ async function loadConversations() {
                 });
                 listItem.appendChild(conversationName);
 
-                // Create the dropdown menu elements
                 const moreOptionsButton = document.createElement('button');
                 moreOptionsButton.classList.add('more-options-button');
                 moreOptionsButton.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-ellipsis-vertical"><circle cx="12" cy="12" r="1"/><circle cx="12" cy="5" r="1"/><circle cx="12" cy="19" r="1"/></svg>`;
 
                 const dropdownMenu = document.createElement('ul');
                 dropdownMenu.classList.add('dropdown-menu');
-                
+
                 const deleteOption = document.createElement('li');
                 deleteOption.classList.add('dropdown-item');
                 deleteOption.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M5 20C5 20.5304 5.21071 21.0391 5.58579 21.4142C5.96086 21.7893 6.46957 22 7 22H17C17.5304 22 18.0391 21.7893 18.4142 21.4142C18.7893 21.0391 19 20.5304 19 20V8H5V20ZM16 5H18V7H6V5H8L10 3H14L16 5ZM3 7H21V8H3V7Z"/></svg> Delete`;
-                
+
                 const renameOption = document.createElement('li');
                 renameOption.classList.add('dropdown-item');
-                renameOption.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-i-cursor"><path d="M10 21V3"/><path d="M14 21V3"/></svg> Rename`;
+                renameOption.innerHTML = `<svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg"><g id="rename"><path d="M12.9167 4.25L13.75 3.41667C13.9242 3.24242 14.1614 3.14152 14.4093 3.14152C14.6572 3.14152 14.8944 3.24242 15.0687 3.41667C15.2429 3.59091 15.3438 3.82806 15.3438 4.07598C15.3438 4.32391 15.2429 4.56106 15.0687 4.7353L14.2353 5.56863C14.0725 5.73147 13.9112 5.88582 13.75 6.04167L12.9167 5.20833C13.0805 5.04453 13.2353 4.88331 13.3917 4.7353L12.9167 4.25ZM11.4167 5.75L12.25 6.58333L6.33333 12.5L5.5 13.3333L4.66667 12.5L3.83333 11.6667L10.5833 4.91667L11.4167 5.75ZM3.83333 14.1667C3.5971 14.1667 3.36086 14.2676 3.18662 14.4418C3.01237 14.6161 2.91147 14.8523 2.91147 15.1011V15.9333H16.1667V15.1011C16.1667 14.8649 16.0658 14.6286 15.8916 14.4544C15.7173 14.2801 15.4811 14.1792 15.2449 14.1792L3.83333 14.1667Z" fill="white"/></g></svg> Rename`;
+
+                const zipItem = document.createElement('li');
+                zipItem.classList.add('dropdown-item');
+                zipItem.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-archive"><rect width="20" height="5" x="2" y="3" rx="1"/><path d="M4 8v11a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8"/><path d="M10 12h4"/></svg> Zip Backup`;
+                zipItem.onclick = (e) => {
+                    e.stopPropagation();
+                    dropdownMenu.classList.remove('visible');
+                    zipConversation(conv.id);
+                };
 
                 dropdownMenu.appendChild(renameOption);
+                dropdownMenu.appendChild(zipItem);
                 dropdownMenu.appendChild(deleteOption);
                 listItem.appendChild(moreOptionsButton);
                 listItem.appendChild(dropdownMenu);
-                
-                // Event listener for the rename option
+
                 renameOption.addEventListener('click', (event) => {
                     event.stopPropagation();
-                    renameConversationForweb(conv.id, conv.name); // Pass both ID and NAME
+                    renameConversationForweb(conv.id, conv.name);
                     dropdownMenu.classList.remove('visible');
                 });
-                
-                // Event listener for the delete option
+
                 deleteOption.addEventListener('click', (event) => {
-                    event.stopPropagation(); // Stop event from bubbling up to the list item
+                    event.stopPropagation();
                     deleteConversation(conv.id);
-                    dropdownMenu.classList.remove('visible'); // Close the menu
+                    dropdownMenu.classList.remove('visible');
                 });
-                
-                // Event listener for the more options button
+
                 moreOptionsButton.addEventListener('click', (event) => {
-                    event.stopPropagation(); // Prevent the list item's click from firing
-                    // Close any other open menus
+                    event.stopPropagation();
                     document.querySelectorAll('.dropdown-menu.visible').forEach(menu => {
                         if (menu !== dropdownMenu) {
                             menu.classList.remove('visible');
@@ -317,113 +351,90 @@ async function loadConversations() {
                     dropdownMenu.classList.toggle('visible');
                 });
 
-
                 if (currentConversationId && currentConversationId !== 'None' && conv.id === currentConversationId) {
                     listItem.classList.add('active');
                 }
                 conversationList.appendChild(listItem);
             });
-            chatControlsContainer.classList.remove('hidden'); // Ensure controls are visible
-            enableControls(); // Ensure controls are enabled if conversations exist
+            chatControlsContainer.classList.remove('hidden');
+            enableControls();
         } else {
-            // If no conversations, ensure controls are hidden and info message box is visible
             if (infoMessageBox) infoMessageBox.classList.remove('hidden');
             const listItem = document.createElement('li');
             listItem.textContent = 'No conversations found.';
             conversationList.appendChild(listItem);
-            chatControlsContainer.classList.add('hidden'); // Ensure controls are hidden here too
-            disableControls(); // Disable controls if no conversations
+            chatControlsContainer.classList.add('hidden');
+            disableControls();
         }
     } catch (error) {
         console.error('Error loading conversations:', error);
-        if (infoMessageBox) infoMessageBox.classList.remove('hidden'); // Show info box on error
+        if (infoMessageBox) infoMessageBox.classList.remove('hidden');
         const listItem = document.createElement('li');
         listItem.textContent = 'Failed to load conversations.';
         conversationList.appendChild(listItem);
-        chatControlsContainer.classList.add('hidden'); // Hide controls on error
-        disableControls(); // Disable controls on error
+        chatControlsContainer.classList.add('hidden');
+        disableControls();
     }
 }
 
-// Function to handle deleting a conversation
+/**
+ * Handles deleting a conversation after a user confirmation.
+ * @param {string} convIdToDelete - The ID of the conversation to delete.
+ */
 async function deleteConversation(convIdToDelete) {
-    const userConfirmed = await new Promise((resolve) => {
-        const modal = document.createElement('div');
-        modal.className = 'confirm-modal';
-        modal.innerHTML = `
-            <div class="confirm-modal-content">
-                <p>Are you sure you want to delete this conversation? This action cannot be undone.</p>
-                <div class="confirm-modal-buttons">
-                    <button id="confirm-yes">Yes</button>
-                    <button id="confirm-no">No</button>
-                </div>
-            </div>
-        `;
-        document.body.appendChild(modal);
-
-        document.getElementById('confirm-yes').onclick = () => {
-            document.body.removeChild(modal);
-            resolve(true);
-        };
-        document.getElementById('confirm-no').onclick = () => {
-            document.body.removeChild(modal);
-            resolve(false);
-        };
-    });
+    const userConfirmed = await createModal(`
+        <p>Are you sure you want to delete this conversation? This action cannot be undone.</p>
+        <div class="confirm-modal-buttons">
+            <button id="confirm-yes">Yes</button>
+            <button id="confirm-no">No</button>
+        </div>
+    `);
 
     if (!userConfirmed) {
-        return; // User cancelled
+        return;
     }
 
     loadingSpinner.style.display = 'block';
-    disableControls(); // Disable controls during deletion
+    disableControls();
     try {
         const response = await fetch(`/delete_conversation/${convIdToDelete}`, {
             method: 'DELETE',
         });
 
         if (response.ok) {
-            // If the deleted conversation was the currently active one, redirect to home
             if (currentConversationId === convIdToDelete) {
                 currentConversationId = null;
                 window.location.href = '/';
             } else {
-                loadConversations(); // Refresh the list
+                loadConversations();
             }
         } else {
             const data = await response.json();
-            const messageBox = document.createElement('div');
-            messageBox.className = 'info-message-box';
-            messageBox.textContent = data.message || 'Failed to delete conversation.';
-            chatBox.appendChild(messageBox);
-            setTimeout(() => chatBox.removeChild(messageBox), 3000); // Remove after 3 seconds
+            showInfoMessage(data.message || 'Failed to delete conversation.');
         }
     } catch (error) {
         console.error('Error deleting conversation:', error);
-        const messageBox = document.createElement('div');
-        messageBox.className = 'info-message-box';
-        messageBox.textContent = 'An error occurred during deletion.';
-        chatBox.appendChild(messageBox);
-        setTimeout(() => chatBox.removeChild(messageBox), 3000); // Remove after 3 seconds
+        showInfoMessage('An error occurred during deletion.');
     } finally {
         loadingSpinner.style.display = 'none';
-        enableControls(); // Always re-enable controls
+        enableControls();
     }
 }
 
-// Function to handle starting a new chat
+/**
+ * Handles starting a new chat session.
+ */
 async function startNewChat() {
     loadingSpinner.style.display = 'block';
-    disableControls(); // Disable controls while starting new chat
-    
+    disableControls();
+
     try {
         const response = await fetch('/new_chat', { method: 'POST' });
         const data = await response.json();
-        
+
         if (response.ok) {
             window.location.href = `/chat/${data.conversation_id}`;
         } else {
-            // Show the error in the chat box, but also ensure info box is hidden if an error occurred in a new chat attempt.
             addMessage(data.message || 'Failed to create new chat.', 'bot');
             if (infoMessageBox) infoMessageBox.classList.add('hidden');
         }
@@ -433,7 +444,45 @@ async function startNewChat() {
         if (infoMessageBox) infoMessageBox.classList.add('hidden');
     } finally {
         loadingSpinner.style.display = 'none';
-        enableControls(); // Always re-enable controls
+        enableControls();
+    }
+}
+
+/**
+ * Handles uploading a backup file.
+ * @param {File} file - The selected file object.
+ */
+async function uploadBackup(file) {
+    if (!file) {
+        return;
+    }
+
+    loadingSpinner.style.display = 'block';
+    disableControls();
+
+    const formData = new FormData();
+    formData.append('file', file);
+
+    try {
+        const response = await fetch('/load_backup', {
+            method: 'POST',
+            body: formData,
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+            addMessage(data.message, 'bot');
+            loadConversations();
+        } else {
+            addMessage(data.message, 'bot');
+        }
+    } catch (error) {
+        console.error('Error uploading backup:', error);
+        addMessage('An error occurred during the backup upload. Please try again.', 'bot');
+    } finally {
+        loadingSpinner.style.display = 'none';
+        enableControls();
     }
 }
 
@@ -447,6 +496,24 @@ messageInput.addEventListener('keypress', (e) => {
 
 newChatButton.addEventListener('click', startNewChat);
 
+uploadBackupButton.addEventListener('click', () => {
+    const fileInput = document.createElement('input');
+    fileInput.type = 'file';
+    fileInput.accept = '.zip';
+    fileInput.style.display = 'none';
+
+    fileInput.addEventListener('change', (event) => {
+        const selectedFile = event.target.files[0];
+        if (selectedFile) {
+            uploadBackup(selectedFile);
+        }
+    });
+
+    document.body.appendChild(fileInput);
+    fileInput.click();
+    document.body.removeChild(fileInput);
+});
+
 // Hamburger menu toggle
 menuButton.addEventListener('click', () => {
     sidebar.classList.toggle('active');
@@ -455,37 +522,36 @@ menuButton.addEventListener('click', () => {
 // Close dropdowns when clicking anywhere on the document
 document.addEventListener('click', (event) => {
     document.querySelectorAll('.dropdown-menu.visible').forEach(menu => {
-        if (!menu.contains(event.target) && !menu.previousElementSibling.contains(event.target)) {
+        const moreOptionsButton = menu.previousElementSibling;
+        if (!menu.contains(event.target) && !moreOptionsButton.contains(event.target)) {
             menu.classList.remove('visible');
         }
     });
 });
 
-// Load conversation on page load
-document.addEventListener('DOMContentLoaded', async () => { // Changed to async
-    loadingSpinner.style.display = 'none'; // Ensure spinner is hidden initially
+document.addEventListener('DOMContentLoaded', async () => {
+    loadingSpinner.style.display = 'none';
 
-    // First, load conversations to determine if any exist
-    await loadConversations(); // Wait for conversations to load
+    // Await conversation loading to ensure the sidebar state is correct
+    await loadConversations();
 
+    // After conversations are loaded, check for initial chat history
     if (initialHistory && initialHistory.length > 0) {
-        if (infoMessageBox) infoMessageBox.classList.add('hidden'); // Hide info box if history exists
+        if (infoMessageBox) infoMessageBox.classList.add('hidden');
         initialHistory.forEach(turn => {
             addMessage(turn.user, 'user');
             addMessage(turn.aeon, 'bot');
         });
-        chatControlsContainer.classList.remove('hidden'); // Ensure controls are visible if history exists
-        enableControls(); // Enable controls if history exists
+        chatControlsContainer.classList.remove('hidden');
+        enableControls();
     } else if (currentConversationId && currentConversationId !== 'None') {
-        if (infoMessageBox) infoMessageBox.classList.add('hidden'); // Hide info box if a new empty chat
+        if (infoMessageBox) infoMessageBox.classList.add('hidden');
         addMessage("Hello! I'm Aeon. A personal and local chat bot.", 'bot');
-        chatControlsContainer.classList.remove('hidden'); // Ensure controls are visible for a new, empty chat
-        enableControls(); // Enable controls for a new, empty chat
-    }
-    else {
-        // If no initial history and no current conversation ID, display the info message box
-        if (infoMessageBox) infoMessageBox.classList.remove('hidden'); // Ensure info box is visible
-        chatControlsContainer.classList.add('hidden'); // Explicitly hide controls here if no conversations
-        disableControls(); // Disable controls if no conversations
+        chatControlsContainer.classList.remove('hidden');
+        enableControls();
+    } else {
+        if (infoMessageBox) infoMessageBox.classList.remove('hidden');
+        chatControlsContainer.classList.add('hidden');
+        disableControls();
     }
 });

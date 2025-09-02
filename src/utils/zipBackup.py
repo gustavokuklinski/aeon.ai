@@ -17,7 +17,7 @@ def zipBackup(source_dir: Path, output_dir: str):
         output_path.mkdir(parents=True, exist_ok=True)
 
         timestamp = datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
-        zip_filename_base = f"memory_{timestamp}"
+        zip_filename_base = f"chat_backup_{timestamp}"
 
         print_info_message(f"Creating zip backup of '{source_path}'...")
 

@@ -4,7 +4,10 @@ import sys
 from pathlib import Path
 from flask import Flask, render_template, request, jsonify, url_for, send_from_directory, redirect
 import json
-import shutil 
+import shutil
+import zipfile
+from werkzeug.utils import secure_filename
+
 
 # Add the parent directory to the Python path to import from 'core' and 'utils'
 project_root = Path(__file__).parent.parent.parent
@@ -21,6 +24,7 @@ from src.core.ragSystem import ragSystem
 from src.utils.new import newConversation
 from src.utils.conversation import loadConversation, saveConversation
 from src.utils.rename import renameConversationForWeb
+from src.utils.load import loadBackup
 from src.libs.messages import print_info_message, print_error_message, print_success_message
 
 # Flask App Setup
@@ -223,7 +227,100 @@ def rename_conversation_route(conv_id):
         return jsonify({"message": "Conversation renamed successfully.", "new_name": message}), 200
     else:
         return jsonify({"message": message}), 500
+
+@app.route('/load_backup', methods=['POST'])
+def load_backup_route():
+    """Handles the upload and loading of a backup file and redirects to the new conversation."""
+    if 'file' not in request.files:
+        return jsonify({"message": "No file part in the request."}), 400
     
+    file = request.files['file']
+    
+    if file.filename == '':
+        return jsonify({"message": "No selected file."}), 400
+    
+    # Check if the file has a .zip extension
+    if not file.filename.endswith('.zip'):
+        return jsonify({"message": "Invalid file type. Please upload a .zip file."}), 400
+
+    # Secure the filename to prevent directory traversal attacks
+    filename = secure_filename(file.filename)
+    zip_path = abs_output_dir / filename
+    
+    try:
+        # Save the uploaded file to a temporary location
+        file.save(zip_path)
+        
+        # Load the backup using the temporary file path.
+        # Assuming loadBackup returns the conversation ID on success.
+        new_conv_id = loadBackup(zip_path, abs_memory_dir)
+        
+        if new_conv_id:
+            return jsonify({"message": "Backup loaded successfully.", "redirect_url": url_for("load_conversation_page", conv_id=new_conv_id)}), 200
+        else:
+            return jsonify({"message": "Failed to load backup. The zip file may be corrupted or in an incorrect format."}), 500
+    except Exception as e:
+        print_error_message(f"Error during backup upload: {e}")
+        return jsonify({"message": "An error occurred during the backup upload. Please try again."}), 500
+    finally:
+        # Clean up the temporary file
+        if os.path.exists(zip_path):
+            os.remove(zip_path)
+
+
+@app.route('/zip_backup/<string:conv_id>')
+def zip_backup_route(conv_id):
+    """
+    Creates a zip file of a conversation's memory folder.
+    """
+    conv_dir_path = abs_memory_dir / conv_id
+    if not conv_dir_path.is_dir():
+        return jsonify({"message": "Conversation not found."}), 404
+
+    # Create the name for the temporary zip file
+    zip_filename = f"{conv_id}_backup.zip"
+    zip_path = abs_output_dir / zip_filename
+
+    try:
+        # Create a zip file and add all contents of the conversation directory
+        with zipfile.ZipFile(zip_path, 'w', zipfile.ZIP_DEFLATED) as zipf:
+            for root, _, files in os.walk(conv_dir_path):
+                for file in files:
+                    file_path = os.path.join(root, file)
+                    arcname = os.path.relpath(file_path, conv_dir_path.parent)
+                    zipf.write(file_path, arcname)
+        
+        print_success_message(f"Successfully created zip file at {zip_path}")
+        return jsonify({"message": "Backup created.", "zip_file": zip_filename}), 200
+
+    except Exception as e:
+        print_error_message(f"Error zipping conversation '{conv_id}': {e}")
+        return jsonify({"message": f"Failed to create backup: {e}"}), 500
+
+@app.route('/download_backup/<path:filename>')
+def download_backup_route(filename):
+    """
+    Serves the created zip file for download and then deletes it.
+    """
+    file_path = abs_output_dir / filename
+    if not file_path.is_file():
+        return "File not found.", 404
+
+    try:
+        # Send the file for download
+        response = send_from_directory(abs_output_dir, filename, as_attachment=True)
+        # Delete the file after it has been sent
+        @response.call_on_close
+        def on_close():
+            try:
+                os.remove(file_path)
+                print_info_message(f"Successfully deleted temporary backup file: {filename}")
+            except OSError as e:
+                print_error_message(f"Error deleting temporary backup file: {e}")
+        return response
+    except Exception as e:
+        print_error_message(f"Error downloading or deleting backup file: {e}")
+        return "An error occurred during download.", 500
 
 @app.route('/serve_from_memory/<folder>/<path:filename>')
 def serve_from_memory(folder, filename):

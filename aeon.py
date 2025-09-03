@@ -10,7 +10,7 @@ import argparse
 
 PYTHON_SCRIPT_DIR = "src"
 PYTHON_MAIN_MODULE = "main"
-FLASK_APP_PATH = "./src/web/webSystem.py"
+FLASK_APP_PATH = "./src/web.py"
 
 # --- Helper Functions for Colored Output ---
 def colored_print(message, color_code):

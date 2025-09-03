@@ -89,3 +89,12 @@ p {
         grid-template-columns: 1fr 1fr;
     }
 }
+.cmd-text-area {
+    width: 95%;
+    height: 20vh;
+    padding: 10px;
+    border: none;
+    outline: none;
+    background: #3c3c3c;
+    color: #fff;
+}

@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AEON: A Local-First Multi-Modal AI System</title>
+    <link rel="stylesheet" href="../assets/css/style.css" />
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <div class="logo-container">
+                <img src="../assets/img/aeon-logo.png" alt="AEON Logo" class="logo">
+            </div>
+            <h2>Plugins</h2>
+        </header>
+        <nav>
+            <a href="../index.html">[HOME]</a>
+            <a href="./index.html">[DOCS]</a>
+            <a href="../plugins.html">[PLUGINS]</a>
+            <a href="https://github.com/gustavokuklinski/aeon.ai/">[GITHUB]</a>
+        </nav>
+        <section class="section">
+            <p style="text-align: center;">Experience the true power of AI, on your terms. With AEON, your intelligence operates locally, ensuring absolute privacy and anonymity. Your data stays yours, always. Embrace powerful, multi-modal AI without compromise.</p>
+        </section>
+
+        <hr>
+
+       
+        <section class="section">
+            <h3>Installation</h3>
+<div class="two-column-section">
+        <section class="section">
+        <h4>Stating with Aeon</h4>
+        <p>The entire system is powered by a local-first technical stack:</p>
+         <p><strong>Llama.cpp Python Library:</strong> A highly efficient library that enables the entire
+                        system to run on a local machine's CPU, bypassing the need for powerful, specialized GPUs or
+                        cloud services.</p>
+                    <p><strong>GGUF Files:</strong> These are the model's brain and eyes in a highly compressed format.
+                        They are quantized versions of the original models, which significantly reduces their file size
+                        and memory footprint without a major loss in performance.</p>
+                   
+    </section>
+    <section class="section">
+        <h4>Docker [Recomended]</h4>
+                    <p>Dependencies: Docker</p>
+                    <p>
+                        <textarea class="cmd-text-area">
+/$ git lfs install
+/$ git clone https://github.com/gustavokuklinski/aeon.ai.git
+
+# Build the Docker Image
+/$ docker build -t aeon .
+
+# Run the image
+/$ docker run -it --rm -p 4303:4303 -v "$(pwd):/app" aeon
+                        </textarea>
+                    </p>
+    </section>
+
+    <section class="section">
+                    <h4>Installation on Linux</h4>
+                    <p>Dependencies: build-essentials, Python3.11, git.</p>
+                    <p>
+                        <textarea class="cmd-text-area">
+/$ git lfs install
+/$ git clone https://github.com/gustavokuklinski/aeon.ai.git
+
+# Prepare the .venv, run check and install dependencies
+/$ python3 ./install.py
+
+# Start virtual env
+/$ source ./venv/bin/activate
+
+# Start AEON
+/$ python3 ./aeon.py
+                        </textarea>
+                    </p>
+                </section>
+                    <section class="section">
+                    <h4>Installation on Windows</h4>
+                    <p>Dependencies: Microsoft C++ Build Tools , Python3.11, git.</p>
+                    <p>
+                        <textarea class="cmd-text-area">
+C:\aeon.ai\> git lfs install
+C:\aeon.ai\> git clone https://github.com/gustavokuklinski/aeon.ai.git
+
+# Prepare the .venv, run check and install dependencies
+C:\aeon.ai\> python install.py
+
+# Start virtual env
+C:\aeon.ai\> .\.venv\Scripts\activate.bat
+
+# Start AEON
+C:\aeon.ai\> python ./aeon.py
+                        </textarea>
+                    </p>
+                </section>
+</div>
+            
+        </section>
+
+        <hr>
+
+        
+    </div>
+</body>
+
+</html>

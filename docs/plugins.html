@@ -17,11 +17,9 @@
             <h2>Plugins</h2>
         </header>
         <nav>
-            <a href="/">[HOME]</a>
-            <a href="./docs.html">[DOCS]</a>
+            <a href="./index.html">[HOME]</a>
+            <a href="./docs/index.html">[DOCS]</a>
             <a href="./plugins.html">[PLUGINS]</a>
-            <a href="./comands.html">[COMANDS]</a>
-            <a href="./donate.html">[DONATE]</a>
             <a href="https://github.com/gustavokuklinski/aeon.ai/">[GITHUB]</a>
         </nav>
         <section class="section">
@@ -32,14 +30,13 @@
 
        
         <section class="section">
-
+<h3>Default package</h3>
             <div class="grid-container">
- 
-
                 <div class="grid-item">
                     <h4>VLM (Vision-Language Model)</h4>
                     <p>
                         <small>Function:</small> The system's "eyes".<br>
+                        <small>Type:</small> image-text<br />
                         <small>Capabilities:</small> Allows the AI to "see" and interpret images. By linking
                         visual data with language, it can describe scenes, answer visual queries, and identify
                         objects within pictures.<br />
@@ -54,6 +51,7 @@
                     <h4>Stable Diffusion (Image Generator)</h4>
                     <p>
                         <small>Function:</small> The creative "artist".<br>
+                        <small>Type:</small> text-image<br />
                         <small>Capabilities:</small> Generates high-quality images from text prompts. It
                         translates textual descriptions into unique visual art, giving the system a powerful
                         creative output.<br />
@@ -61,6 +59,37 @@
                             target="_blank"><b>Tiny-SD by Segmind</b></a><br />
                             Commands<br />
                             <code>/image [PROMPT]</code>
+                    </p>
+                </div>
+
+            </div>
+        </section>
+        <hr />
+        <section class="section">
+<h3>Community plugins</h3>
+            <div class="grid-container">
+                <div class="grid-item">
+                    <h4>Hello World</h4>
+                    <p>
+                        <small>Function:</small> Display message<br>
+                        <small>Type:</small> text-text<br />
+                        <small>Capabilities:</small> Simple plugin placeholder<br />
+                        <small>Model:</small><b>none</b><br />
+                            Commands<br />
+                            <code>/hello [PROMPT]</code>
+                    </p>
+                </div>
+
+                <div class="grid-item">
+                    <h4>Gemma3 270m</h4>
+                    <p>
+                        <small>Function:</small> Embed power.<br>
+                        <small>Type:</small> text-text<br />
+                        <small>Capabilities:</small> Embed Gemma3 270m instruct to work with Aeon default LLM<br />
+                        <small>Model:</small> <a href="https://huggingface.co/google/gemma-3-270m-it"
+                            target="_blank"><b>Gemma3 270m by Google</b></a><br />
+                            Commands<br />
+                            <code>/gemma3 [PROMPT]</code>
                     </p>
                 </div>
 

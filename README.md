@@ -41,6 +41,9 @@ Use the script `./install.py` to set up your virtual environment and install all
 # Prepare the .venv, run check and install dependencies
 /$ python3 ./install.py 
 
+# Start virtual env
+/$ source ./venv/bin/activate
+
 # Start AEON
 /$ python3 ./aeon.py
 ```

@@ -10,6 +10,11 @@ const infoMessageBox = document.getElementById('infoMessageBox');
 const menuButton = document.getElementById('hamburger-menu');
 const sidebar = document.querySelector('.sidebar');
 const uploadBackupButton = document.getElementById('upload-backup-button');
+const configButton = document.getElementById('config-button');
+const configModal = document.getElementById('config-modal');
+const configTextarea = document.getElementById('config-textarea');
+const configSaveButton = document.getElementById('config-save-button');
+const configCancelButton = document.getElementById('config-cancel-button');
 
 const originalMessagePlaceholder = messageInput.placeholder;
 
@@ -241,7 +246,7 @@ function showInfoMessage(message) {
     messageBox.className = 'info-message-box';
     messageBox.textContent = message;
     chatBox.appendChild(messageBox);
-    setTimeout(() => chatBox.removeChild(messageBox), 3000);
+    //setTimeout(() => chatBox.removeChild(messageBox), 3000);
 }
 
 /**
@@ -516,6 +521,83 @@ uploadBackupButton.addEventListener('click', () => {
     fileInput.click();
     document.body.removeChild(fileInput);
 });
+
+configButton.addEventListener('click', async () => {
+    if (!currentConversationId || currentConversationId === 'None') {
+        showInfoMessage("Please start or select a conversation first.");
+        return;
+    }
+
+    // Show the modal and a temporary loading message
+    const configHtml = `
+        <p><strong>Configuration for ${currentConversationId}</strong></p>
+        <textarea id="config-textarea" class="config-textarea" rows="20" cols="50" placeholder="Loading..." wrap='off'></textarea>
+        <p>When [SAVE] Chat will be reloaded</p>
+        <div class="confirm-modal-buttons">
+            <button id="config-save-button">Save</button>
+            <button id="config-cancel-button">Cancel</button>
+        </div>
+    `;
+
+    // Use createModal to create a temporary modal and get the element for a brief moment
+    const tempModal = document.createElement('div');
+    tempModal.className = 'confirm-modal';
+    tempModal.innerHTML = `<div class="confirm-modal-content">${configHtml}</div>`;
+    document.body.appendChild(tempModal);
+
+    const configTextArea = tempModal.querySelector('#config-textarea');
+    const saveButton = tempModal.querySelector('#config-save-button');
+    const cancelButton = tempModal.querySelector('#config-cancel-button');
+
+    // Add event listeners within the context of the newly created modal
+    saveButton.addEventListener('click', async () => {
+        const newConfig = configTextArea.value;
+        disableControls();
+
+        try {
+            const response = await fetch(`/api/config/${currentConversationId}`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ config_content: newConfig })
+            });
+            const data = await response.json();
+            if (response.ok) {
+                showInfoMessage(data.message);
+                window.location.href = '/';
+            } else {
+                throw new Error(data.message);
+            }
+        } catch (error) {
+            console.error('Error saving config:', error);
+            showInfoMessage(`Failed to save config: ${error.message}`);
+        } finally {
+            enableControls();
+            document.body.removeChild(tempModal);
+        }
+    });
+
+    cancelButton.addEventListener('click', () => {
+        document.body.removeChild(tempModal);
+    });
+
+    // Fetch and display config
+    disableControls();
+    try {
+        const response = await fetch(`/api/config/${currentConversationId}`);
+        const data = await response.json();
+        if (response.ok) {
+            configTextArea.value = data.config_content;
+        } else {
+            throw new Error(data.message);
+        }
+    } catch (error) {
+        console.error('Error fetching config:', error);
+        configTextArea.value = `Error loading config: ${error.message}`;
+    } finally {
+        enableControls();
+    }
+});
+
 
 // Hamburger menu toggle
 menuButton.addEventListener('click', () => {

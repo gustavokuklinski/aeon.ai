@@ -59,7 +59,38 @@ To run on **Windows** check: [Windows setup](https://github.com/gustavokuklinski
 
 ## Configuration
 
-Edit `config.yml` to fit your needs. You must specify the **file paths** to your locally downloaded models and `prompts`
+Edit `config.yml` to fit your needs. You must specify the **file paths** to your locally use models and `prompts`.
+
+**User configuration**
+`/data/chat/<CHAT_ID>/config.yml` sets the current chat configuration.
+
+Example config.yml file:
+
+```yaml
+llm_config:
+  # MODEL_FROM: https://huggingface.co/HuggingFaceTB/SmolLM2-360M-Instruct
+  model: ./data/model/SmolLM2-360M-Instruct-Q8_0.gguf
+  temperature: 0.5
+  n_ctx: 4096
+  top_k: 40
+  top_p: 0.8
+  llm_prompt: >
+    You are Aeon, a friendly, helpful, and conversational AI assistant.\nCONTEXT: {context}
+  llm_rag_prompt: >
+    "Your responses should be in plain, natural language ONLY. Determine the nature of the user's QUESTION. If the question is factual, follow this process: 1. Scan the CONTEXT for all relevant facts. 2. Combine these facts to form a single, comprehensive answer. 3. If context is unavailable, state: 'I don't know about it. Can we /search?'. If the question is conversational or non-factual, respond naturally and conversationally, without referring to the CONTEXT. Do not echo the user's QUESTION or the CONTEXT.
+
+emb_config:
+  # MODEL_FROM: https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2
+  model: ./data/model/all-MiniLM-L6-v2-Q8_0.gguf
+  n_ctx: 256
+  chunk_size: 20
+  chunk_overlap: 0
+
+load_plugins:
+  - smolvlm-256m-instruct
+  - tiny-sd
+  - hello-world
+```
 
 
 ## Star History

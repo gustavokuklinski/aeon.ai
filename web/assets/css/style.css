@@ -293,6 +293,14 @@ img {
     display: none;
 }
 
+#config-textarea {
+    outline: none;
+    border: none;
+    padding: 10px;
+    color: #fff;
+    background: #4f4f4fcc;
+    border-radius: 8px;
+}
 .confirm-modal {
     position: fixed;
     top: 0;
@@ -326,7 +334,9 @@ img {
 #confirm-yes,
 #confirm-no,
 #rename-update,
-#rename-cancel {
+#rename-cancel,
+#config-save-button,
+#config-cancel-button {
     padding: 10px 20px;
     border: none;
     border-radius: 8px;
@@ -336,24 +346,28 @@ img {
 }
 
 #confirm-yes,
-#rename-update {
+#rename-update,
+#config-save-button {
     background-color: #950000;
     color: #fff;
 }
 
 #confirm-yes:hover,
-#rename-update:hover {
+#rename-update:hover,
+#config-save-button:hover {
     background-color: #b30000;
 }
 
 #confirm-no,
-#rename-cancel {
+#rename-cancel,
+#config-cancel-button {
     background-color: #424242;
     color: #fff;
 }
 
 #confirm-no:hover,
-#rename-cancel:hover {
+#rename-cancel:hover,
+#config-cancel-button:hover {
     background-color: #555555;
 }
 

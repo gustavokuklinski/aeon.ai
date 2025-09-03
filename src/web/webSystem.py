@@ -7,6 +7,7 @@ import json
 import shutil
 import zipfile
 from werkzeug.utils import secure_filename
+import yaml
 
 # Add the parent directory to the Python path to import from 'core' and 'utils'
 project_root = Path(__file__).parent.parent.parent
@@ -320,6 +321,53 @@ def download_backup_route(filename):
     except Exception as e:
         print_error_message(f"Error downloading or deleting backup file: {e}")
         return "An error occurred during download.", 500
+
+
+@app.route('/api/config/<conv_id>', methods=['GET'])
+def get_config(conv_id):
+    """
+    Reads the config.yml for a given conversation and returns its content.
+    """
+    config_path = abs_memory_dir / conv_id / 'config.yml'
+    if not config_path.is_file():
+        return jsonify({"message": "Configuration file not found."}), 404
+    
+    try:
+        with open(config_path, 'r', encoding='utf-8') as f:
+            content = f.read()
+        return jsonify({"config_content": content})
+    except Exception as e:
+        print_error_message(f"Error reading config file for '{conv_id}': {e}")
+        return jsonify({"message": f"Failed to read config file: {e}"}), 500
+
+@app.route('/api/config/<conv_id>', methods=['POST'])
+def save_config(conv_id):
+    """
+    Receives and saves the updated config.yml content for a given conversation.
+    """
+    data = request.json
+    config_content = data.get('config_content')
+    if config_content is None:
+        return jsonify({"message": "No configuration content provided."}), 400
+
+    config_path = abs_memory_dir / conv_id / 'config.yml'
+    
+    try:
+        # Optional: Validate YAML content before saving
+        yaml.safe_load(config_content)
+        
+        with open(config_path, 'w', encoding='utf-8') as f:
+            f.write(config_content)
+            
+        print_success_message(f"Configuration file updated for '{conv_id}'.")
+        return jsonify({"message": "Configuration saved successfully."})
+    except yaml.YAMLError as e:
+        print_error_message(f"YAML parsing error for '{conv_id}': {e}")
+        return jsonify({"message": f"Invalid YAML content: {e}"}), 400
+    except Exception as e:
+        print_error_message(f"Error writing config file for '{conv_id}': {e}")
+        return jsonify({"message": f"Failed to save config file: {e}"}), 500
+
 
 @app.route('/serve_from_memory/<folder>/<path:filename>')
 def serve_from_memory(folder, filename):

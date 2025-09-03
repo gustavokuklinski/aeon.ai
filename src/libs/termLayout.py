@@ -28,7 +28,7 @@ def printAeonCmd():
     print_command_message("'/zip' Backup contents to a timestamped zip file.")
     print_command_message("'/ingest <PATH> | <PATH><filename.json,txt,md>'"
                           "Add documents to RAG.")
-    print_command_message("'/search' <TERM>' Make web search with DuckDuckGo")
+    print_command_message("'/search <TERM>' Make web search with DuckDuckGo")
     print_command_message("'/restart' Restart AEON")
     print_command_message("'/quit', '/exit' or '/bye'"
                           "to end the chat.")

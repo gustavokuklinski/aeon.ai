@@ -97,4 +97,10 @@ p {
     outline: none;
     background: #3c3c3c;
     color: #fff;
+      border-radius: 5px;
+}
+.cli-img {
+    width: 100%;
+    outline: 5px solid #640000;
+  border-radius: 5px;
 }

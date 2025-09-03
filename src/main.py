@@ -6,8 +6,7 @@ from pathlib import Path
 from src.config import (
     OUTPUT_DIR,
     MEMORY_DIR,
-    PLUGINS_DIR,
-    BACKUP_DIR
+    PLUGINS_DIR
 )
 
 from src.utils.ingestion import ingestDocuments
@@ -180,7 +179,7 @@ def _handle_rag_chat(user_input, session_vars):
 
 def _handle_delete(user_input, session_vars):
     deleteConversation(user_input, session_vars)
-
+    main()
 
 def _handle_rename(user_input, session_vars):
     renameConversation(user_input, session_vars)

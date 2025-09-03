@@ -5,3 +5,8 @@ aeon_plugin:
   command: /image
   parameters: <PROMPT>
 
+  # Custom config
+  width: 512
+  height: 512
+  negative_prompt: ""
+

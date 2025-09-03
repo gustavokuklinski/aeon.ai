@@ -21,6 +21,14 @@
         <h2><img src="/assets/img/aeon-logo.png" class="logo" /></h2>
 
         <div class="sidebar-buttons-container">
+            <button id="start-button" class="sidebar-button">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                class="lucide lucide-home">
+                <path d="M3 12L12 3L21 12" />
+                <path d="M7 15V21H17V15" />
+            </svg>
+        </button>
         <button id="new-chat-button" class="sidebar-button">
             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
                 stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
@@ -36,14 +44,7 @@
             <ul id="conversation-list" class="sidebar-list"></ul>
         </div>
 
-        <button id="start-button" class="sidebar-button">
-            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
-                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                class="lucide lucide-home">
-                <path d="M3 12L12 3L21 12" />
-                <path d="M7 15V21H17V15" />
-            </svg>
-        </button>
+        
     </div>
 
     <div class="main-content">
@@ -111,7 +112,7 @@
         window.currentConversationId = "{{ initial_conv_id }}";
         window.initialHistory = {{ initial_history | tojson }};
     </script>
-
+    <script src="/assets/js/lib/marked/marked.min.js"></script>
     <script src="/assets/js/avatar.js"></script>
     <script src="/assets/js/chat.js"></script>
 </body>

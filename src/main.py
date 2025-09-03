@@ -6,8 +6,8 @@ from pathlib import Path
 from src.config import (
     OUTPUT_DIR,
     MEMORY_DIR,
-    PLUGINS_DIR
-)
+    LOADED_PLUGINS
+) 
 
 from src.utils.ingestion import ingestDocuments
 from src.utils.webSearch import webSearch
@@ -27,12 +27,10 @@ from src.libs.messages import (
     print_command_message,
     print_error_message,
     print_aeon_message,
-    print_chat_message
+    print_chat_message,
+    print_plugin_message
 )
-from src.libs.termLayout import printAeonLayout, printAeonCmd, printAeonModels
-
-os.environ["LLAMA_LOG_LEVEL"] = "5"
-
+from src.libs.termLayout import printAeonLayout, printAeonModels
 
 def startup_prompt(memory_dir_path: Path):
 
@@ -45,11 +43,10 @@ def startup_prompt(memory_dir_path: Path):
 
     if not conversation_dirs:
         print_note_message("No previous conversations found.")
-        print_command_message("[1] Start a new conversation.")
-        # Add a note about loading a backup file
+        print_command_message("[1] Start a new conversation or press <ENTER>.")
+
         print_note_message("To open a backup file, type: /load <PATH_TO_ZIP>")
         choice = input("\n\033[92m[OPTN]:\033[0m ").strip()
-        # If user presses ENTER, default to starting a new conversation
         if not choice:
             return "1"
         return choice
@@ -70,6 +67,31 @@ def startup_prompt(memory_dir_path: Path):
         return str(len(conversation_dirs) + 1)
     return choice
 
+def printAeonCmd(plugin_manager: PluginManager):
+    """
+    Prints a list of available commands and loaded plugins.
+    """
+    print("Commands to use:")
+    print_command_message("'/help' Show this screen.")
+    print_command_message("'/new' Create a new chat.")
+    print_command_message("'/list' List all chats.")
+    print_command_message("'/open <NUMBER>' Open chat.")
+    print_command_message("'/load <PATH>/<FILE>.zip' Load ZIP backup.")
+    print_command_message("'/rename <NUMBER> <NEW_NAME>' Rename chat by ID.")
+    print_command_message("'/delete <NUMBER>' Delete selected chat.")
+    print_command_message("'/zip' Backup contents to a timestamped zip file.")
+    print_command_message("'/ingest <PATH> | <PATH><filename.json,txt,md>'"
+                          "Add documents to RAG.")
+    print_command_message("'/search' <TERM>' Make web search with DuckDuckGo")
+    print_command_message("'/restart' Restart AEON")
+    print_command_message("'/quit', '/exit' or '/bye'"
+                          "to end the chat.")
+    print_info_message("PLUGINS:")
+
+    for command, plugin in plugin_manager.plugins.items():
+        parameters = plugin.get_parameters() or ""
+        desc = plugin.desc or ""
+        print_plugin_message(f"'{command} {parameters}' {desc}")
 
 def _initialize_session(memory_dir_path: Path):
 
@@ -203,13 +225,18 @@ def main():
 
     printAeonLayout()
     printAeonModels()
+    if "loaded_config" in session_vars:
+        print_info_message(f"Using config from: {session_vars['current_memory_path']}")
+
     print("\033[1;31m[Type /help to show commands]\033[0m")
-    plugin_manager = PluginManager(PLUGINS_DIR)
+    plugins_to_load = session_vars.get("loaded_config", {}).get("load_plugins", LOADED_PLUGINS)
+    plugin_manager = PluginManager(plugins_to_load)
+    session_vars['plugin_manager'] = plugin_manager 
     print("\033[1;31m[STARTING AEON]\033[0m")
 
     # Command handlers dictionary
     command_handlers = {
-        "/help": lambda *_: printAeonCmd(),
+        "/help": lambda *_: printAeonCmd(plugin_manager),
         "/list": lambda *_: listConversations(memory_dir_path),
         "/ingest": _handle_ingest,
         "/zip": _handle_zip,
@@ -251,10 +278,10 @@ def main():
         command = parts[0].lower()
         query = parts[1] if len(parts) > 1 else ""
 
-        plugin = plugin_manager.get_plugin(command)
+        plugin = plugin_manager.load_plugins()
         if plugin:
             # Get the expected parameters from the plugin's config
-            param_string = plugin.get_parameters()
+            param_string = plugin
             if param_string:
                 expected_params = param_string.split()
                 num_expected = len(expected_params)

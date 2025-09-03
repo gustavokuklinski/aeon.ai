@@ -3,7 +3,7 @@ from pathlib import Path
 from typing import Dict, Any, Optional
 import importlib.util
 from src.libs.messages import (
-    print_error_message, print_info_message, print_success_message
+    print_error_message, print_info_message, print_plugin_message
 )
 
 # Define the base plugins directory relative to the project root
@@ -21,6 +21,7 @@ class Plugin:
         self.type = self.config.get('type')
         self.command = self.config.get('command')
         self.parameters = self.config.get('parameters')
+        self.desc = self.config.get('desc')
         self.model_path = self.path / self.config.get('model_path', '')
 
         if not self.command:
@@ -72,9 +73,11 @@ class Plugin:
 
 
 class PluginManager:
-    def __init__(self, plugins_dir: Path = PLUGINS_DIR):
+    # The constructor now accepts a list of plugin names to load
+    def __init__(self, plugins_to_load: list[str], plugins_dir: Path = PLUGINS_DIR):
         self.plugins_dir = plugins_dir
         self.plugins: Dict[str, Plugin] = {}
+        self.plugins_to_load = plugins_to_load
         self.load_plugins()
 
     def load_plugins(self):
@@ -85,46 +88,30 @@ class PluginManager:
 
         self.plugins.clear()
 
-        for plugin_path in self.plugins_dir.iterdir():
-            if plugin_path.is_dir():
-                config_path = plugin_path / "config.yml"
-                if config_path.exists():
-                    try:
-                        with open(config_path, 'r') as f:
-                            config_data = yaml.safe_load(f)
-                            aeon_plugin_config = config_data.get('aeon_plugin')
-                            if aeon_plugin_config:
-                                # Instantiate Plugin with the parsed config data
-                                plugin = Plugin(
-                                    name=plugin_path.name,
-                                    config=aeon_plugin_config,
-                                    path=plugin_path
-                                )
-                                # Use the plugin's command as the dictionary key
-                                self.plugins[plugin.command] = plugin
-                                print_success_message(
-                                    f"Plugin loaded: {plugin.name} (command: {plugin.command})")
-                            else:
-                                print_info_message(
-                                    f"Skipping '{plugin_path.name}': 'aeon_plugin' key not found in config.")
-                    except (yaml.YAMLError, ValueError) as e:
-                        print_error_message(
-                            f"Error loading config for '{plugin_path.name}': {e}")
-                else:
-                    print_info_message(
-                        f"Skipping '{plugin_path.name}': config.yml not found.")
+        # Iterate over the list from config.yml, not the file system
+        for plugin_name in self.plugins_to_load:
+            plugin_path = self.plugins_dir / plugin_name
+            config_path = plugin_path / "config.yml"
 
-    def get_plugin(self, command: str) -> Optional[Plugin]:
-        return self.plugins.get(command)
+            if not plugin_path.is_dir() or not config_path.exists():
+                print_error_message(f"Skipping '{plugin_name}': Not a valid plugin directory or config.yml not found.")
+                continue
 
-    def get_commands(self) -> list[str]:
-        return list(self.plugins.keys())
-
-    def execute_command(self, command: str, *args, **kwargs):
-        plugin = self.get_plugin(command)
-        if plugin:
-            result = plugin.execute(*args, **kwargs)
-            if result:
-                print(result)
-        else:
-            print_error_message(f"No plugin found for command '{command}'.")
+            try:
+                with open(config_path, 'r') as f:
+                    config_data = yaml.safe_load(f)
+                    aeon_plugin_config = config_data.get('aeon_plugin')
+                    if aeon_plugin_config:
+                        plugin = Plugin(
+                            name=plugin_name,
+                            config=aeon_plugin_config,
+                            path=plugin_path
+                        )
+                        # Use the plugin's command as the dictionary key
+                        self.plugins[plugin.command] = plugin
+                    else:
+                        print_info_message(
+                            f"Skipping '{plugin_name}': 'aeon_plugin' key not found in config.")
+            except (yaml.YAMLError, ValueError) as e:
+                print_error_message(
+                    f"Error loading config for '{plugin_name}': {e}")

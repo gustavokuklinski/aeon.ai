@@ -1,12 +1,13 @@
 from src.config import (
     LLM_MODEL,
-    EMB_MODEL
+    EMB_MODEL,
+    LOADED_PLUGINS
 )
-from src.libs.messages import print_command_message, print_info_message
-
+from src.libs.messages import print_command_message, print_info_message, print_error_message
+from src.libs.plugins import PluginManager
 
 def printAeonLayout():
-    print("                                    ")
+    print("")
     print("\033[38;5;196m █████╗ ███████╗ ██████╗ ███╗   ██╗ \033[0m")
     print("\033[38;5;197m██╔══██╗██╔════╝██╔═══██╗████╗  ██║ \033[0m")
     print("\033[38;5;160m███████║█████╗  ██║   ██║██╔██╗ ██║ \033[0m")
@@ -31,6 +32,7 @@ def printAeonCmd():
     print_command_message("'/restart' Restart AEON")
     print_command_message("'/quit', '/exit' or '/bye'"
                           "to end the chat.")
+    
 
 
 def printAeonModels():

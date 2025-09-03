@@ -6,10 +6,31 @@ Know more about Aeon: [DOCS](https://github.com/gustavokuklinski/aeon.ai/blob/ma
 ## Stats
 [![Aeon build](https://github.com/gustavokuklinski/aeon.ai/actions/workflows/python-app.yml/badge.svg)](https://github.com/gustavokuklinski/aeon.ai/actions/workflows/python-app.yml)
 
+## Using Docker
+Aeon in a Docker container allows real-time file updates.
+You can customize and backup chats.
 
-## Installation
+**Build the Docker image**
+```bash
+docker build -t aeon .
+```
 
-AEON uses Python with virtual environment and `git lfs` installed.
+**Run the docker image**
+```bash
+docker run -it --rm -p 4303:4303 -v "$(pwd):/app" aeon
+```
+
+Docker image params:
+* `-it` : Runs the container in interactive mode, allowing you to use the menu.
+* `--rm` : Automatically removes the container when you exit.
+* `-p 4303:4303` : Maps the container's port 4303 to your host machine's port 4303, allowing you to access the web interface.
+* `-v "$(pwd):/app"` : This is the bind mount. It links your project folder on your machine directly to the /app folder in the container. Any changes you save on your local machine will be immediately available to the Python script running inside the container.
+* `aeon` : The name of the Docker image you built.
+
+## Manual Installation
+If you want to tweak everything!
+
+AEON uses Python with virtual environment and `git lfs` installed. 
 
 Use the script `./install.py` to set up your virtual environment and install all necessary pip dependencies.
 
@@ -17,7 +38,7 @@ Use the script `./install.py` to set up your virtual environment and install all
 /$ git lfs install
 /$ git clone https://github.com/gustavokuklinski/aeon.ai.git
 
-# Run check and install dependencies
+# Prepare the .venv, run check and install dependencies
 /$ python3 ./install.py 
 
 # Start AEON
@@ -49,5 +70,5 @@ Edit `config.yml` to fit your needs. You must specify the **file paths** to your
 
 | OS | CPU | GPU | RAM |
 |:---|:---|:---|:---|
-| Ubuntu 24.04.2 LTS | Intel i7 - 10510U | - | 16GB |
-| Windows 11 Home Edition | Intel i7 - 10510U | - | 8GB |
+| Ubuntu 24.04.2 LTS | Intel i7-10510U | Intel CometLake-U GT2 | 16GB |
+| Windows 11 Home Edition | Intel i7-10510U | Intel CometLake-U GT2 | 8GB |

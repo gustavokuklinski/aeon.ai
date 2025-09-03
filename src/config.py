@@ -1,10 +1,12 @@
 # src/config.py
 import yaml
 from pathlib import Path
+import shutil
 
 from src.libs.messages import (
     print_error_message,
-    print_info_message
+    print_info_message,
+    print_success_message,
 )
 
 # Configuration
@@ -13,7 +15,11 @@ INPUT_DIR = "./data/input"
 CHROMA_DB_DIR = "./data/chats"
 BACKUP_DIR = "./data/output/backup"
 OUTPUT_DIR = "./data/output"
+
+
 CONFIG_FILE = "./config.yml"
+
+
 
 PLUGINS_DIR = Path("./plugins")
 
@@ -27,12 +33,13 @@ try:
     LLM_TOP_K = config["llm_config"]["top_k"]
     LLM_TOP_P = config["llm_config"]["top_p"]
     SYSTEM_PROMPT = config["llm_config"]["llm_prompt"]
+    SYSTEM_RAG_PROMPT = config["llm_config"]["llm_rag_prompt"]
 
     EMB_MODEL = config["emb_config"]["model"]
     EMB_N_CTX = config["emb_config"]["n_ctx"]
     EMB_CHUNK_SIZE = config["emb_config"]["chunk_size"]
     EMB_CHUNK_OVERLAP = config["emb_config"]["chunk_overlap"]
-
+    LOADED_PLUGINS = config["load_plugins"]
 except FileNotFoundError:
     print_error_message(f"Config file not found: {CONFIG_FILE}")
 
@@ -73,3 +80,26 @@ else:
 
 # Ensure OUTPUT_DIR exists
 Path(OUTPUT_DIR).mkdir(parents=True, exist_ok=True)
+
+def copy_config_to_chat(conversation_id: str):
+    """
+    Copies the main config.yml to a new conversation directory.
+    """
+    source_path = Path(CONFIG_FILE)
+    destination_dir = Path(MEMORY_DIR) / conversation_id
+    destination_path = destination_dir / "config.yml"
+
+    if not source_path.exists():
+        print_error_message(f"Source config file not found at {source_path}.")
+        return False
+
+    try:
+        shutil.copyfile(source_path, destination_path)
+        print_success_message(f"Copied config.yml to {destination_path}")
+        return True
+    except FileNotFoundError:
+        print_error_message(f"Destination directory not found: {destination_dir}")
+        return False
+    except Exception as e:
+        print_error_message(f"Error copying config file: {e}")
+        return False

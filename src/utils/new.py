@@ -4,7 +4,7 @@ from datetime import datetime
 from pathlib import Path
 from src.libs.messages import print_boot_message, print_success_message
 from src.core.ragSystem import ragSystem
-
+from src.config import copy_config_to_chat
 
 def newConversation(memory_dir_path: Path):
     print_boot_message("Starting a new conversation...")
@@ -15,7 +15,7 @@ def newConversation(memory_dir_path: Path):
 
     current_memory_path = memory_dir_path / conversation_hash
     current_memory_path.mkdir(parents=True, exist_ok=True)
-
+    copy_config_to_chat(conversation_hash)
     chroma_db_dir_path = current_memory_path / 'db'
     conversation_filename = f"{conversation_hash}.json"
     current_chat_history = []

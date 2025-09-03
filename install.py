@@ -74,9 +74,14 @@ def manage_virtual_environment():
 
     return python_executable, bin_dir
 
-def install_plugin_requirements():
+def install_plugin_requirements(python_executable):
     print_boot_msg("Installing main application requirements...")
-    subprocess.run(["pip", "install", "-r", "requirements.txt"], check=True)
+    subprocess.run(
+            [python_executable, "-c", "import llama_cpp, langchain_chroma"],
+            check=True,
+            capture_output=True,
+            text=True
+        )
 
     print_boot_msg("\nInstalling plugin requirements...")
     if not PLUGINS_DIR.exists():
@@ -88,7 +93,12 @@ def install_plugin_requirements():
             req_file = plugin_path / "requirements.txt"
             if req_file.exists():
                 print_ok_msg(f"Installing dependencies for {plugin_path.name}...")
-                subprocess.run(["pip", "install", "-r", req_file], check=True)
+                subprocess.run(
+                    [python_executable, "-c", "import llama_cpp, langchain_chroma"],
+                    check=True,
+                    capture_output=True,
+                    text=True
+                )
             else:
                 print_boot_msg(f"No requirements.txt found for {plugin_path.name}. Skipping.")
 
@@ -124,7 +134,7 @@ def run_preflight_checks(python_executable):
                         f"'{python_executable}'. Virtual environment "
                         "might be corrupted.")
 
-    install_plugin_requirements()
+
     print_boot_msg(" All pre-flight checks passed. Installation is complete.")
 
 
@@ -135,3 +145,4 @@ if __name__ == "__main__":
     
     python_executable, _ = manage_virtual_environment()
     run_preflight_checks(python_executable)
+    install_plugin_requirements(python_executable)

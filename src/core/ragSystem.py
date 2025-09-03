@@ -25,6 +25,7 @@ from src.config import (
     EMB_CHUNK_OVERLAP,
     INPUT_DIR,
     SYSTEM_PROMPT,
+    SYSTEM_RAG_PROMPT,
     LLM_N_CTX,
     LLM_TOP_P,
     LLM_TOP_K
@@ -150,17 +151,7 @@ def ragSystem(conversation_memory_path: Path,
         LLM_MODEL,
         "<|im_start|>system\n"
         f"{SYSTEM_PROMPT}\n"
-        "Your responses should be in plain, natural language ONLY."
-        "Determine the nature of the user's QUESTION. "
-        "If the question is factual, follow this process: "
-        "1. Scan the CONTEXT for all relevant facts."
-        "2. Combine these facts to form a single, comprehensive answer."
-        "3. If context is unavailable, "
-        "state: 'I don't know about it. Can we /search?'."
-        "If the question is conversational "
-        "or non-factual, respond naturally and "
-        "conversationally, without referring to the CONTEXT."
-        "Do not echo the user's QUESTION or the CONTEXT."
+        f"{SYSTEM_RAG_PROMPT}"
         "<|im_end|>\n"
         "<|im_start|>user\n"
         "CONTEXT:{context}\n"

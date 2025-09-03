@@ -8,7 +8,6 @@ import shutil
 import zipfile
 from werkzeug.utils import secure_filename
 
-
 # Add the parent directory to the Python path to import from 'core' and 'utils'
 project_root = Path(__file__).parent.parent.parent
 sys.path.append(str(project_root))
@@ -333,4 +332,4 @@ def serve_from_memory(folder, filename):
 
 if __name__ == "__main__":
     os.makedirs(abs_output_dir, exist_ok=True)
-    app.run(debug=True, port=4303)
+    app.run(host='0.0.0.0', debug=False, port=4303)

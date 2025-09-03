@@ -31,6 +31,9 @@ def print_success_message(message: str):
 def print_warning_message(message: str):
     print(f"\033[1;33m[WARN]\033[0m {message}")
 
+def print_plugin_message(message: str):
+    print(f"\033[1;33m[PLUG]\033[0m {message}")
+
 
 def print_chat_message(message: str):
     print(f"\033[1;33m[CHAT]\033[0m {message}")

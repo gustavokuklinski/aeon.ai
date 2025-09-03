@@ -16,3 +16,4 @@ markdown
 ddgs
 pytest
 flake8
+psutil

@@ -63,8 +63,11 @@ function addMessage(text, sender) {
         aeonIcon.alt = 'Aeon Icon';
         aeonIcon.classList.add('aeon-message-icon');
 
+        const botTextContent = document.createElement('div');
+        botTextContent.innerHTML = marked.parse(text);
+
         messageDiv.appendChild(aeonIcon);
-        messageDiv.appendChild(textSpan);
+        messageDiv.appendChild(botTextContent);
     } else if (sender === 'user') {
         const userAvatarCanvas = document.createElement('canvas');
         userAvatarCanvas.classList.add('user-message-avatar');

@@ -1,10 +1,12 @@
+# plugins/tiny/config.yml
 aeon_plugin:
   plugin_name: tiny-sd
+  plugin: tiny-sd
   type: text-image
   model_path: ./model/
   command: /image
   parameters: <PROMPT>
-
+  desc: Generate images with prompt
   # Custom config
   width: 512
   height: 512

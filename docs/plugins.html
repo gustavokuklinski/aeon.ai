@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AEON: A Local-First Multi-Modal AI System</title>
+    <link rel="stylesheet" href="./assets/css/style.css" />
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <div class="logo-container">
+                <img src="./assets/img/aeon-logo.png" alt="AEON Logo" class="logo">
+            </div>
+            <h2>Plugins</h2>
+        </header>
+        <nav>
+            <a href="/">[HOME]</a>
+            <a href="./docs.html">[DOCS]</a>
+            <a href="./plugins.html">[PLUGINS]</a>
+            <a href="./comands.html">[COMANDS]</a>
+            <a href="./donate.html">[DONATE]</a>
+            <a href="https://github.com/gustavokuklinski/aeon.ai/">[GITHUB]</a>
+        </nav>
+        <section class="section">
+            <p style="text-align: center;">The true power of AEON lies in its modular plugin system, which allows you to build a custom AI ecosystem. You can connect and switch between different LLM GGUF files for specific tasks or plug in alternative Stable Diffusion models for varied creative output. This modularity empowers you to create and integrate new features, tailoring AEON's capabilities to your exact needs and making it a truly evolutionary and agentic tool.</p>
+        </section>
+
+        <hr>
+
+       
+        <section class="section">
+
+            <div class="grid-container">
+ 
+
+                <div class="grid-item">
+                    <h4>VLM (Vision-Language Model)</h4>
+                    <p>
+                        <small>Function:</small> The system's "eyes".<br>
+                        <small>Capabilities:</small> Allows the AI to "see" and interpret images. By linking
+                        visual data with language, it can describe scenes, answer visual queries, and identify
+                        objects within pictures.<br />
+                        <small>Model:</small> <a href="https://huggingface.co/HuggingFaceTB/SmolVLM-256M-Instruct"
+                            target="_blank"><b>SmolVLM 256M by HuggingFace</b></a><br />
+                            Commands<br />
+                            <code>/view [IMAGE_PATH] [PROMPT]</code>
+                    </p>
+                </div>
+
+                <div class="grid-item">
+                    <h4>Stable Diffusion (Image Generator)</h4>
+                    <p>
+                        <small>Function:</small> The creative "artist".<br>
+                        <small>Capabilities:</small> Generates high-quality images from text prompts. It
+                        translates textual descriptions into unique visual art, giving the system a powerful
+                        creative output.<br />
+                        <small>Model:</small> <a href="https://huggingface.co/segmind/tiny-sd"
+                            target="_blank"><b>Tiny-SD by Segmind</b></a><br />
+                            Commands<br />
+                            <code>/image [PROMPT]</code>
+                    </p>
+                </div>
+
+            </div>
+        </section>
+        <hr>
+
+        
+    </div>
+</body>
+
+</html>

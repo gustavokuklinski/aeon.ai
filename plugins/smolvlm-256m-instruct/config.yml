@@ -1,6 +1,9 @@
+# plugins/smolvlm-256m-instruct/config.yml
 aeon_plugin:
-  type: image-text
+  plugin_name: smolvlm-256m-instruct
   plugin: smolvlm-256m-instruct
+  type: image-text
   model_path: ./model/
   command: /view
   parameters: <PATH> <PROMPT>
+  desc: Used to interpret images

@@ -1,18 +1,16 @@
-# install.py
 import os
 import sys
 import subprocess
 import textwrap
-import subprocess
 from pathlib import Path
 
-# --- Configuration ---
+
 VENV_DIR = "./.venv"
 REQUIREMENTS_FILE = "requirements.txt"
 CONFIG_FILE = "config.yml"
 PLUGINS_DIR = Path("plugins")
 
-# --- Helper Functions for Colored Output ---
+
 def colored_print(message, color_code):
     """Prints a message with ANSI color codes."""
     print(f"\033[{color_code}m{message}\033[0m")
@@ -35,12 +33,10 @@ def print_error_msg(message, exit_script=True):
     if exit_script:
         sys.exit(1)
 
-# --- Virtual Environment and Dependency Management ---
+
 def manage_virtual_environment():
-    """Checks, creates, and prepares the virtual environment."""
     print_boot_msg(" Checking virtual environment...")
     
-    # Determine the correct virtual environment executable path based on OS
     if sys.platform == "win32":
         python_executable = os.path.join(VENV_DIR, "Scripts", "python.exe")
         bin_dir = "Scripts"
@@ -59,7 +55,6 @@ def manage_virtual_environment():
         except FileNotFoundError:
             print_error_msg(" 'python3' command not found. Ensure Python 3 is installed and in your PATH. Aborting.")
 
-    # Check for the executable before proceeding
     if not os.path.exists(python_executable):
         print_error_msg(f" Python executable not found in virtual environment at '{python_executable}'. Aborting.")
         
@@ -75,45 +70,39 @@ def manage_virtual_environment():
     return python_executable, bin_dir
 
 def install_plugin_requirements(python_executable):
-    print_boot_msg("Installing main application requirements...")
-    subprocess.run(
-            [python_executable, "-c", "import llama_cpp, langchain_chroma"],
-            check=True,
-            capture_output=True,
-            text=True
-        )
-
+    """
+    Installs requirements for each plugin found in the plugins directory.
+    """
     print_boot_msg("\nInstalling plugin requirements...")
     if not PLUGINS_DIR.exists():
-        print_info_msg("No plugins directory found.")
+        print_info_msg("No plugins directory found. Skipping plugin installation.")
         return
 
     for plugin_path in PLUGINS_DIR.iterdir():
         if plugin_path.is_dir():
             req_file = plugin_path / "requirements.txt"
             if req_file.exists():
-                print_ok_msg(f"Installing dependencies for {plugin_path.name}...")
-                subprocess.run(
-                    [python_executable, "-c", "import llama_cpp, langchain_chroma"],
-                    check=True,
-                    capture_output=True,
-                    text=True
-                )
+                print_info_msg(f" Installing dependencies for {plugin_path.name} from {req_file}...")
+                try:
+                    subprocess.run(
+                        [python_executable, "-m", "pip", "install", "-r", str(req_file)],
+                        check=True
+                    )
+                    print_ok_msg(f" Dependencies for {plugin_path.name} installed successfully.")
+                except subprocess.CalledProcessError as e:
+                    print_error_msg(f" Failed to install dependencies for {plugin_path.name}: {e.stderr.strip()}")
             else:
-                print_boot_msg(f"No requirements.txt found for {plugin_path.name}. Skipping.")
+                print_info_msg(f" No requirements.txt found in {plugin_path.name}. Skipping.")
 
 def run_preflight_checks(python_executable):
-    """Runs checks for external tools and Python dependencies."""
     print_boot_msg(" Running pre-flight checks...")
 
-    # 1. Verify 'config.yml' exists
     print_info_msg(f" Checking for '{CONFIG_FILE}'...")
     if not os.path.exists(CONFIG_FILE):
         print_error_msg(f" Configuration file '{CONFIG_FILE}' not found. "
                         "Please create it based on the example provided in the documentation.")
     print_ok_msg(f" '{CONFIG_FILE}' found.")
     
-    # 2. Verify core Python libraries (`llama-cpp-python` and others)
     print_info_msg(" Checking for core Python dependencies...")
     try:
         subprocess.run(
@@ -136,7 +125,6 @@ def run_preflight_checks(python_executable):
 
 
     print_boot_msg(" All pre-flight checks passed. Installation is complete.")
-
 
 
 if __name__ == "__main__":

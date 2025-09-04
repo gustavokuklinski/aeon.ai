@@ -8,6 +8,7 @@ src/libs/__pycache__/
 src/cli/__pycache__/
 src/webapp/__pycache__/
 
+plugins/aeon/__pycache__/
 plugins/tiny-sd/__pycache__/
 plugins/smolvlm-256m-instruct/__pycache__/
 plugins/hello-world/__pycache__/

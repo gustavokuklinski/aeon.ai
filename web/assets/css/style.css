@@ -18,8 +18,22 @@ hr {
 }
 
 .info-message-box {
-    color: #c0c0c0;
+    color: #161616;
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background: #d7ab00;
+    padding: 10px;
+    border-radius: 5px;
 }
+
+.info-message-box-home {
+    color: #c1c1c1;
+    top: 20px;
+    right: 20px;
+    padding: 10px;
+}
+
 
 .links {
     color: #da0202
@@ -202,7 +216,7 @@ hr {
     width: 24px;
     height: 24px;
     margin-right: 8px;
-    margin-top: 20px;
+    margin-top: 0;
 }
 
 .chat-controls-container {
@@ -232,16 +246,13 @@ hr {
     background: #393939;
 }
 
-.main-button {
+.main-button,
+#ingest-button {
     padding: 10px 15px;
     background: none;
     color: #fff;
     border: none;
     cursor: pointer;
-}
-
-.main-button:hover {
-    background-color: #950000;
 }
 
 .loading-spinner {
@@ -471,4 +482,34 @@ img {
 .download-backup {
     color: #b30000;
     font-weight: bold;
+}
+.command-list {
+    bottom: 100%;
+    background-color: #151515;
+    border-radius: 5px;
+    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.3);
+    padding: 10px;
+    max-height: 200px;
+    overflow-y: auto;
+    z-index: 10;
+}
+
+.command-list.hidden {
+    display: none;
+}
+
+.command-list-item {
+    padding: 8px 12px;
+    cursor: pointer;
+    color: #c0c0c0;
+    font-size: 0.9em;
+    border-radius: 4px;
+}
+
+.command-list-item:hover {
+    background-color: #3a3a3a;
+}
+
+.bot-message div p {
+    margin: 0;
 }

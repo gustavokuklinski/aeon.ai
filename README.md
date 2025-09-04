@@ -90,11 +90,11 @@ emb_config:
   chunk_overlap: 0
 
 load_plugins:
+  - aeon
   - smolvlm-256m-instruct
   - tiny-sd
   - hello-world
 ```
-
 
 ## Star History
 

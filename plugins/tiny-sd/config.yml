@@ -1,7 +1,6 @@
 # plugins/tiny/config.yml
 aeon_plugin:
   plugin_name: tiny-sd
-  plugin: tiny-sd
   type: text-image
   model_path: ./model/
   command: /image

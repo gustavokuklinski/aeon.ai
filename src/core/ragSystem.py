@@ -80,12 +80,12 @@ def _get_or_create_vectorstore(chroma_db_dir_path: Path, chunks: list, embedding
         if chunks:
             print_info_message(
                 f"Ingesting {len(chunks)} chunks into new vector store...")
-            for i in range(0, len(chunks), batch_size):
-                batch = chunks[i:i + batch_size]
+            for i, chunk in enumerate(chunks, start=1):
                 try:
-                    vectorstore.add_documents(batch)
-                    print_info_message(
-                        f"Ingested chunks {i + 1} to {min(i + batch_size, len(chunks))}.")
+                    vectorstore.add_documents([chunk])
+                    if i % 20 == 0 or i == len(chunks):
+                        print_info_message(
+                            f"Ingested chunks {i + 1} to {min(i + batch_size, len(chunks))}.")
                 except Exception as e:
                     print_error_message(
                         f"Failed to ingest batch starting at index {i}: {e}")

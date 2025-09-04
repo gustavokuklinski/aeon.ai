@@ -1,3 +1,4 @@
+# /src/webapp/routes.py
 import os
 import sys
 import json
@@ -14,7 +15,8 @@ from src.utils.conversation import loadConversation, saveConversation
 from src.utils.rename import renameConversationForWeb
 from src.utils.load import loadBackup
 from src.webapp.ragweb import initialize_rag_system, rag_system_state
-
+from src.utils.ingestion import ingestDocuments
+from src.utils.webSearch import webSearch
 
 def init_routes(app, abs_output_dir, abs_memory_dir):
 
@@ -266,3 +268,88 @@ def init_routes(app, abs_output_dir, abs_memory_dir):
             return jsonify({"message": f"Invalid YAML content: {e}"}), 400
         except Exception as e:
             return jsonify({"message": f"Failed to save config file: {e}"}), 500
+    
+    @app.route('/ingest', methods=['POST'])
+    def ingest_files():
+        if 'file' not in request.files:
+            return jsonify({"message": "No file part in the request."}), 400
+
+        file = request.files['file']
+        conv_id = request.form.get('conversation_id')
+        print(conv_id)
+        if file.filename == '':
+            return jsonify({"message": "No selected file."}), 400
+
+        allowed_extensions = {'.md', '.txt', '.json'}
+        file_ext = os.path.splitext(file.filename)[1].lower()
+        if file_ext not in allowed_extensions:
+            return jsonify({"message": f"Invalid file type. Allowed types are: {', '.join(allowed_extensions)}"}), 400
+
+        if not conv_id:
+            return jsonify({"message": "Invalid conversation ID or RAG system not initialized."}), 400
+
+        # Initialize RAG system if it's not already initialized for this conversation
+        if conv_id not in rag_system_state:
+            initialized_vars = initialize_rag_system(conv_id, abs_memory_dir)
+            if not initialized_vars:
+                return jsonify({"message": f"Failed to initialize RAG system for conversation: {conv_id}"}), 500
+            rag_system_state[conv_id] = initialized_vars
+
+        current_rag = rag_system_state[conv_id]
+        temp_ingest_dir = current_rag["current_memory_path"] / 'temp_ingest'
+        os.makedirs(temp_ingest_dir, exist_ok=True)
+        
+        filename = secure_filename(file.filename)
+        temp_file_path = temp_ingest_dir / filename
+        
+        try:
+            file.save(temp_file_path)
+            ingestDocuments(
+                str(temp_file_path),
+                current_rag["vectorstore"],
+                current_rag["text_splitter"],
+                current_rag["llama_embeddings"]
+            )
+            return jsonify({"message": f"File '{filename}' ingested successfully."}), 200
+        except Exception as e:
+            return jsonify({"message": f"An error occurred during file ingestion: {e}"}), 500
+        finally:
+            if os.path.exists(temp_file_path):
+                os.remove(temp_file_path)
+
+    @app.route('/search', methods=['POST'])
+    def web_search_route():
+        try:
+            search_term = request.json.get('search_term')
+            conv_id = request.json.get('conversation_id')
+            
+            if not conv_id:
+                return jsonify({"message": "Conversation ID is required."}), 400
+            
+            if conv_id not in rag_system_state:
+                initialized_vars = initialize_rag_system(conv_id, abs_memory_dir)
+                if not initialized_vars:
+                    return jsonify({"response": f"Failed to initialize RAG system for conversation: {conv_id}"}), 500
+                rag_system_state[conv_id] = initialized_vars
+
+            current_rag = rag_system_state[conv_id]
+            
+            summary = webSearch(
+                search_term,
+                current_rag["llm_instance"],
+                current_rag["text_splitter"],
+                current_rag["vectorstore"]
+            )
+
+            saveConversation(
+                f"/search {search_term}",
+                summary,
+                current_rag["current_memory_path"],
+                current_rag["conversation_filename"]
+            )
+
+            return jsonify({'response': summary})
+        
+        except Exception as e:
+            print(f"Web search route failed: {e}", file=sys.stderr)
+            return jsonify({"message": "An error occurred during the web search."}), 500

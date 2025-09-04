@@ -1,0 +1,8 @@
+# plugins/aeon/config.yml
+aeon_plugin:
+  plugin_name: aeon
+  model_path: ./model/
+  type: dataset
+  command: /aeon
+  parameters:
+  desc: Aeon Personality Dataset

@@ -1,6 +1,7 @@
 import sys
 from pathlib import Path
 
+# Correct the import for the PluginManager class
 from src.config import OUTPUT_DIR, MEMORY_DIR, LOADED_PLUGINS
 from src.libs.plugins import PluginManager
 from src.libs.messages import print_error_message, print_aeon_message, print_info_message
@@ -21,7 +22,6 @@ from src.utils.list import listConversations
 from src.utils.open import openConversation
 from src.utils.new import newConversation
 
-
 def main():
     """
     The main entry point for the AEON CLI application.
@@ -34,7 +34,7 @@ def main():
     if not session_vars:
         print_error_message("Failed to initialize AEON. Exiting.")
         sys.exit()
-    
+
     session_vars["output_dir_path"] = output_dir_path
     session_vars["memory_dir_path"] = memory_dir_path
     
@@ -46,7 +46,7 @@ def main():
     print("\033[1;31m[Type /help to show commands]\033[0m")
     plugins_to_load = session_vars.get("loaded_config", {}).get("load_plugins", LOADED_PLUGINS)
     plugin_manager = PluginManager(plugins_to_load)
-    session_vars['plugin_manager'] = plugin_manager 
+    session_vars['plugin_manager'] = plugin_manager
     print("\033[1;31m[STARTING AEON]\033[0m")
 
     # Command handlers dictionary
@@ -82,25 +82,23 @@ def main():
             print_aeon_message("Goodbye!")
             break
 
+        # This section has been corrected to properly parse commands.
         parts = user_input.split(" ", 1)
         command = parts[0].lower()
-        
+        query = parts[1] if len(parts) > 1 else ""
+
         # Check if the command is a plugin
-        if plugin_manager.load_plugins() and plugin_manager.plugins.get(command):
+        if command in plugin_manager.plugins:
             plugin = plugin_manager.plugins.get(command)
             param_string = plugin.get_parameters() or ""
-            query = parts[1] if len(parts) > 1 else ""
 
-            if param_string:
-                expected_params = param_string.split()
-                num_expected = len(expected_params)
-                query_parts = query.split(" ", num_expected - 1)
-                if len(query_parts) < num_expected:
-                    print_error_message(f"Usage: {command} {param_string}")
-                    continue
-                plugin_manager.execute_command(command, *query_parts, output_dir=output_dir_path)
-            else:
-                plugin_manager.execute_command(command, query, output_dir=output_dir_path)
+            plugin.execute(
+                query,
+                output_dir=output_dir_path,
+                vectorstore=session_vars.get("vectorstore"),
+                text_splitter=session_vars.get("text_splitter"),
+                embeddings=session_vars.get("llama_embeddings")
+            )
             continue
         
         # Handle core commands

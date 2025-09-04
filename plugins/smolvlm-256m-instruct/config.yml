@@ -1,7 +1,6 @@
 # plugins/smolvlm-256m-instruct/config.yml
 aeon_plugin:
   plugin_name: smolvlm-256m-instruct
-  plugin: smolvlm-256m-instruct
   type: image-text
   model_path: ./model/
   command: /view

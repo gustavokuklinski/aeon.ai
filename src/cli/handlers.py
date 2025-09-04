@@ -55,6 +55,12 @@ def _initialize_session(memory_dir_path: Path):
 
 def _handle_ingest(user_input, session_vars):
     """Handles the /ingest command."""
+    if not isinstance(user_input, str):
+        print_error_message(
+            "Invalid input to the ingest handler. Expected a string but received a dictionary."
+        )
+        return
+    
     ingest_path = user_input[len("/ingest "):].strip()
     ingestDocuments(
         ingest_path,
@@ -135,4 +141,3 @@ def _handle_rename(user_input, session_vars):
 def _handle_restart(user_input, session_vars):
     """Handles the /restart command."""
     print_info_message("Restarting AEON...")
-    # The main loop will call main() again, so we just return here.

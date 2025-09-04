@@ -15,6 +15,8 @@ const configModal = document.getElementById('config-modal');
 const configTextarea = document.getElementById('config-textarea');
 const configSaveButton = document.getElementById('config-save-button');
 const configCancelButton = document.getElementById('config-cancel-button');
+const commandList = document.getElementById('command-list');
+const ingestButton = document.getElementById('ingest-button');
 
 const originalMessagePlaceholder = messageInput.placeholder;
 
@@ -26,6 +28,17 @@ let initialHistory = window.initialHistory;
 // The start button now correctly navigates to the home page
 startButton.addEventListener('click', () => { window.location.href = '/'; });
 
+const availableCommands = [
+    { cmd: '/new', desc: 'Create a new chat.' },
+    { cmd: '/open [CHAT_ID]', desc: 'Open a chat by number.' },
+    { cmd: '/zip', desc: 'Backup contents to a zip file at /data/output/backup' },
+    { cmd: '/ingest', desc: 'Add documents to RAG. Accept only: txt, md and json' },
+    { cmd: '/load', desc: 'Load a ZIP backup.' },
+    { cmd: '/search [TERM]', desc: 'Make a web search by term and /ingest' },
+    { cmd: '/rename [OLD_CHAT_ID] [NEW_CHAT_ID]', desc: 'Rename a chat by ID.' },
+    { cmd: '/delete [CHAT_ID]', desc: 'Delete a selected chat.' },
+];
+
 /**
  * Disables chat controls (input, send button) and shows a loading state.
  */
@@ -33,6 +46,7 @@ function disableControls() {
     messageInput.disabled = true;
     sendButton.disabled = true;
     messageInput.placeholder = "Thinking...";
+    ingestButton.disabled = true;
 }
 
 /**
@@ -43,6 +57,7 @@ function enableControls() {
     sendButton.disabled = false;
     messageInput.placeholder = originalMessagePlaceholder;
     messageInput.focus();
+    ingestButton.disabled = false;
 }
 
 /**
@@ -98,6 +113,55 @@ function addMessage(text, sender) {
 async function sendMessage() {
     const userMessage = messageInput.value.trim();
     if (userMessage === '') return;
+
+    const [command, ...args] = userMessage.split(' ');
+    const fullCommand = command.toLowerCase();
+
+    switch (fullCommand) {
+        case '/new':
+            startNewChat();
+            return;
+        case '/open':
+            const chatId = args[0];
+            if (chatId) {
+                window.location.href = `/chat/${chatId}`;
+            } else {
+                addMessage('Please provide a valid chat ID. Example: /open my-chat-id', 'bot');
+            }
+            return;
+        case '/zip':
+            if (currentConversationId && currentConversationId !== 'None') {
+                zipConversation(currentConversationId);
+            } else {
+                addMessage('Please select a conversation to back up.', 'bot');
+            }
+            return;
+        case '/delete':
+            const idToDelete = args[0];
+            if (idToDelete) {
+                deleteConversation(idToDelete);
+            } else {
+                addMessage('Please provide a chat ID to delete. Example: /delete my-old-chat', 'bot');
+            }
+            return;
+        case '/load':
+            uploadBackupButton.click(); // Triggers the file selection dialog
+            return;
+        case '/search':
+            const searchTerm = args.join(' ');
+            if (searchTerm) {
+                webSearch(searchTerm);
+            } else {
+                showInfoMessage('Please provide a search term. Example: /search latest tech news', 'bot');
+            }
+            return;
+        case '/ingest':
+            ingestButton.click(); // Triggers the file selection dialog for ingestion
+            return;
+        default:
+            // Continue with normal message sending
+            break;
+    }
 
     addMessage(userMessage, 'user');
     messageInput.value = '';
@@ -187,6 +251,58 @@ function createModal(contentHtml) {
     });
 }
 
+async function webSearch(searchTerm) {
+    if (!currentConversationId || currentConversationId === 'None') {
+        showInfoMessage("Please start or select a conversation first.");
+        return;
+    }
+
+    addMessage(`Searching the web for: "${searchTerm}"...`, 'user');
+    messageInput.value = '';
+    loadingSpinner.style.display = 'block';
+    disableControls();
+
+    try {
+        const payload = {
+            search_term: searchTerm,
+            conversation_id: currentConversationId
+        };
+
+        const response = await fetch('/search', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload),
+        });
+
+        const data = await response.json();
+
+        if (typeof data.response === 'string' && data.response.includes('\n\nTitle:')) {
+            const [summary, ...linkBlocks] = data.response.split('\n\nTitle:');
+
+            let formattedLinks = '';
+            linkBlocks.forEach(block => {
+                const lines = block.split('\n');
+                if (lines.length >= 2) {
+                    const title = lines[0].trim();
+                    const linkUrl = lines[1].replace('Link:', '').trim();
+                    formattedLinks += `<br /><br />Title: ${title}<br />Link: <a href="${linkUrl}" class="search-result-link" target="_blank">${linkUrl}</a>`;
+                }
+            });
+            const finalMessage = `${summary.trim()}${formattedLinks}`;
+            addMessage(finalMessage, 'bot');
+        } else {
+            addMessage(data.response, 'bot');
+        }
+
+    } catch (error) {
+        console.error('Error during web search:', error);
+        showInfoMessage('An unexpected network error occurred. Please try again.');
+    } finally {
+        loadingSpinner.style.display = 'none';
+        enableControls();
+    }
+}
+
 /**
  * Handles renaming a conversation via a modal prompt.
  * @param {string} convIdToRename - The ID of the conversation to rename.
@@ -246,7 +362,7 @@ function showInfoMessage(message) {
     messageBox.className = 'info-message-box';
     messageBox.textContent = message;
     chatBox.appendChild(messageBox);
-    //setTimeout(() => chatBox.removeChild(messageBox), 3000);
+    setTimeout(() => chatBox.removeChild(messageBox), 3000);
 }
 
 /**
@@ -443,12 +559,12 @@ async function startNewChat() {
         if (response.ok) {
             window.location.href = `/chat/${data.conversation_id}`;
         } else {
-            addMessage(data.message || 'Failed to create new chat.', 'bot');
+            showInfoMessage(data.message || 'Failed to create new chat.', 'bot');
             if (infoMessageBox) infoMessageBox.classList.add('hidden');
         }
     } catch (error) {
         console.error('Error starting new chat:', error);
-        addMessage('An error occurred trying to start a new chat.', 'bot');
+        showInfoMessage('An error occurred trying to start a new chat.', 'bot');
         if (infoMessageBox) infoMessageBox.classList.add('hidden');
     } finally {
         loadingSpinner.style.display = 'none';
@@ -494,6 +610,50 @@ async function uploadBackup(file) {
     }
 }
 
+/**
+ * Handles file ingestion via upload.
+ * @param {File} file - The file to be ingested.
+ */
+async function ingestFile(file) {
+    if (!file) {
+        return;
+    }
+
+    if (!currentConversationId || currentConversationId === 'None') {
+        showInfoMessage("Please start or select a conversation first.");
+        return;
+    }
+
+    showInfoMessage(`Ingesting file: ${file.name}...`);
+    disableControls();
+
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('conversation_id', currentConversationId);
+
+    try {
+        const response = await fetch('/ingest', {
+            method: 'POST',
+            body: formData,
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+            showInfoMessage(data.message);
+        } else {
+            showInfoMessage(data.message);
+        }
+    } catch (error) {
+        console.error('Error ingesting file:', error);
+        showInfoMessage('An error occurred during file ingestion. Please try again.', 'bot');
+    } finally {
+        loadingSpinner.style.display = 'none';
+        enableControls();
+    }
+}
+
+
 // Event listeners
 sendButton.addEventListener('click', sendMessage);
 messageInput.addEventListener('keypress', (e) => {
@@ -514,6 +674,24 @@ uploadBackupButton.addEventListener('click', () => {
         const selectedFile = event.target.files[0];
         if (selectedFile) {
             uploadBackup(selectedFile);
+        }
+    });
+
+    document.body.appendChild(fileInput);
+    fileInput.click();
+    document.body.removeChild(fileInput);
+});
+
+ingestButton.addEventListener('click', () => {
+    const fileInput = document.createElement('input');
+    fileInput.type = 'file';
+    fileInput.accept = '.md,.txt,.json';
+    fileInput.style.display = 'none';
+
+    fileInput.addEventListener('change', (event) => {
+        const selectedFile = event.target.files[0];
+        if (selectedFile) {
+            ingestFile(selectedFile);
         }
     });
 
@@ -616,11 +794,8 @@ document.addEventListener('click', (event) => {
 
 document.addEventListener('DOMContentLoaded', async () => {
     loadingSpinner.style.display = 'none';
-
-    // Await conversation loading to ensure the sidebar state is correct
     await loadConversations();
 
-    // After conversations are loaded, check for initial chat history
     if (initialHistory && initialHistory.length > 0) {
         if (infoMessageBox) infoMessageBox.classList.add('hidden');
         initialHistory.forEach(turn => {
@@ -640,3 +815,35 @@ document.addEventListener('DOMContentLoaded', async () => {
         disableControls();
     }
 });
+
+messageInput.addEventListener('input', () => {
+    const value = messageInput.value.trim();
+    if (value.startsWith('/')) {
+        const searchTerm = value.substring(1).toLowerCase();
+        const filteredCommands = availableCommands.filter(command => command.cmd.toLowerCase().includes(searchTerm));
+        displayCommands(filteredCommands);
+        commandList.classList.remove('hidden');
+    } else {
+        commandList.classList.add('hidden');
+    }
+});
+
+function displayCommands(commands) {
+    commandList.innerHTML = '';
+    if (commands.length === 0) {
+        commandList.classList.add('hidden');
+        return;
+    }
+
+    commands.forEach(command => {
+        const commandItem = document.createElement('div');
+        commandItem.classList.add('command-list-item');
+        commandItem.innerHTML = `<strong>${command.cmd}</strong> - ${command.desc}`;
+        commandItem.addEventListener('click', () => {
+            messageInput.value = `${command.cmd} `;
+            commandList.classList.add('hidden');
+            messageInput.focus();
+        });
+        commandList.appendChild(commandItem);
+    });
+}

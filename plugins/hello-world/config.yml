@@ -1,7 +1,6 @@
 # plugins/hello-world/config.yml
 aeon_plugin:
   plugin_name: hello-world
-  plugin: hello-world
   model_path: ./model/
   type: text-output
   command: /hello

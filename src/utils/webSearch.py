@@ -1,5 +1,3 @@
-# src/utils/webSearch.py
-
 from ddgs import DDGS
 from langchain.prompts import PromptTemplate
 from langchain_community.llms import LlamaCpp
@@ -17,7 +15,10 @@ from src.libs.messages import (
 
 
 def _perform_search_and_get_context(search_query: str) -> str:
-
+    """
+    Performs a DuckDuckGo search and extracts relevant text and links.
+    Returns a tuple of the search context and a list of links.
+    """
     print_info_message(f"Searching DuckDuckGo for: '{search_query}'...")
     search_results = DDGS().text(query=search_query, backend='duckduckgo',
                                  safesearch='on', max_results=5)
@@ -115,20 +116,11 @@ def _generate_summary(
     return summary_response
 
 
-def _print_search_links(search_links: list):
-    """
-    Prints the search result titles and URLs in a formatted list.
-    """
-    for link in search_links:
-        print_info_message(f"[WEBSEARCH] {link['title']}")
-        print_info_message(f"[WEBSEARCH LINK] {link['href']}")
-
-
 def webSearch(
         search_query: str,
         llm_instance: LlamaCpp,
         text_splitter: RecursiveCharacterTextSplitter,
-        vectorstore: Chroma) -> str:
+        vectorstore: Chroma) -> None:
 
     try:
         search_context, search_links = _perform_search_and_get_context(
@@ -136,7 +128,7 @@ def webSearch(
 
         if not search_context:
             print_info_message("No relevant search results found.")
-            return "No relevant search results were found for your query."
+            return "No relevant search results were found for your query.", []
 
         print_info_message("Incorporating into RAG chain...")
         search_doc = Document(
@@ -149,16 +141,22 @@ def webSearch(
                 "I found search results, but encountered an error "
                 "ingesting them into my knowledge base. Please check "
                 "the logs for details."
-            )
-
+            ), search_links
+        
         summary = _generate_summary(search_context, search_query, llm_instance)
+       
+        # Return both the summary and the links
+        # Format the links into a single string
+        formatted_links = ""
+        for link in search_links:
+            formatted_links += f"\n\nTitle:{link['title']}\nLink: {link['href']}"
+            
+        # Combine the summary and links into a single return string
+        final_output = f"{summary}{formatted_links}"
 
-        # Print the links after the summary is generated
-        _print_search_links(search_links)
-
-        return summary
+        return final_output
 
     except Exception as e:
         print_error_message(
             f"Failed to perform DuckDuckGo web search or process results: {e}")
-        return "An error occurred during the web search."
+        return "An error occurred during the web search.", []

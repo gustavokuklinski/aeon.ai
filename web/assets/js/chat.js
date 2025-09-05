@@ -20,6 +20,8 @@ const ingestButton = document.getElementById('ingest-button');
 
 const originalMessagePlaceholder = messageInput.placeholder;
 
+let conversationsMap = new Map();
+
 // These variables are now retrieved from the HTML file where they were
 // processed by the Jinja templating engine.
 let currentConversationId = window.currentConversationId;
@@ -34,8 +36,8 @@ const availableCommands = [
     { cmd: '/zip', desc: 'Backup contents to a zip file at /data/output/backup' },
     { cmd: '/ingest', desc: 'Add documents to RAG. Accept only: txt, md and json' },
     { cmd: '/load', desc: 'Load a ZIP backup.' },
+    { cmd: '/rename', desc: 'Rename a chat by ID.' },
     { cmd: '/search [TERM]', desc: 'Make a web search by term and /ingest' },
-    { cmd: '/rename [OLD_CHAT_ID] [NEW_CHAT_ID]', desc: 'Rename a chat by ID.' },
     { cmd: '/delete [CHAT_ID]', desc: 'Delete a selected chat.' },
 ];
 
@@ -47,6 +49,7 @@ function disableControls() {
     sendButton.disabled = true;
     messageInput.placeholder = "Thinking...";
     ingestButton.disabled = true;
+
 }
 
 /**
@@ -57,6 +60,7 @@ function enableControls() {
     sendButton.disabled = false;
     messageInput.placeholder = originalMessagePlaceholder;
     messageInput.focus();
+    messageInput.placeholder = "Type / to view a list of commands";
     ingestButton.disabled = false;
 }
 
@@ -84,15 +88,13 @@ function addMessage(text, sender) {
         aeonIcon.classList.add('aeon-message-icon');
 
         const botTextContent = document.createElement('div');
-        botTextContent.innerHTML = marked.parse(text);
+        botTextContent.innerHTML = marked.parse(text);  
 
         messageDiv.appendChild(aeonIcon);
         messageDiv.appendChild(botTextContent);
     } else if (sender === 'user') {
         const userAvatarCanvas = document.createElement('canvas');
         userAvatarCanvas.classList.add('user-message-avatar');
-        // NOTE: The `generateAvatar` function is a dependency not included in this file.
-        // It must be defined elsewhere for this to work.
         if (currentConversationId && currentConversationId !== 'None') {
             generateAvatar(userAvatarCanvas, currentConversationId);
         } else {
@@ -126,14 +128,26 @@ async function sendMessage() {
             if (chatId) {
                 window.location.href = `/chat/${chatId}`;
             } else {
-                addMessage('Please provide a valid chat ID. Example: /open my-chat-id', 'bot');
+                showInfoMessage('Please provide a valid chat ID. Example: /open [CHAT_ID]');
             }
             return;
         case '/zip':
             if (currentConversationId && currentConversationId !== 'None') {
                 zipConversation(currentConversationId);
             } else {
-                addMessage('Please select a conversation to back up.', 'bot');
+                showInfoMessage('Please select a conversation to back up.');
+            }
+            return;
+        case '/rename':
+            if (currentConversationId && currentConversationId !== 'None') {
+                const currentName = conversationsMap.get(currentConversationId);
+                if (currentName) {
+                    renameConversationForweb(currentConversationId, currentName);
+                } else {
+                    showInfoMessage('Could not find the conversation name. Please try again or use the rename button.');
+                }
+            } else {
+                showInfoMessage('Please select a conversation to rename.');
             }
             return;
         case '/delete':
@@ -141,7 +155,7 @@ async function sendMessage() {
             if (idToDelete) {
                 deleteConversation(idToDelete);
             } else {
-                addMessage('Please provide a chat ID to delete. Example: /delete my-old-chat', 'bot');
+                showInfoMessage('Please provide a chat ID to delete. Example: /delete my-old-chat');
             }
             return;
         case '/load':
@@ -152,7 +166,7 @@ async function sendMessage() {
             if (searchTerm) {
                 webSearch(searchTerm);
             } else {
-                showInfoMessage('Please provide a search term. Example: /search latest tech news', 'bot');
+                showInfoMessage('Please provide a search term. Example: /search latest tech news');
             }
             return;
         case '/ingest':
@@ -399,10 +413,13 @@ async function loadConversations() {
         const conversations = await response.json();
 
         conversationList.innerHTML = '';
+        conversationsMap.clear();
+
         if (conversations.length > 0) {
             if (infoMessageBox) infoMessageBox.classList.add('hidden');
 
             conversations.forEach(conv => {
+                conversationsMap.set(conv.id, conv.name);
                 const listItem = document.createElement('li');
                 listItem.classList.add('conversation-item');
                 listItem.setAttribute('data-id', conv.id);

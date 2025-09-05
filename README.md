@@ -4,10 +4,12 @@ AEON is portable, private, and capable of operating fully offline (with the exce
 Know more about Aeon: [DOCS](https://github.com/gustavokuklinski/aeon.ai/blob/main/docs/assets/md)
 
 ## Stats
-[![Aeon build](https://github.com/gustavokuklinski/aeon.ai/actions/workflows/python-app.yml/badge.svg)](https://github.com/gustavokuklinski/aeon.ai/actions/workflows/python-app.yml)
+[![Aeon build](https://github.com/gustavokuklinski/aeon.ai/actions/workflows/python-app.yml/badge.svg)](https://github.com/gustavokuklinski/aeon.ai/actions/workflows/python-app.yml) 
+
+[![license](https://img.shields.io/badge/license-BSD%203--Clause-green?logo=style)]
 
 ## Using Docker
-Aeon in a Docker container allows real-time file updates.
+Aeon in a Docker container allows real-time file updates.]
 You can customize and backup chats.
 
 **Build the Docker image**

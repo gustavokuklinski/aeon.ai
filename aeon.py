@@ -39,13 +39,16 @@ def get_resource_path(relative_path):
 
 def display_menu_and_execute():
     
-    print("\n")
-    print("\033[38;5;196m █████╗ ███████╗ ██████╗ ███╗   ██╗ \033[0m")
-    print("\033[38;5;197m██╔══██╗██╔════╝██╔═══██╗████╗  ██║ \033[0m")
-    print("\033[38;5;160m███████║█████╗  ██║   ██║██╔██╗ ██║ \033[0m")
-    print("\033[38;5;124m██╔══██║██╔══╝  ██║   ██║██║╚██╗██║ \033[0m")
-    print("\033[38;5;88m██║  ██║███████╗╚██████╔╝██║ ╚████║ \033[0m")
-    print("\033[38;5;52m╚═╝  ╚═╝╚══════╝ ╚═════╝ ╚═╝  ╚═══╝ \033[0m")
+    print("")
+    print("\033[38;5;160m_______________________________________________________\033[0m")
+    print("")
+    print("\033[38;5;160m      ###       #########      ######     ###      ### \033[0m")
+    print("\033[38;5;160m    ### ###     ##          ###      ###  ######   ### \033[0m")
+    print("\033[38;5;160m   ###   ###    #########  ###       ###  ###  ### ### \033[0m")
+    print("\033[38;5;160m  ###     ###   ##          ##       ###  ###   ###### \033[0m")
+    print("\033[38;5;160m ##         ##  #########     #######     ###      ### \033[0m")
+    print("\033[38;5;160m_______________________________________________________\033[0m")
+    print("")
     print(f"SYSM:     {sys.platform} - {platform.processor()}")
     print(f"RAM TTL:  {round(psutil.virtual_memory().total / (1024**3), 2)} GB")
     print(f"RAM USD:  {round(psutil.virtual_memory().used / (1024**3), 2)} GB")
@@ -95,7 +98,6 @@ def display_menu_and_execute():
 
 if __name__ == "__main__":
     os.system("cls" if os.name == "nt" else "clear")
-    
     
     print_boot_msg(" Booting AEON")
     display_menu_and_execute()

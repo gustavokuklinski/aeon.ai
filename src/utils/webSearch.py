@@ -98,11 +98,10 @@ def _generate_summary(
         "search query and the context provided.\n"
         "<|im_end|>\n"
         "<|im_start|>user\n"
-        "CONTEXT:\n{context}\n\n"
-        "QUESTION:\nSummarize the contents about {query}\n"
+        "{context}\n"
+        "Summarize the contents about {query}\n"
         "<|im_end|>\n"
         "<|im_start|>assistant\n"
-        "RESPONSE:"
     )
     summarize_prompt = PromptTemplate.from_template(
         summarize_prompt_template_string)
@@ -144,15 +143,12 @@ def webSearch(
             ), search_links
         
         summary = _generate_summary(search_context, search_query, llm_instance)
-       
-        # Return both the summary and the links
-        # Format the links into a single string
+
         formatted_links = ""
         for link in search_links:
-            formatted_links += f"\n\nTitle:{link['title']}\nLink: {link['href']}"
+            formatted_links += f"({link['title']})[{link['href']}]"
             
-        # Combine the summary and links into a single return string
-        final_output = f"{summary}{formatted_links}"
+        final_output = f"{summary}\n\n**Sources**{formatted_links}"
 
         return final_output
 

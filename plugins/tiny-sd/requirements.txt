@@ -1,5 +1,0 @@
-diffusers
-torch
-transformers
-safetensors
-accelerate

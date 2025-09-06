@@ -6,7 +6,6 @@ from src.libs.messages import (print_info_message, print_success_message,
                                print_error_message)
 
 from src.utils.ingestion import ingestDocuments
-from src.libs.loaders import JsonPlaintextLoader
 
 project_root = Path(__file__).resolve().parent
 

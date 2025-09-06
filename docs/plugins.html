@@ -23,14 +23,18 @@
             <a href="https://github.com/gustavokuklinski/aeon.ai/">[GITHUB]</a>
         </nav>
         <section class="section">
-            <p style="text-align: center;">The true power of AEON lies in its modular plugin system, which allows you to build a custom AI ecosystem. You can connect and switch between different LLM GGUF files for specific tasks or plug in alternative Stable Diffusion models for varied creative output. This modularity empowers you to create and integrate new features, tailoring AEON's capabilities to your exact needs and making it a truly evolutionary and agentic tool.</p>
+            <p style="text-align: center;">The true power of AEON lies in its modular plugin system, which allows you to
+                build a custom AI ecosystem. You can connect and switch between different LLM GGUF files for specific
+                tasks or plug in alternative Stable Diffusion models for varied creative output. This modularity
+                empowers you to create and integrate new features, tailoring AEON's capabilities to your exact needs and
+                making it a truly evolutionary and agentic tool.</p>
         </section>
 
         <hr>
 
-       
+
         <section class="section">
-<h3>Default package</h3>
+            <h3>Default package</h3>
             <div class="grid-container">
                 <div class="grid-item">
                     <h4>Aeon</h4>
@@ -39,8 +43,19 @@
                         <small>Type:</small> dataset<br />
                         <small>Capabilities:</small> Gives Aeon a background story. Use it only once.<br />
                         <small>Model:</small> <b>MD, JSON and TXT files</b><br />
-                            Commands<br />
-                            <code>/aeon</code>
+                        Commands<br />
+                        <code>/aeon</code>
+                    </p>
+                </div>
+                <div class="grid-item">
+                    <h4>Hello World</h4>
+                    <p>
+                        <small>Function:</small> Display message<br>
+                        <small>Type:</small> text-text<br />
+                        <small>Capabilities:</small> Simple plugin placeholder<br />
+                        <small>Model:</small><b>none</b><br />
+                        Commands<br />
+                        <code>/hello [PROMPT]</code>
                     </p>
                 </div>
                 <div class="grid-item">
@@ -51,13 +66,13 @@
                         <small>Capabilities:</small> Allows the AI to "see" and interpret images. By linking
                         visual data with language, it can describe scenes, answer visual queries, and identify
                         objects within pictures.<br />
-                        <small>Model:</small> <a href="https://huggingface.co/HuggingFaceTB/SmolVLM-256M-Instruct"
-                            target="_blank"><b>SmolVLM 256M by HuggingFace</b></a><br />
-                            Commands<br />
-                            <code>/view [IMAGE_PATH] [PROMPT]</code>
+                        <small>Source Code:</small> <a
+                            href="https://github.com/gustavokuklinski/aeon-smolvlm-256m-instruct"
+                            target="_blank"><b>SmolVLM-256M-Instruct</b></a><br />
+                        Commands<br />
+                        <code>/view [IMAGE_PATH] [PROMPT]</code>
                     </p>
                 </div>
-
                 <div class="grid-item">
                     <h4>Stable Diffusion (Image Generator)</h4>
                     <p>
@@ -66,52 +81,37 @@
                         <small>Capabilities:</small> Generates high-quality images from text prompts. It
                         translates textual descriptions into unique visual art, giving the system a powerful
                         creative output.<br />
-                        <small>Model:</small> <a href="https://huggingface.co/segmind/tiny-sd"
-                            target="_blank"><b>Tiny-SD by Segmind</b></a><br />
-                            Commands<br />
-                            <code>/image [PROMPT]</code>
+                        <small>Model:</small> <a href="https://github.com/gustavokuklinski/aeon-tiny-sd"
+                            target="_blank"><b>Tiny-SD</b></a><br />
+                        Commands<br />
+                        <code>/image [PROMPT]</code>
                     </p>
                 </div>
-                <div class="grid-item">
-                    <h4>Hello World</h4>
-                    <p>
-                        <small>Function:</small> Display message<br>
-                        <small>Type:</small> text-text<br />
-                        <small>Capabilities:</small> Simple plugin placeholder<br />
-                        <small>Model:</small><b>none</b><br />
-                            Commands<br />
-                            <code>/hello [PROMPT]</code>
-                    </p>
-                </div>
-
             </div>
         </section>
         <hr />
         <section class="section">
-<h3>Community plugins</h3>
+            <h3>Community plugins</h3>
             <div class="grid-container">
-                
-
                 <div class="grid-item">
-                    <h4>Gemma3 270m</h4>
+                    <h4>Gemma3 270m instruct</h4>
                     <p>
                         <small>Function:</small> Embed power.<br>
                         <small>Type:</small> text-text<br />
                         <small>Capabilities:</small> Embed Gemma3 270m instruct to work with Aeon default LLM<br />
-                        <small>Model:</small> <a href="https://huggingface.co/google/gemma-3-270m-it"
-                            target="_blank"><b>Gemma3 270m by Google</b></a><br />
-                            Commands<br />
-                            <code>/gemma3 [PROMPT]</code>
+                        <small>Model:</small> <a href="https://github.com/gustavokuklinski/aeon-gemma3-270m"
+                            target="_blank"><b>Gemma3 270m Instruct</b></a><br />
+                        Commands<br />
+                        <code>/gemma3 [PROMPT]</code>
                     </p>
                 </div>
-
             </div>
         </section>
         <hr>
 
         <footer>
-        <p style="text-align: center;">Made in 🇧🇷 for the comunity</p>
-    </footer>
+            <p style="text-align: center;">Made in 🇧🇷 for the community</p>
+        </footer>
     </div>
 </body>
 

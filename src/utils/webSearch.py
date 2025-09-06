@@ -146,10 +146,10 @@ def webSearch(
 
         formatted_links = ""
         for link in search_links:
-            formatted_links += f"({link['title']})[{link['href']}]"
+            formatted_links += f"- ({link['title']})[{link['href']}]\n"
             
-        final_output = f"{summary}\n\n**Sources**{formatted_links}"
-
+        final_output = f"{summary}\n\n**Sources**\n{formatted_links}"
+        print(search_context)
         return final_output
 
     except Exception as e:

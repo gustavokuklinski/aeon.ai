@@ -38,6 +38,11 @@ Use the script `./install.py` to set up your virtual environment and install all
 
 ```shell
 /$ git lfs install
+
+# With plugins
+/$ git clone --recurse-submodules https://github.com/gustavokuklinski/aeon.ai.git
+
+# Without plugins
 /$ git clone https://github.com/gustavokuklinski/aeon.ai.git
 
 # Prepare the .venv, run check and install dependencies

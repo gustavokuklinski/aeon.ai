@@ -1,5 +1,11 @@
+# Python ENV
 venv
 .venv
+
+# Git modules
+.gitmodules
+
+# Python cache folders
 .pytest_cache/
 src/__pycache__/
 src/core/__pycache__/
@@ -13,8 +19,7 @@ plugins/tiny-sd/__pycache__/
 plugins/smolvlm-256m-instruct/__pycache__/
 plugins/hello-world/__pycache__/
 
-/llm/custom
-
+# User output default files
 /data/output/*.png
 /data/output/*.zip
 /data/output/backup/*.zip
@@ -23,6 +28,7 @@ plugins/hello-world/__pycache__/
 /data/chats/*/*.json
 /data/chats/*/*.sqlite3
 
-/data/cerebrum/temp/*.json
-/data/cerebrum/temp/*.txt
-/data/cerebrum/temp/*.md
+# User input data files
+/data/input/*.json
+/data/input/*.txt
+/data/input/*.md

@@ -2,9 +2,6 @@
 venv
 .venv
 
-# Git modules
-.gitmodules
-
 # Python cache folders
 .pytest_cache/
 src/__pycache__/

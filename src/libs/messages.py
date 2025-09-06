@@ -37,3 +37,6 @@ def print_plugin_message(message: str):
 
 def print_chat_message(message: str):
     print(f"\033[1;33m[CHAT]\033[0m {message}")
+
+def print_source_message(message: str):
+    print(f"\033[1;32m[SOURCE]:\033[0m {message}")

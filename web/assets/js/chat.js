@@ -289,7 +289,7 @@ async function webSearch(searchTerm) {
         });
 
         const data = await response.json();
-
+        console.log(data);
         if (typeof data.response === 'string' && data.response.includes('\n\nTitle:')) {
             const [summary, ...linkBlocks] = data.response.split('\n\nTitle:');
 

@@ -12,7 +12,7 @@ from src.utils.load import loadBackup
 from src.utils.delete import deleteConversation
 from src.utils.rename import renameConversation
 
-from src.libs.messages import print_error_message, print_info_message, print_aeon_message
+from src.libs.messages import print_error_message, print_info_message, print_aeon_message,print_source_message
 from src.cli.termPrompts import startup_prompt
 
 
@@ -99,10 +99,11 @@ def _handle_search(user_input, session_vars):
         session_vars["text_splitter"],
         session_vars["vectorstore"]
     )
-    print_aeon_message(summarized_search_results)
+    print_aeon_message(f"{summarized_search_results[0]}\n\n{summarized_search_results[1]}")
     saveConversation(
         user_input,
-        summarized_search_results,
+        summarized_search_results[0],
+        summarized_search_results[1],
         session_vars["current_memory_path"],
         session_vars["conversation_filename"]
     )
@@ -111,19 +112,51 @@ def _handle_search(user_input, session_vars):
 
 
 def _handle_rag_chat(user_input, session_vars):
-    """Handles a standard chat message using the RAG system."""
+    """
+    Handles a user query by running it through the RAG chain
+    and printing the output in the desired format.
+    """
+    rag_chain = session_vars.get("rag_chain")
+    if not rag_chain:
+        print_error_message("RAG system not initialized. Type /restart to begin.")
+        return
+
+    print_info_message("Thinking...")
+    
     try:
-        response = session_vars["rag_chain"].invoke(user_input)
-        ai_response_content = str(response)
-        print_aeon_message(ai_response_content)
+        result = rag_chain.invoke(user_input)
+
+        answer = result.get("answer", "No answer found.")
+        context_docs = result.get("context", [])
+
+        sources_count = {}
+        for doc in context_docs:
+            source = doc.metadata.get("source")
+            if source:
+                #if source.startswith("http://") or source.startswith("https://"):
+                #    cleaned_source = source.replace("https://", "").replace("http://", "").strip('/')
+                #else:
+                cleaned_source = Path(source)
+                
+                sources_count[cleaned_source] = sources_count.get(cleaned_source, 0) + 1
+
+        formatted_list = [f"{source} ({count}x)" for source, count in sources_count.items()]
+        formatted_sources = "\n".join(formatted_list) if formatted_list else "No sources found."
+
+
+        print_aeon_message(f"{answer}")
+        #print_source_message(f"<div class='sources'>**Sources**\n{formatted_sources}</div>")
 
         saveConversation(
             user_input,
-            ai_response_content,
+            answer,
+            formatted_sources,
             session_vars["current_memory_path"],
-            session_vars["conversation_filename"])
+            session_vars["conversation_filename"]
+        )
         session_vars["current_chat_history"].append(
-            {"user": user_input, "aeon": ai_response_content})
+            {"user": user_input, "aeon": answer, "source": formatted_sources}
+        )
     except Exception as e:
         print_error_message(f"An error occurred during RAG processing: {e}")
 

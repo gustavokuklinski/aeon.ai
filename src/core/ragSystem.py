@@ -1,5 +1,3 @@
-# src/core/ragSystem.py
-
 import os
 import sys
 from pathlib import Path
@@ -8,7 +6,7 @@ from langchain_community.document_loaders import (
 )
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain_chroma import Chroma
-from langchain_core.runnables import RunnablePassthrough
+from langchain_core.runnables import RunnablePassthrough, RunnableParallel
 from langchain.chains.combine_documents import create_stuff_documents_chain
 from langchain.prompts import PromptTemplate
 from langchain_community.llms import LlamaCpp
@@ -42,7 +40,7 @@ def _load_initial_documents(input_dir_path: Path) -> list:
             f"Directory '{input_dir_path}' not found. Please create it.")
         sys.exit(1)
 
-    print_info_message(f"Loading initial documents from: {input_dir_path}")
+    print_info_message(f"Loading initial documents...")
     documents = []
     documents.extend(DirectoryLoader(str(input_dir_path),
                      glob="**/*.md", loader_cls=UnstructuredMarkdownLoader).load())
@@ -58,7 +56,7 @@ def _get_or_create_vectorstore(chroma_db_dir_path: Path, chunks: list, embedding
     batch_size = 32
     if chroma_db_dir_path.exists() and os.listdir(chroma_db_dir_path):
         print_info_message(
-            f"Loading existing vector store from {chroma_db_dir_path}...")
+            f"Loading existing vector store...")
         vectorstore = Chroma(persist_directory=str(
             chroma_db_dir_path), embedding_function=embeddings)
         if chunks:
@@ -96,8 +94,7 @@ def _get_or_create_vectorstore(chroma_db_dir_path: Path, chunks: list, embedding
         return vectorstore
 
 
-def _initialize_models_and_chain(retriever, llm_model_path, system_prompt_template) -> tuple[LlamaCpp, RunnablePassthrough]:
-
+def _initialize_models_and_chain(retriever, llm_model_path, system_prompt_template) -> tuple[LlamaCpp, RunnableParallel]:
     print_info_message(f"Loading LLM: {llm_model_path}")
     llm = LlamaCpp(
         model_path=llm_model_path,
@@ -110,9 +107,20 @@ def _initialize_models_and_chain(retriever, llm_model_path, system_prompt_templa
     )
 
     qa_prompt = PromptTemplate.from_template(system_prompt_template)
-    document_combiner = create_stuff_documents_chain(llm, qa_prompt)
-    rag_chain = {"context": retriever,
-                 "question": RunnablePassthrough()} | document_combiner
+    
+    # This chain will retrieve the documents and pass them through to the next step
+    # along with the original question.
+    retrieval_chain = RunnableParallel({"context": retriever, "question": RunnablePassthrough()})
+    
+    # This chain will use the retrieved documents to generate the answer.
+    answer_chain = create_stuff_documents_chain(llm, qa_prompt)
+    
+    # The final chain combines everything to return a dictionary.
+    # It first retrieves the documents and prepares the input.
+    # Then it calls the answer chain with the formatted input, and also
+    # passes the retrieved context through using a RunnablePassthrough.assign().
+    rag_chain = retrieval_chain | RunnablePassthrough.assign(answer=answer_chain)
+
     print_success_message("RAG chain assembled and ready.")
     return llm, rag_chain
 

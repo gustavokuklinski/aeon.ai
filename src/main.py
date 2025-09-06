@@ -90,7 +90,6 @@ def main():
         # Check if the command is a plugin
         if command in plugin_manager.plugins:
             plugin = plugin_manager.plugins.get(command)
-            param_string = plugin.get_parameters() or ""
 
             plugin.execute(
                 query,

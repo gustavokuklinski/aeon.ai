@@ -78,8 +78,8 @@ def _load_single_file(path: Path) -> list[Document]:
         print_info_message(
             "Detected .json file. Loading with custom JSON plaintext loader.")
         loader = JsonPlaintextLoader(str(path))
-    elif path.suffix.lower() == ".db":
-        print_info_message("Detected .db file. Loading as SQLite database.")
+    elif path.suffix.lower() == ".sqlite3":
+        print_info_message("Detected .sqlite3 file. Loading as SQLite database.")
         return _load_sqlite_db(path)
     else:
         print_info_message(
@@ -123,7 +123,7 @@ def _load_directory_documents(path: Path) -> list[Document]:
             doc.metadata.update(_parse_file_metadata(json_file))
         all_documents.extend(json_docs)
         
-    db_files = list(path.glob("**/*.db"))
+    db_files = list(path.glob("**/*.sqlite3"))
     for db_file in db_files:
         print_info_message(
             f"Found SQLite database file: '{db_file}'. "

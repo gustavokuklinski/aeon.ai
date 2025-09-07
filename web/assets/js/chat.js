@@ -22,12 +22,9 @@ const originalMessagePlaceholder = messageInput.placeholder;
 
 let conversationsMap = new Map();
 
-// These variables are now retrieved from the HTML file where they were
-// processed by the Jinja templating engine.
 let currentConversationId = window.currentConversationId;
 let initialHistory = window.initialHistory;
 
-// The start button now correctly navigates to the home page
 startButton.addEventListener('click', () => { window.location.href = '/'; });
 
 const availableCommands = [
@@ -49,7 +46,6 @@ function disableControls() {
     sendButton.disabled = true;
     messageInput.placeholder = "Thinking...";
     ingestButton.disabled = true;
-
 }
 
 /**
@@ -68,8 +64,9 @@ function enableControls() {
  * Creates and appends a new message div to the chat box.
  * @param {string} text - The message content.
  * @param {string} sender - 'user' or 'bot'.
+ * @param {string[]} [sources=[]] - An optional array of source URLs.
  */
-function addMessage(text, sender) {
+function addMessage(text, sender, sources = []) {
     if (infoMessageBox && !infoMessageBox.classList.contains('hidden')) {
         infoMessageBox.classList.add('hidden');
     }
@@ -88,10 +85,40 @@ function addMessage(text, sender) {
         aeonIcon.classList.add('aeon-message-icon');
 
         const botTextContent = document.createElement('div');
-        botTextContent.innerHTML = marked.parse(text);  
+        botTextContent.innerHTML = marked.parse(text);
 
         messageDiv.appendChild(aeonIcon);
         messageDiv.appendChild(botTextContent);
+
+        // Add logic to display sources if they exist
+        if (sources.length > 0) {
+            const sourcesContainer = document.createElement('details');
+            sourcesContainer.classList.add('sources');
+            
+            const heading = document.createElement('summary');
+            heading.classList.add('sources-title');
+            heading.textContent = 'Sources';
+            sourcesContainer.appendChild(heading);
+            
+            const sourcesList = document.createElement('ul');
+            sourcesList.classList.add('source-list');
+
+            sources.forEach(source => {
+                if (source.trim() !== '') {
+                    const listItem = document.createElement('li');
+                    const link = document.createElement('a');
+                    link.href = source.trim();
+                    link.target = '_blank';
+                    link.classList.add('source-link');
+                    link.textContent = source.trim();
+                    listItem.appendChild(link);
+                    sourcesList.appendChild(listItem);
+                }
+            });
+            sourcesContainer.appendChild(sourcesList);
+            botTextContent.appendChild(sourcesContainer);
+        }
+
     } else if (sender === 'user') {
         const userAvatarCanvas = document.createElement('canvas');
         userAvatarCanvas.classList.add('user-message-avatar');
@@ -159,7 +186,7 @@ async function sendMessage() {
             }
             return;
         case '/load':
-            uploadBackupButton.click(); // Triggers the file selection dialog
+            uploadBackupButton.click();
             return;
         case '/search':
             const searchTerm = args.join(' ');
@@ -170,10 +197,9 @@ async function sendMessage() {
             }
             return;
         case '/ingest':
-            ingestButton.click(); // Triggers the file selection dialog for ingestion
+            ingestButton.click();
             return;
         default:
-            // Continue with normal message sending
             break;
     }
 
@@ -199,8 +225,12 @@ async function sendMessage() {
 
         const data = await response.json();
 
+       
+
+
         if (response.ok) {
-            addMessage(data.response, 'bot');
+            const sourceLinks = data.source ? data.source.split('\n') : [];
+            addMessage(data.response, 'bot', sourceLinks);
             if (data.conversation_id && data.conversation_id !== currentConversationId) {
                 currentConversationId = data.conversation_id;
                 window.history.pushState({}, '', `/chat/${currentConversationId}`);
@@ -230,7 +260,6 @@ function createModal(contentHtml) {
         modal.innerHTML = `<div class="confirm-modal-content">${contentHtml}</div>`;
         document.body.appendChild(modal);
 
-        // Function to handle cleanup and resolution
         const cleanup = (result) => {
             document.body.removeChild(modal);
             resolve(result);
@@ -288,24 +317,29 @@ async function webSearch(searchTerm) {
             body: JSON.stringify(payload),
         });
 
-        const data = await response.json();
-        console.log(data);
-        if (typeof data.response === 'string' && data.response.includes('\n\nTitle:')) {
-            const [summary, ...linkBlocks] = data.response.split('\n\nTitle:');
+        // The key is to handle the JSON response correctly, regardless of 'ok' status
+        let data;
+        try {
+            data = await response.json();
+            console.log('Server response data:', data); // Add for debugging
+        } catch (jsonError) {
+            console.error('Failed to parse JSON response:', jsonError);
+            addMessage('The server returned an invalid response. Please try again.', 'bot');
+            return;
+        }
 
-            let formattedLinks = '';
-            linkBlocks.forEach(block => {
-                const lines = block.split('\n');
-                if (lines.length >= 2) {
-                    const title = lines[0].trim();
-                    const linkUrl = lines[1].replace('Link:', '').trim();
-                    formattedLinks += `<br /><br />Title: ${title}<br />Link: <a href="${linkUrl}" class="search-result-link" target="_blank">${linkUrl}</a>`;
-                }
-            });
-            const finalMessage = `${summary.trim()}${formattedLinks}`;
-            addMessage(finalMessage, 'bot');
+        if (response.ok) {
+            // Check for the presence of the aeon key
+            if (data.hasOwnProperty('response')) {
+                const sourceLinks = data.source ? data.source.split('\n') : [];
+                addMessage(data.response, 'bot', sourceLinks);
+            } else {
+                // Handle a successful response that doesn't have the aeon field
+                addMessage('Web search completed successfully.', 'bot');
+            }
         } else {
-            addMessage(data.response, 'bot');
+            // This is the original error handling block
+            addMessage(data.message || 'An error occurred during the web search.', 'bot');
         }
 
     } catch (error) {
@@ -316,7 +350,6 @@ async function webSearch(searchTerm) {
         enableControls();
     }
 }
-
 /**
  * Handles renaming a conversation via a modal prompt.
  * @param {string} convIdToRename - The ID of the conversation to rename.
@@ -723,7 +756,6 @@ configButton.addEventListener('click', async () => {
         return;
     }
 
-    // Show the modal and a temporary loading message
     const configHtml = `
         <p><strong>Configuration for ${currentConversationId}</strong></p>
         <textarea id="config-textarea" class="config-textarea" rows="20" cols="50" placeholder="Loading..." wrap='off'></textarea>
@@ -734,7 +766,6 @@ configButton.addEventListener('click', async () => {
         </div>
     `;
 
-    // Use createModal to create a temporary modal and get the element for a brief moment
     const tempModal = document.createElement('div');
     tempModal.className = 'confirm-modal';
     tempModal.innerHTML = `<div class="confirm-modal-content">${configHtml}</div>`;
@@ -744,7 +775,6 @@ configButton.addEventListener('click', async () => {
     const saveButton = tempModal.querySelector('#config-save-button');
     const cancelButton = tempModal.querySelector('#config-cancel-button');
 
-    // Add event listeners within the context of the newly created modal
     saveButton.addEventListener('click', async () => {
         const newConfig = configTextArea.value;
         disableControls();
@@ -775,7 +805,6 @@ configButton.addEventListener('click', async () => {
         document.body.removeChild(tempModal);
     });
 
-    // Fetch and display config
     disableControls();
     try {
         const response = await fetch(`/api/config/${currentConversationId}`);
@@ -817,7 +846,10 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (infoMessageBox) infoMessageBox.classList.add('hidden');
         initialHistory.forEach(turn => {
             addMessage(turn.user, 'user');
-            addMessage(turn.aeon, 'bot');
+            
+            // Check if the bot message is a web search result with sources
+            const sourceLinks = turn.source ? turn.source.split('\n') : [];
+            addMessage(turn.aeon, 'bot', sourceLinks);
         });
         chatControlsContainer.classList.remove('hidden');
         enableControls();

@@ -40,3 +40,6 @@ def print_chat_message(message: str):
 
 def print_source_message(message: str):
     print(f"\033[1;32m[SOURCE]:\033[0m {message}")
+
+def print_think_message(message: str):
+    print(f"\033[91m[...]:\033[0m {message}")

@@ -12,7 +12,7 @@ from src.utils.load import loadBackup
 from src.utils.delete import deleteConversation
 from src.utils.rename import renameConversation
 
-from src.libs.messages import print_error_message, print_info_message, print_aeon_message,print_source_message
+from src.libs.messages import print_error_message, print_info_message, print_aeon_message,print_source_message, print_think_message
 from src.cli.termPrompts import startup_prompt
 
 
@@ -112,16 +112,12 @@ def _handle_search(user_input, session_vars):
 
 
 def _handle_rag_chat(user_input, session_vars):
-    """
-    Handles a user query by running it through the RAG chain
-    and printing the output in the desired format.
-    """
     rag_chain = session_vars.get("rag_chain")
     if not rag_chain:
         print_error_message("RAG system not initialized. Type /restart to begin.")
         return
 
-    print_info_message("Thinking...")
+    print_think_message("Thinking...")
     
     try:
         result = rag_chain.invoke(user_input)
@@ -133,9 +129,6 @@ def _handle_rag_chat(user_input, session_vars):
         for doc in context_docs:
             source = doc.metadata.get("source")
             if source:
-                #if source.startswith("http://") or source.startswith("https://"):
-                #    cleaned_source = source.replace("https://", "").replace("http://", "").strip('/')
-                #else:
                 cleaned_source = Path(source)
                 
                 sources_count[cleaned_source] = sources_count.get(cleaned_source, 0) + 1
@@ -145,7 +138,7 @@ def _handle_rag_chat(user_input, session_vars):
 
 
         print_aeon_message(f"{answer}")
-        #print_source_message(f"<div class='sources'>**Sources**\n{formatted_sources}</div>")
+        print_source_message(f"\n{formatted_sources}")
 
         saveConversation(
             user_input,
@@ -162,15 +155,12 @@ def _handle_rag_chat(user_input, session_vars):
 
 
 def _handle_delete(user_input, session_vars):
-    """Handles the /delete command."""
     deleteConversation(user_input, session_vars)
 
 
 def _handle_rename(user_input, session_vars):
-    """Handles the /rename command."""
     renameConversation(user_input, session_vars)
 
 
 def _handle_restart(user_input, session_vars):
-    """Handles the /restart command."""
     print_info_message("Restarting AEON...")

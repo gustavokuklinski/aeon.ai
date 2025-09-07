@@ -126,7 +126,7 @@ def init_routes(app, abs_output_dir, abs_memory_dir):
                 current_rag["conversation_filename"]
             )
 
-            return jsonify({"response": final_answer, "conversation_id": conv_id})
+            return jsonify({"response": final_answer, "source": source_answer, "conversation_id": conv_id})
         
         except Exception as e:
             print(f"Error during RAG processing: {e}", file=sys.stderr)

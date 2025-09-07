@@ -69,7 +69,7 @@ def saveConversation(
     except Exception as e:
         print_error_message(f"Failed to save chat to '{filename}': {e}")
 
-    db_file_path = memory_dir / f"{Path(filename).stem}.db"
+    db_file_path = memory_dir / "db/chat.sqlite3"
     
     _initialize_db(db_file_path)
 

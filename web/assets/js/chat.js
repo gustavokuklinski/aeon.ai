@@ -31,7 +31,7 @@ const availableCommands = [
     { cmd: '/new', desc: 'Create a new chat.' },
     { cmd: '/open [CHAT_ID]', desc: 'Open a chat by number.' },
     { cmd: '/zip', desc: 'Backup contents to a zip file at /data/output/backup' },
-    { cmd: '/ingest', desc: 'Add documents to RAG. Accept only: txt, md and json' },
+    { cmd: '/ingest', desc: 'Add documents to RAG. Accept only: txt, md, json, sqlite3' },
     { cmd: '/load', desc: 'Load a ZIP backup.' },
     { cmd: '/rename', desc: 'Rename a chat by ID.' },
     { cmd: '/search [TERM]', desc: 'Make a web search by term and /ingest' },
@@ -295,6 +295,7 @@ function createModal(contentHtml) {
 }
 
 async function webSearch(searchTerm) {
+    loadingSpinner.style.display = 'block';
     if (!currentConversationId || currentConversationId === 'None') {
         showInfoMessage("Please start or select a conversation first.");
         return;
@@ -302,7 +303,7 @@ async function webSearch(searchTerm) {
 
     addMessage(`Searching the web for: "${searchTerm}"...`, 'user');
     messageInput.value = '';
-    loadingSpinner.style.display = 'block';
+    
     disableControls();
 
     try {
@@ -735,7 +736,7 @@ uploadBackupButton.addEventListener('click', () => {
 ingestButton.addEventListener('click', () => {
     const fileInput = document.createElement('input');
     fileInput.type = 'file';
-    fileInput.accept = '.md,.txt,.json';
+    fileInput.accept = '.md,.txt,.json,sqlite3';
     fileInput.style.display = 'none';
 
     fileInput.addEventListener('change', (event) => {

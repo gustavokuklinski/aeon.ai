@@ -108,17 +108,10 @@ def _initialize_models_and_chain(retriever, llm_model_path, system_prompt_templa
 
     qa_prompt = PromptTemplate.from_template(system_prompt_template)
     
-    # This chain will retrieve the documents and pass them through to the next step
-    # along with the original question.
     retrieval_chain = RunnableParallel({"context": retriever, "question": RunnablePassthrough()})
     
-    # This chain will use the retrieved documents to generate the answer.
     answer_chain = create_stuff_documents_chain(llm, qa_prompt)
     
-    # The final chain combines everything to return a dictionary.
-    # It first retrieves the documents and prepares the input.
-    # Then it calls the answer chain with the formatted input, and also
-    # passes the retrieved context through using a RunnablePassthrough.assign().
     rag_chain = retrieval_chain | RunnablePassthrough.assign(answer=answer_chain)
 
     print_success_message("RAG chain assembled and ready.")

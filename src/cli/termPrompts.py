@@ -12,12 +12,7 @@ from src.libs.messages import (
 
 
 def startup_prompt(memory_dir_path: Path):
-    """
-    Displays the startup menu and prompts the user for a choice.
-    Returns the user's choice as a string.
-    """
-    # Assuming printAeonLayout is defined elsewhere and handles its own printing
-    # printAeonLayout()
+
     print_info_message("Welcome to AEON.")
     print_info_message("Please choose an option:")
 

@@ -1,10 +1,12 @@
 # AEON
 AEON is portable, private, and capable of operating fully offline (with the exception of web search). It democratizes access to powerful, dynamic AI capabilities for a wider audience, regardless of their hardware.
 
+Know more about AeonLLM: [Finetune Aeon](https://github.com/gustavokuklinski/aeon.llm)
+
 Know more about Aeon: [DOCS](https://github.com/gustavokuklinski/aeon.ai/blob/main/docs/assets/md)
 
 ## Stats
-[![Aeon build](https://github.com/gustavokuklinski/aeon.ai/actions/workflows/python-app.yml/badge.svg)](https://github.com/gustavokuklinski/aeon.ai/actions/workflows/python-app.yml) [license](https://img.shields.io/badge/license-BSD%203--Clause-green?logo=style)
+[![Aeon build](https://github.com/gustavokuklinski/aeon.ai/actions/workflows/python-app.yml/badge.svg)](https://github.com/gustavokuklinski/aeon.ai/actions/workflows/python-app.yml) [[license](https://img.shields.io/badge/license-BSD%203--Clause-green?logo=style)
 
 ## Using Docker
 Aeon in a Docker container allows real-time file updates.]
@@ -76,8 +78,8 @@ Example config.yml file:
 
 ```yaml
 llm_config:
-  # MODEL_FROM: https://huggingface.co/HuggingFaceTB/SmolLM2-360M-Instruct
-  model: ./data/model/SmolLM2-360M-Instruct-Q8_0.gguf
+  # MODEL_FROM: https://huggingface.co/gustavokuklinski/aeon
+  model: ./data/model/aeon-360M-Q4.gguf
   temperature: 0.5
   n_ctx: 4096
   top_k: 40

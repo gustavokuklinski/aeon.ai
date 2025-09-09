@@ -17,9 +17,6 @@ from src.cli.termPrompts import startup_prompt
 
 
 def _initialize_session(memory_dir_path: Path):
-    """
-    Initializes a new or existing conversation session based on user choice.
-    """
     user_choice = startup_prompt(memory_dir_path)
     if user_choice.startswith("/load"):
         zip_path = user_choice[len("/load "):].strip()
@@ -54,7 +51,6 @@ def _initialize_session(memory_dir_path: Path):
 
 
 def _handle_ingest(user_input, session_vars):
-    """Handles the /ingest command."""
     if not isinstance(user_input, str):
         print_error_message(
             "Invalid input to the ingest handler. Expected a string but received a dictionary."
@@ -71,7 +67,6 @@ def _handle_ingest(user_input, session_vars):
 
 
 def _handle_zip(user_input, session_vars):
-    """Handles the /zip command."""
     print_info_message("Zipping memory folder contents...")
     try:
         archive_path = zipBackup(
@@ -85,13 +80,11 @@ def _handle_zip(user_input, session_vars):
 
 
 def _handle_load(user_input, session_vars):
-    """Handles the /load command."""
     zip_path = user_input[len("/load "):].strip()
     loadBackup(zip_path, session_vars)
 
 
 def _handle_search(user_input, session_vars):
-    """Handles the /search command."""
     search_query = user_input[len("/search "):].strip()
     summarized_search_results = webSearch(
         search_query,

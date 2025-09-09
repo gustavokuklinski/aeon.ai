@@ -6,7 +6,6 @@ from src.libs.messages import (
     print_error_message, print_info_message, print_plugin_message
 )
 
-# Define the base plugins directory relative to the project root
 PLUGINS_DIR = Path(__file__).parent.parent.parent / "plugins"
 
 
@@ -16,7 +15,6 @@ class Plugin:
         self.config = config
         self.path = path
 
-        # Validate and set core plugin attributes from the config
         self.plugin_name = self.config.get('plugin_name', name)
         self.type = self.config.get('type')
         self.command = self.config.get('command')
@@ -28,7 +26,6 @@ class Plugin:
             raise ValueError(
                 f"Plugin '{name}' is missing a 'command' key in its config.")
 
-        # Validate that the model path exists if one is specified
         if self.model_path and not self.model_path.exists():
             print_error_message(
                 f"Model path for '{self.name}' not found: {self.model_path}")
@@ -57,8 +54,7 @@ class Plugin:
                     f"Plugin '{self.name}' is missing the 'run_plugin' function.")
                 return None
 
-            # Pass the plugin's config and path directly to the run_plugin function
-            # This makes run_plugin more self-contained.
+
             return plugin_module.run_plugin(
                 *args,
                 plugin_config=self.config,
@@ -73,12 +69,12 @@ class Plugin:
 
 
 class PluginManager:
-    # The constructor now accepts a list of plugin names to load
     def __init__(self, plugins_to_load: list[str], plugins_dir: Path = PLUGINS_DIR):
         self.plugins_dir = plugins_dir
         self.plugins: Dict[str, Plugin] = {}
         self.plugins_to_load = plugins_to_load
         self.load_plugins()
+
 
     def load_plugins(self):
         if not self.plugins_dir.exists():
@@ -88,7 +84,6 @@ class PluginManager:
 
         self.plugins.clear()
 
-        # Iterate over the list from config.yml, not the file system
         for plugin_name in self.plugins_to_load:
             plugin_path = self.plugins_dir / plugin_name
             config_path = plugin_path / "config.yml"
@@ -107,7 +102,7 @@ class PluginManager:
                             config=aeon_plugin_config,
                             path=plugin_path
                         )
-                        # Use the plugin's command as the dictionary key
+
                         self.plugins[plugin.command] = plugin
                     else:
                         print_info_message(

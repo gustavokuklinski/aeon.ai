@@ -6,7 +6,7 @@ Know more about AeonLLM: [Finetune Aeon](https://github.com/gustavokuklinski/aeo
 Know more about Aeon: [DOCS](https://github.com/gustavokuklinski/aeon.ai/blob/main/docs/assets/md)
 
 ## Stats
-[![Aeon build](https://github.com/gustavokuklinski/aeon.ai/actions/workflows/python-app.yml/badge.svg)](https://github.com/gustavokuklinski/aeon.ai/actions/workflows/python-app.yml) [[license](https://img.shields.io/badge/license-BSD%203--Clause-green?logo=style)
+[![Aeon build](https://github.com/gustavokuklinski/aeon.ai/actions/workflows/python-app.yml/badge.svg)](https://github.com/gustavokuklinski/aeon.ai/actions/workflows/python-app.yml)
 
 ## Using Docker
 Aeon in a Docker container allows real-time file updates.]

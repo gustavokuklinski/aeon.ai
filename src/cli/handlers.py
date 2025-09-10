@@ -14,7 +14,7 @@ from src.utils.rename import renameConversation
 
 from src.libs.messages import print_error_message, print_info_message, print_aeon_message,print_source_message, print_think_message
 from src.cli.termPrompts import startup_prompt
-
+from langchain.docstore.document import Document
 
 def _initialize_session(memory_dir_path: Path):
     user_choice = startup_prompt(memory_dir_path)
@@ -103,6 +103,36 @@ def _handle_search(user_input, session_vars):
     session_vars["current_chat_history"].append(
         {"user": user_input, "aeon": summarized_search_results})
 
+def _ingest_conversation_turn(user_input, aeon_output, vectorstore, text_splitter, llama_embeddings):
+    """
+    Ingests a single user/bot turn into the vectorstore to create virtual memory.
+    """
+    try:
+        # Combine the user's question and the bot's answer into one document
+        conversation_text = f"USER: {user_input}\nAEON: {aeon_output}"
+        
+        # Create a LangChain Document object
+        conversation_document = Document(
+            page_content=conversation_text,
+            metadata={"source": "memory"} # Optional metadata
+        )
+        
+        # Split the document into chunks
+        docs = text_splitter.split_documents([conversation_document])
+        success, failed = 0, 0
+        for i, chunk in enumerate(docs, start=1):
+            try:
+                vectorstore.add_documents([chunk])
+                success += 1
+               
+
+            except Exception as e:
+                failed += 1
+                print_error_message(f" Failed on chunk {i}: {e}")
+
+        
+    except Exception as e:
+        print_error_message(f"Failed to ingest conversation turn: {e}")
 
 def _handle_rag_chat(user_input, session_vars):
     rag_chain = session_vars.get("rag_chain")
@@ -143,6 +173,15 @@ def _handle_rag_chat(user_input, session_vars):
         session_vars["current_chat_history"].append(
             {"user": user_input, "aeon": answer, "source": formatted_sources}
         )
+
+        _ingest_conversation_turn(
+            user_input,
+            answer,
+            session_vars["vectorstore"],
+            session_vars["text_splitter"],
+            session_vars["llama_embeddings"]
+        )
+
     except Exception as e:
         print_error_message(f"An error occurred during RAG processing: {e}")
 

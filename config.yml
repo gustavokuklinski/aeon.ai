@@ -5,9 +5,9 @@ llm_config:
   top_k: 40
   top_p: 0.8
   llm_prompt: >
-    ANSWER the users QUESTION using ONLY the CONTEXT.
+    ANSWER the user QUESTION using ONLY the CONTEXT.
     Keep your ANSWER ground in the facts of the CONTEXT.
-    If the CONTEXT doesn’t contain the facts to ANSWER the QUESTION state: I dont know, can we /search?
+    If the CONTEXT doesn't contain the facts to ANSWER the QUESTION state: I dont know, can we /search?
 
   llm_rag_prompt: >
     "Your responses should be in plain, natural language ONLY.
@@ -15,11 +15,8 @@ llm_config:
     If the question is factual, follow this process:
     1. Scan the CONTEXT for all relevant facts.
     2. Combine these facts to form a single, comprehensive answer.
-    3. If context is unavailable,
-    state: 'I don't know about it. Can we /search?'.
-    If the question is conversational
-    or non-factual, respond naturally and
-    conversationally, without referring to the CONTEXT.
+    3. If context is unavailable, state: 'I don't know about it. Can we /search?'.
+    If the question is conversational or non-factual, respond naturally and conversationally, without referring to the CONTEXT.
     Do not echo the user's QUESTION or the CONTEXT.
 
 emb_config:

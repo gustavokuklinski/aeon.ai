@@ -54,7 +54,7 @@ def printAeonCmd(plugin_manager: PluginManager):
     print_command_message("'/rename <NUMBER> <NEW_NAME>' Rename chat by ID.")
     print_command_message("'/delete <NUMBER>' Delete selected chat.")
     print_command_message("'/zip' Backup contents to a timestamped zip file.")
-    print_command_message("'/ingest <PATH> | <PATH><filename.json,txt,md>'"
+    print_command_message("'/ingest <PATH> | <PATH><.json, .txt, .md, .sqlite3>'"
                           "Add documents to RAG.")
     print_command_message("'/search' <TERM>' Make web search with DuckDuckGo")
     print_command_message("'/restart' Restart AEON")

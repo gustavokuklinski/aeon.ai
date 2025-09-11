@@ -21,12 +21,12 @@ llm_config:
 
 emb_config:
   model: ./data/model/all-MiniLM-L6-v2-Q8_0.gguf
-  n_ctx: 256
-  chunk_size: 20
-  chunk_overlap: 0
+  n_ctx: 512
+  chunk_size: 100
+  chunk_overlap: 50
 
 load_plugins: 
   - aeon
-  - smolvlm-256m-instruct
-  - tiny-sd 
   - hello-world
+#  - smolvlm-256m-instruct
+#  - tiny-sd 

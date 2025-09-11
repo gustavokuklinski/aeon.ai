@@ -49,34 +49,46 @@ def list_plugins():
     
     return plugins
 
-def add_plugin():
-    """Adds a new plugin by cloning a Git repository."""
-    print_boot_msg("\nAdding a new plugin...")
-    repo_url = input("Enter the Git repository URL: ")
+def add_plugin(repo_url, name=None):
+    """
+    Adds a new plugin as a Git submodule.
 
+    Args:
+        repo_url (str): The Git repository URL of the plugin.
+        name (str, optional): The name for the plugin directory.
+                              If not provided, it's inferred from the URL.
+    """
+    if name is None:
+        name = repo_url.split('/')[-1].replace('.git', '')
+
+    plugins_dir = 'plugins'
+    target_path = os.path.join(plugins_dir, name)
+
+    # Ensure the plugins directory exists
+    if not os.path.exists(plugins_dir):
+        print(f"[INFO] Creating plugins directory: {plugins_dir}")
+        os.makedirs(plugins_dir)
+
+    # Check if the target directory already exists
+    force_flag = ''
+    if os.path.exists(target_path):
+        print(f"[WARNING] Directory '{target_path}' already exists. Attempting to reuse with '--force'.")
+        force_flag = '--force'
+    
     try:
-        # Extract plugin name from URL
-        plugin_name = repo_url.split('/')[-1].replace(".git", "")
-        plugin_path = PLUGINS_DIR / plugin_name
-        
-        # Check if plugin already exists
-        if plugin_path.exists():
-            print_error_msg(f"A directory for plugin '{plugin_name}' already exists.")
-            return
+        print(f"[INFO] Adding plugin from '{repo_url}' into '{target_path}'...")
+        cmd = ['git', 'submodule', 'add', repo_url, target_path]
+        if force_flag:
+            cmd.insert(3, force_flag)
 
-        print_info_msg(f"Cloning '{repo_url}' into '{plugin_path}'...")
-        subprocess.run(
-            ["git", "submodule", "add", repo_url, str(plugin_path)],
-            check=True,
-            capture_output=True,
-            text=True
-        )
-        print_ok_msg(f"Plugin '{plugin_name}' cloned and added successfully.")
-        
+        result = subprocess.run(cmd, check=True, capture_output=True, text=True)
+        print("[INFO] Plugin added successfully.")
+        print(result.stdout)
     except subprocess.CalledProcessError as e:
-        print_error_msg(f"Failed to add plugin. Git command failed: {e.stderr.strip()}", exit_script=False)
-    except Exception as e:
-        print_error_msg(f"An unexpected error occurred: {e}", exit_script=False)
+        print(f"[ERROR] Failed to add plugin. Git command failed: {e.stderr}")
+        print(f"[DEBUG] Full command: {' '.join(e.cmd)}")
+    except FileNotFoundError:
+        print("[ERROR] 'git' command not found. Please ensure Git is installed and in your system's PATH.")
 
 def delete_plugin():
     """Deletes a selected plugin."""
@@ -142,7 +154,12 @@ def main_menu():
         if choice == '1':
             list_plugins()
         elif choice == '2':
-            add_plugin()
+            repo_url = input("Enter the Git repository URL: ").strip()
+            name = input("Enter a name for the plugin (or press Enter to use default): ").strip()
+            if not repo_url:
+                print_error_msg("Repository URL cannot be empty.", exit_script=False)
+                continue
+            add_plugin(repo_url, name if name else None)
         elif choice == '3':
             delete_plugin()
         elif choice == '4':

@@ -96,7 +96,10 @@ def main():
                 output_dir=output_dir_path,
                 vectorstore=session_vars.get("vectorstore"),
                 text_splitter=session_vars.get("text_splitter"),
-                embeddings=session_vars.get("llama_embeddings")
+                embeddings=session_vars.get("llama_embeddings"),
+                current_memory_path=session_vars.get("current_memory_path"),
+                conversation_filename=session_vars.get("conversation_filename"),
+                current_chat_history=session_vars.get("current_chat_history")
             )
             continue
         

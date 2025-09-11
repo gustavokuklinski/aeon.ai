@@ -125,7 +125,6 @@ def _ingest_conversation_turn(user_input, aeon_output, vectorstore, text_splitte
                 vectorstore.add_documents([chunk])
                 success += 1
                
-
             except Exception as e:
                 failed += 1
                 print_error_message(f" Failed on chunk {i}: {e}")
@@ -159,10 +158,7 @@ def _handle_rag_chat(user_input, session_vars):
         formatted_list = [f"{source} ({count}x)" for source, count in sources_count.items()]
         formatted_sources = "\n".join(formatted_list) if formatted_list else "No sources found."
 
-
-        print_aeon_message(f"{answer}")
-        print_source_message(f"\n{formatted_sources}")
-
+        
         saveConversation(
             user_input,
             answer,
@@ -181,6 +177,11 @@ def _handle_rag_chat(user_input, session_vars):
             session_vars["text_splitter"],
             session_vars["llama_embeddings"]
         )
+
+
+        print_aeon_message(f"{answer}")
+        print_source_message(f"\n{formatted_sources}")
+
 
     except Exception as e:
         print_error_message(f"An error occurred during RAG processing: {e}")

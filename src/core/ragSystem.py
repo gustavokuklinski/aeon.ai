@@ -133,7 +133,9 @@ def ragSystem(conversation_memory_path: Path,
 
     print_info_message(f"Loading embedding model: {EMB_MODEL}")
     llama_embeddings = LlamaCppEmbeddings(
-        model_path=EMB_MODEL, n_ctx=EMB_N_CTX, verbose=False)
+        model_path=EMB_MODEL, 
+        n_ctx=EMB_N_CTX, 
+        verbose=False)
 
     try:
         test_vector = llama_embeddings.embed_query(

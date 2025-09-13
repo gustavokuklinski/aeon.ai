@@ -104,20 +104,14 @@ def _handle_search(user_input, session_vars):
         {"user": user_input, "aeon": summarized_search_results})
 
 def _ingest_conversation_turn(user_input, aeon_output, vectorstore, text_splitter, llama_embeddings):
-    """
-    Ingests a single user/bot turn into the vectorstore to create virtual memory.
-    """
     try:
-        # Combine the user's question and the bot's answer into one document
-        conversation_text = f"USER: {user_input}\nAEON: {aeon_output}"
+        conversation_text = f"QUESTION: {user_input}\nANSWER: {aeon_output}"
         
-        # Create a LangChain Document object
         conversation_document = Document(
             page_content=conversation_text,
-            metadata={"source": "memory"} # Optional metadata
+            metadata={"source": "memory"}
         )
         
-        # Split the document into chunks
         docs = text_splitter.split_documents([conversation_document])
         success, failed = 0, 0
         for i, chunk in enumerate(docs, start=1):

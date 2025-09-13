@@ -88,24 +88,14 @@ def init_routes(app, abs_output_dir, abs_memory_dir):
         try:
             current_rag = rag_system_state[conv_id]
             response = current_rag["rag_chain"].invoke(user_input)
-            # ai_response_content = str(response)
 
             answer = response.get("answer", "No answer found.")
             context_docs = response.get("context", [])
 
-            # Get a unique list of sources from the document metadata
-            # Use a dictionary to count the occurrences of each unique source
             sources_count = {}
             for doc in context_docs:
                 source = doc.metadata.get("source")
                 if source:
-                    # Check if the source is a URL or a file path
-                    #if source.startswith("http://") or source.startswith("https://"):
-                    #    # Clean up the URL for a cleaner output
-                    #    cleaned_source = source.replace(
-                    #        "https://", "").replace("http://", "").strip('/')
-                    #else:
-                        # Use only the filename for a cleaner output
                     cleaned_source = Path(source)
 
                     sources_count[cleaned_source] = sources_count.get(
@@ -319,7 +309,6 @@ def init_routes(app, abs_output_dir, abs_memory_dir):
         if not conv_id:
             return jsonify({"message": "Invalid conversation ID or RAG system not initialized."}), 400
 
-        # Initialize RAG system if it's not already initialized for this conversation
         if conv_id not in rag_system_state:
             initialized_vars = initialize_rag_system(conv_id, abs_memory_dir)
             if not initialized_vars:

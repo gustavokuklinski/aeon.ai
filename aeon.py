@@ -8,7 +8,7 @@ from importlib import import_module
 from pathlib import Path
 
 project_root = Path(__file__).resolve().parent
-sys.path.append(str(project_root))
+sys.path.insert(0, str(project_root))
 
 PYTHON_SCRIPT_DIR = "src"
 PYTHON_MAIN_MODULE = "main"
@@ -38,7 +38,6 @@ def print_error_msg(message, exit_script=True):
         sys.exit(1)
 
 def get_resource_path(relative_path):
-    """Gets the correct path for a resource, considering PyInstaller packaging."""
     try:
         base_path = sys._MEIPASS
     except AttributeError:
@@ -46,7 +45,6 @@ def get_resource_path(relative_path):
     return os.path.join(base_path, relative_path)
 
 def build_and_run_docker_image():
-    """Builds and runs the Docker image, with automatic cleanup."""
     container_name = "aeon-container"
     image_name = "aeon"
     
@@ -57,16 +55,13 @@ def build_and_run_docker_image():
         return
 
     try:
-        # Build the Docker image
         subprocess.run(["docker", "build", "-t", image_name, "."], check=True)
         print_ok_msg(f"Docker image '{image_name}' built successfully.")
 
-        # Stop and remove any existing container with the same name
         print_info_msg("Cleaning up any previous container...")
         subprocess.run(["docker", "stop", container_name], check=False, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
         subprocess.run(["docker", "rm", container_name], check=False, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 
-        # Run the new container, mapping the port
         print_boot_msg(" Running Docker container...")
         subprocess.run(
             ["docker", "run", "--name", container_name, "-d", "-p", "4303:4303", image_name],
@@ -74,7 +69,6 @@ def build_and_run_docker_image():
         )
         print_ok_msg(f"Container '{container_name}' is running. Access the web interface at: http://0.0.0.0:4303")
         
-        # Keep the script running until user decides to exit
         input("\nPress Enter to stop the container and exit...")
         
     except FileNotFoundError:
@@ -140,18 +134,16 @@ def display_menu_and_execute():
     if choice == "1":
         print_boot_msg(" Running AEON in Terminal mode...")
         try:
-            main_module = import_module(f"{PYTHON_SCRIPT_DIR}.{PYTHON_MAIN_MODULE}")
-            main_module.main()
-        except ImportError:
-            print_error_msg(f"Could not import module: '{PYTHON_SCRIPT_DIR}.{PYTHON_MAIN_MODULE}'")
-        except Exception as e:
+            subprocess.run([sys.executable, "-m", "src.main"], check=True)
+            print_ok_msg("Terminal mode finished.")
+        except subprocess.CalledProcessError as e:
             print_error_msg(f"Terminal mode exited with an error: {e}")
 
     elif choice == "2":
         print_boot_msg(" Running AEON in Web mode...")
         print_boot_msg(" Access the web interface at: http://0.0.0.0:4303")
         try:
-            web_module = import_module(f"{PYTHON_SCRIPT_DIR}.{Path(FLASK_APP_PATH).stem}")
+            web_module = subprocess.run([sys.executable, "-m", "src.web"], check=True)
             web_module.app.run(host="0.0.0.0", port=4303, debug=False)
         except ImportError:
             print_error_msg(f"Could not import module: '{PYTHON_SCRIPT_DIR}.{Path(FLASK_APP_PATH).stem}'")

@@ -9,7 +9,7 @@ from src.libs.messages import (
     print_success_message,
 )
 
-# Configuration
+# Configuration dirs
 MEMORY_DIR = "./data/chats"
 INPUT_DIR = "./data/input"
 CHROMA_DB_DIR = "./data/chats"

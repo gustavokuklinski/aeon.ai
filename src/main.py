@@ -1,7 +1,6 @@
 import sys
 from pathlib import Path
 
-# Correct the import for the PluginManager class
 from src.config import OUTPUT_DIR, MEMORY_DIR, LOADED_PLUGINS
 from src.libs.plugins import PluginManager
 from src.libs.messages import print_error_message, print_aeon_message, print_info_message
@@ -23,9 +22,6 @@ from src.utils.open import openConversation
 from src.utils.new import newConversation
 
 def main():
-    """
-    The main entry point for the AEON CLI application.
-    """
     project_root = Path(__file__).parent.parent
     output_dir_path = project_root / OUTPUT_DIR
     memory_dir_path = project_root / MEMORY_DIR
@@ -49,7 +45,6 @@ def main():
     session_vars['plugin_manager'] = plugin_manager
     print("\033[1;31m[STARTING AEON]\033[0m")
 
-    # Command handlers dictionary
     command_handlers = {
         "/help": lambda sv: printAeonCmd(sv['plugin_manager']),
         "/list": lambda sv: listConversations(sv["memory_dir_path"]),
@@ -74,7 +69,7 @@ def main():
 
     while True:
         user_input = input(session_vars["user_prompt_string"]).strip()
-        session_vars['user_input'] = user_input  # Store for handlers
+        session_vars['user_input'] = user_input 
         
         if not user_input:
             continue
@@ -82,12 +77,10 @@ def main():
             print_aeon_message("Goodbye!")
             break
 
-        # This section has been corrected to properly parse commands.
         parts = user_input.split(" ", 1)
         command = parts[0].lower()
         query = parts[1] if len(parts) > 1 else ""
 
-        # Check if the command is a plugin
         if command in plugin_manager.plugins:
             plugin = plugin_manager.plugins.get(command)
 
@@ -99,15 +92,14 @@ def main():
                 embeddings=session_vars.get("llama_embeddings"),
                 current_memory_path=session_vars.get("current_memory_path"),
                 conversation_filename=session_vars.get("conversation_filename"),
-                current_chat_history=session_vars.get("current_chat_history")
+                current_chat_history=session_vars.get("current_chat_history"),
+                rag_chain=session_vars.get("rag_chain")
             )
             continue
         
-        # Handle core commands
         if command in command_handlers:
             handler = command_handlers[command]
             
-            # Handle restart and new conversation separately
             if command in ["/restart", "/new", "/open"]:
                 new_session_vars = handler(session_vars)
                 if new_session_vars:

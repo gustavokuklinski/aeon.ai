@@ -6,7 +6,8 @@ from langchain_community.document_loaders import (
     DirectoryLoader,
     UnstructuredMarkdownLoader,
     UnstructuredFileLoader,
-    TextLoader)
+    TextLoader,
+    CSVLoader)
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain_chroma import Chroma
 from langchain_community.embeddings import LlamaCppEmbeddings
@@ -78,6 +79,9 @@ def _load_single_file(path: Path) -> list[Document]:
         print_info_message(
             "Detected .json file. Loading with custom JSON plaintext loader.")
         loader = JsonPlaintextLoader(str(path))
+    elif path.suffix.lower() == ".csv":
+        print_info_message("Detected .csv file. Loading with CSVLoader.")
+        loader = CSVLoader(str(path))
     elif path.suffix.lower() == ".sqlite3":
         print_info_message("Detected .sqlite3 file. Loading as SQLite database.")
         return _load_sqlite_db(path)
@@ -111,6 +115,13 @@ def _load_directory_documents(path: Path) -> list[Document]:
     for doc in txt_docs:
         doc.metadata.update(_parse_file_metadata(Path(doc.metadata['source'])))
     all_documents.extend(txt_docs)
+
+    csv_loader = DirectoryLoader(
+        str(path), glob="**/*.csv", loader_cls=CSVLoader)
+    csv_docs = csv_loader.load()
+    for doc in csv_docs:
+        doc.metadata.update(_parse_file_metadata(Path(doc.metadata['source'])))
+    all_documents.extend(csv_docs)
 
     json_files = list(path.glob("**/*.json"))
     for json_file in json_files:
@@ -166,7 +177,6 @@ def ingestDocuments(
             return
 
         print_info_message(f"Loaded {len(ingested_documents)} new documents.")
-        # Optional: Log the metadata of the first document to verify
         if ingested_documents:
             first_doc_meta = ingested_documents[0].metadata
             print_info_message(f"Sample metadata: {first_doc_meta}")

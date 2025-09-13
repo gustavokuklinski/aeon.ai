@@ -102,7 +102,7 @@ def _initialize_models_and_chain(retriever, llm_model_path, system_prompt_templa
         top_p=LLM_TOP_P,
         top_k=LLM_TOP_K,
         n_ctx=LLM_N_CTX,
-        stop=["<|im_end|>", "\nQUESTION:", "\nCONTEXT:", "RESPONSE:"],
+        stop=["<|im_end|>", "\nQUESTION:", "\nCONTEXT:","\nUSER:", "RESPONSE:"],
         verbose=False,
     )
 

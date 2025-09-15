@@ -7,3 +7,6 @@
 [submodule "plugins/aeon-gemma3-270m"]
 	path = plugins/aeon-gemma3-270m
 	url = https://github.com/gustavokuklinski/aeon-gemma3-270m.git
+[submodule "plugins/aeon-speak"]
+	path = plugins/aeon-speak
+	url = https://github.com/gustavokuklinski/aeon-speak.git

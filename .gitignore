@@ -17,7 +17,7 @@ src/cli/__pycache__/
 src/webapp/__pycache__/
 
 # Plugins in development
-plugins/aeon-speak/
+
 
 # Plugins PyCache
 plugins/aeon-outetts-0.2-500m/__pycache__

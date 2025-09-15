@@ -119,9 +119,9 @@ def display_menu_and_execute():
     print(f"SYSM: {sys.platform}")
     print(f"RAM TTL: {round(psutil.virtual_memory().total / (1024**3), 2)} GB | USED: {round(psutil.virtual_memory().used / (1024**3), 2)} GB | FREE: {round(psutil.virtual_memory().available / (1024**3), 2)} GB")
     print("Type the \033[1;1;91m[NUMBER]\033[0m option:")
-    print("\033[1;1;33m[1] Terminal               | [4] Build and Run Docker image\033[0m")
-    print("\033[1;1;33m[2] WebGPT - https://:4303 | [5] Install for developers\033[0m")
-    print("\033[1;1;33m[3] Plugin manager         | [6] Exit\033[0m")
+    print("\033[1;1;33m[1] Terminal               | [4] Install for developers\033[0m")
+    print("\033[1;1;33m[2] WebGPT - https://:4303 | [5] Exit\033[0m")
+    print("\033[1;1;33m[3] Build and Run Docker\033[0m")
     print("")
 
     try:
@@ -151,22 +151,12 @@ def display_menu_and_execute():
             print_error_msg(f"Web mode exited with an error: {e}")
 
     elif choice == "3":
-        print_boot_msg(" Opening Plugin Manager...")
-        try:
-            from scripts import pluginmanager
-            pluginmanager.main_menu()
-        except ImportError:
-            print_error_msg(f"Could not find 'pluginmanager.py' in the '{SCRIPTS_DIR}' directory.")
-        except Exception as e:
-            print_error_msg(f"Plugin Manager exited with an error: {e}")
-
-    elif choice == "4":
         build_and_run_docker_image()
 
-    elif choice == "5":
+    elif choice == "4":
         install_for_hacking()
 
-    elif choice == "6":
+    elif choice == "5":
         print_boot_msg(" Exiting AEON. Goodbye!")
         sys.exit(0)
     else:

@@ -105,7 +105,7 @@ def _handle_search(user_input, session_vars):
 
 def _ingest_conversation_turn(user_input, aeon_output, vectorstore, text_splitter, llama_embeddings):
     try:
-        conversation_text = f"QUESTION: {user_input}\nANSWER: {aeon_output}"
+        conversation_text = f"{user_input}\n\n{aeon_output}"
         
         conversation_document = Document(
             page_content=conversation_text,

@@ -1,10 +1,10 @@
 import sys
 from pathlib import Path
 
-from src.config import OUTPUT_DIR, MEMORY_DIR, LOADED_PLUGINS
+from src.config import OUTPUT_DIR, MEMORY_DIR, LOADED_PLUGINS, LLM_MODEL, EMB_MODEL
 from src.libs.plugins import PluginManager
 from src.libs.messages import print_error_message, print_aeon_message, print_info_message
-from src.libs.termLayout import printAeonLayout, printAeonModels
+from src.libs.termLayout import printAeonLayout
 from src.cli.termPrompts import printAeonCmd
 from src.cli.handlers import (
     _initialize_session,
@@ -35,9 +35,12 @@ def main():
     session_vars["memory_dir_path"] = memory_dir_path
     
     printAeonLayout()
-    printAeonModels()
     if "loaded_config" in session_vars:
         print_info_message(f"Using config from: {session_vars['current_memory_path']}")
+        print_info_message(f"Models loaded:"
+                       f"\nLLM: \033[36m{session_vars.get("llm_config", LLM_MODEL)}\033[0m"
+                       f"\nEMB: \033[36m{session_vars.get("emb_config", EMB_MODEL)}\033[0m")
+
 
     print("\033[1;31m[Type /help to show commands]\033[0m")
     plugins_to_load = session_vars.get("loaded_config", {}).get("load_plugins", LOADED_PLUGINS)

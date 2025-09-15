@@ -1,5 +1,5 @@
 llm_config:
-  model: ./data/model/aeon-360M_Q4.gguf
+  model: ./data/model/aeon-360M-Q8_0.gguf
   temperature: 0.2
   n_ctx: 2048
   top_k: 40

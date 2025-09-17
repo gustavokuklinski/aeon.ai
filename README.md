@@ -1,15 +1,11 @@
-# AEON
-AEON is portable, private, and capable of operating fully offline (with the exception of web search). It democratizes access to powerful, dynamic AI capabilities for a wider audience, regardless of their hardware.
+![alt text](https://raw.githubusercontent.com/gustavokuklinski/aeon.ai/refs/heads/main/docs/assets/img/aeon-logo.png)
 
-Know more about AeonLLM: [Finetune Aeon](https://github.com/gustavokuklinski/aeon.llm)
-
-Know more about Aeon: [DOCS](https://github.com/gustavokuklinski/aeon.ai/blob/main/docs/assets/md)
-
-## Stats
 [![Aeon build](https://github.com/gustavokuklinski/aeon.ai/actions/workflows/python-app.yml/badge.svg)](https://github.com/gustavokuklinski/aeon.ai/actions/workflows/python-app.yml)
 
+AEON is portable, private, and capable of operating fully offline (with the exception of web search). It democratizes access to powerful, dynamic AI capabilities for a wider audience, regardless of their hardware.
+
 ## Using Docker
-Aeon in a Docker container allows real-time file updates.]
+Aeon in a Docker container allows real-time file updates.
 You can customize and backup chats.
 
 **Build the Docker image**
@@ -44,30 +40,26 @@ Use the script `./install.py` to set up your virtual environment and install all
 
 # Without plugins
 /$ git clone https://github.com/gustavokuklinski/aeon.ai.git
-
-# Prepare the .venv, run check and install dependencies
-/$ python3 ./install.py 
-
-# Start virtual env
-/$ source ./venv/bin/activate
-
-# Start AEON
-/$ python3 ./aeon.py
 ```
 
-Manual install (Linux)
 ```shell
-/$ cd ./aeon.ai/
-/aeon.ai $ python -m venv .venv
-/aeon.ai $ source ./venv/bin/activate
-/aeon.ai $ python install.py
-/aeon.ai $ python aeon.py
+# Create .venv
+/$ python -m venv .venv
+
+# Start virtual env
+/$ source .venv/bin/activate
+
+# Run check and install dependencies
+/$ python3 scripts/install.py 
+
+# Start AEON
+/$ python3 aeon.py
 ```
 
 To run on **Windows** check: [Windows setup](https://github.com/gustavokuklinski/aeon.ai/blob/main/docs/assets/md/WINDOWS.md)
 
 
-## Configuration
+## Global Configuration
 
 Edit `config.yml` to fit your needs. You must specify the **file paths** to your locally use models and `prompts`.
 
@@ -78,8 +70,7 @@ Example config.yml file:
 
 ```yaml
 llm_config:
-  # MODEL_FROM: https://huggingface.co/gustavokuklinski/aeon
-  model: ./data/model/aeon-360M-Q4.gguf
+  model: ./data/model/aeon-360M-Q8_0.gguf
   temperature: 0.5
   n_ctx: 4096
   top_k: 40
@@ -88,24 +79,21 @@ llm_config:
     You are Aeon, a friendly, helpful, and conversational AI assistant.\nCONTEXT: {context}
   llm_rag_prompt: >
     "Your responses should be in plain, natural language ONLY. Determine the nature of the user's QUESTION. If the question is factual, follow this process: 1. Scan the CONTEXT for all relevant facts. 2. Combine these facts to form a single, comprehensive answer. 3. If context is unavailable, state: 'I don't know about it. Can we /search?'. If the question is conversational or non-factual, respond naturally and conversationally, without referring to the CONTEXT. Do not echo the user's QUESTION or the CONTEXT.
-
 emb_config:
-  # MODEL_FROM: https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2
   model: ./data/model/all-MiniLM-L6-v2-Q8_0.gguf
   n_ctx: 256
   chunk_size: 20
   chunk_overlap: 0
 
 load_plugins:
-  - aeon
-  - smolvlm-256m-instruct
-  - tiny-sd
   - hello-world
+  - aeon-speak
+  - aeon-smolvlm-256m-instruct
+  - aeon-tiny-sd
 ```
 
-## Star History
-
-[![Star History Chart](https://api.star-history.com/svg?repos=gustavokuklinski/aeon.ai&type=Date)](https://www.star-history.com/#gustavokuklinski/aeon.ai&Date)
+Know more about AeonLLM: [Finetune Aeon](https://github.com/gustavokuklinski/aeon.llm)
+Know more about Aeon: [DOCS](https://github.com/gustavokuklinski/aeon.ai/blob/main/docs/assets/md)
 
 ### Tested on
 
@@ -113,3 +101,6 @@ load_plugins:
 |:---|:---|:---|:---|
 | Ubuntu 24.04.2 LTS | Intel i7-10510U | Intel CometLake-U GT2 | 16GB |
 | Windows 11 Home Edition | Intel i7-10510U | Intel CometLake-U GT2 | 8GB |
+
+
+[![Star History Chart](https://api.star-history.com/svg?repos=gustavokuklinski/aeon.ai&type=Date)](https://www.star-history.com/#gustavokuklinski/aeon.ai&Date)

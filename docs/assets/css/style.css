@@ -11,7 +11,7 @@ hr {
     border-bottom: none;
 }
 a {
-    color: #a60000;
+    color: #fbe746;
 }
 .container {
     max-width: 1200px;
@@ -41,7 +41,7 @@ h2 {
 }
 h3 {
     font-size: 1.2em;
-    color: #fff;
+    color: #e8e8e8;
     margin-top: 2em;
 }
 p {
@@ -91,7 +91,7 @@ p {
 }
 .cmd-text-area {
     width: 95%;
-    height: 20vh;
+    height: 25vh;
     padding: 10px;
     border: none;
     outline: none;

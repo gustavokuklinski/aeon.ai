@@ -1,7 +1,7 @@
 # Python ENV
 venv
+build
 .venv
-
 .gitmodules
 
 

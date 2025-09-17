@@ -1,8 +1,8 @@
 [submodule "plugins/smolvlm-256m-instruct"]
-	path = plugins/smolvlm-256m-instruct
+	path = plugins/aeon-smolvlm-256m-instruct
 	url = https://github.com/gustavokuklinski/aeon-smolvlm-256m-instruct.git
 [submodule "plugins/tiny-sd"]
-	path = plugins/tiny-sd
+	path = plugins/aeon-tiny-sd
 	url = https://github.com/gustavokuklinski/aeon-tiny-sd.git
 [submodule "plugins/aeon-gemma3-270m"]
 	path = plugins/aeon-gemma3-270m

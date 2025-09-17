@@ -31,9 +31,7 @@
        
         <section class="section">
             <h3>Getting started</h3>
-<div class="two-column-section">
-        <section class="section">
-        <h4>Stating with Aeon</h4>
+                    <section class="section">
         <p>The entire system is powered by a local-first technical stack:</p>
          <p><strong>Llama.cpp Python Library:</strong> A highly efficient library that enables the entire
                         system to run on a local machine's CPU, bypassing the need for powerful, specialized GPUs or
@@ -41,63 +39,48 @@
                     <p><strong>GGUF Files:</strong> These are the model's brain and eyes in a highly compressed format.
                         They are quantized versions of the original models, which significantly reduces their file size
                         and memory footprint without a major loss in performance.</p>
+                        <p><strong>Requirements</strong> Dependencies: build-essentials (Linux), Microsoft C++ Build Tools (Windows), Python3.11, git.</p>
                    
     </section>
-    <section class="section">
-        <h4>Docker [Recomended]</h4>
-                    <p>Dependencies: Docker</p>
+<div class="two-column-section">
+
+        <section class="section">
+        <h4>Running</h4>
                     <p>
-                        <textarea class="cmd-text-area">
+<textarea class="cmd-text-area" style="height:45vh">
 /$ git lfs install
+
+# Clone without Plugins
 /$ git clone https://github.com/gustavokuklinski/aeon.ai.git
 
+# Clone with Plugins
+/$ git clone --recurse-submodules https://github.com/gustavokuklinski/aeon.ai.git
+
+# Create virtual environment
+/$ python3 -m venv .venv
+
+/$ source .venv/bin/activate
+
+# Install Pip dependencies
+/$ python install.py
+
+/$ python aeon.py
+</textarea>
+                    </p>
+    </section>
+
+    <section class="section">
+        <h4>Running with Docker [Recomended]</h4>
+                    <p>
+<textarea class="cmd-text-area" style="height:45vh">
 # Build the Docker Image
 /$ docker build -t aeon .
 
 # Run the image
 /$ docker run -it --rm -p 4303:4303 -v "$(pwd):/app" aeon
-                        </textarea>
+</textarea>
                     </p>
     </section>
-
-    <section class="section">
-                    <h4>Installation on Linux</h4>
-                    <p>Dependencies: build-essentials, Python3.11, git.</p>
-                    <p>
-                        <textarea class="cmd-text-area">
-/$ git lfs install
-/$ git clone https://github.com/gustavokuklinski/aeon.ai.git
-
-# Prepare the .venv, run check and install dependencies
-/$ python3 ./install.py
-
-# Start virtual env
-/$ source ./venv/bin/activate
-
-# Start AEON
-/$ python3 ./aeon.py
-                        </textarea>
-                    </p>
-                </section>
-                    <section class="section">
-                    <h4>Installation on Windows</h4>
-                    <p>Dependencies: Microsoft C++ Build Tools , Python3.11, git.</p>
-                    <p>
-                        <textarea class="cmd-text-area">
-C:\aeon.ai\> git lfs install
-C:\aeon.ai\> git clone https://github.com/gustavokuklinski/aeon.ai.git
-
-# Prepare the .venv, run check and install dependencies
-C:\aeon.ai\> python install.py
-
-# Start virtual env
-C:\aeon.ai\> .\.venv\Scripts\activate.bat
-
-# Start AEON
-C:\aeon.ai\> python ./aeon.py
-                        </textarea>
-                    </p>
-                </section>
 </div>
             
         </section>
@@ -147,7 +130,7 @@ C:\aeon.ai\> python ./aeon.py
                         <td>Backup contents to a zip file.</td>
                     </tr>
                     <tr>
-                        <td><code>/ingest [PATH] or [.json,txt,md]</code></td>
+                        <td><code>/ingest [.json,txt,md,csv,sqlite3]</code></td>
                         <td>Add documents to RAG.</td>
                     </tr>
                     <tr>

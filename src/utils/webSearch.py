@@ -19,10 +19,6 @@ from src.libs.messages import (
 
 
 def _perform_search_and_get_context(search_query: str) -> list:
-    """
-    Performs a DuckDuckGo search and extracts relevant text and links.
-    Returns a list of dictionaries, each containing 'title', 'body', and 'href'.
-    """
     print_info_message(f"Searching DuckDuckGo for: '{search_query}'...")
     search_results = DDGS().text(query=search_query, backend='duckduckgo',
                                  safesearch='on', max_results=5)
@@ -30,7 +26,6 @@ def _perform_search_and_get_context(search_query: str) -> list:
     formatted_results = []
     if search_results:
         for i, result in enumerate(search_results):
-            # Limit to the top 3 results for a concise context
             if i >= 3:
                 break
             formatted_results.append({
@@ -95,7 +90,6 @@ def _generate_summary(
         search_context: str,
         search_query: str,
         llm_instance: LlamaCpp) -> str:
-    """Generates a summary of the search context using the language model."""
     summarize_prompt_template_string = (
         "<|im_start|>system\n"
         f"{SYSTEM_PROMPT}\n"

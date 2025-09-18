@@ -2,8 +2,6 @@
 venv
 build
 .venv
-.gitmodules
-
 
 # Python cache folders
 .pytest_cache/
@@ -18,13 +16,6 @@ src/webapp/__pycache__/
 
 # Plugins in development
 
-
-# Plugins PyCache
-plugins/aeon-outetts-0.2-500m/__pycache__
-plugins/aeon/__pycache__/
-plugins/tiny-sd/__pycache__/
-plugins/smolvlm-256m-instruct/__pycache__/
-plugins/hello-world/__pycache__/
 
 # User output default files
 /data/output/*.png

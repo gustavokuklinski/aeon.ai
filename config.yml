@@ -28,5 +28,5 @@ emb_config:
 load_plugins:
   - aeon-speak
   - hello-world
-  - smolvlm-256m-instruct
-  - tiny-sd
+  - aeon-smolvlm-256m-instruct
+  - aeon-tiny-sd

@@ -44,16 +44,3 @@ You can then invoke it from the AEON command line like this:
 
 ```
 
----
-
-## Output
-
-When you run the command, the plugin will echo back the string you provided. For the example above, the output would be:
-
-```
-
-[INFO] 'Hello World Plugin' received input: 'This is my message'
-[SUCCESS] Hello, you said: This is my message
-
-```
-

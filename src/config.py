@@ -32,6 +32,10 @@ try:
     LLM_N_CTX = config["llm_config"]["n_ctx"]
     LLM_TOP_K = config["llm_config"]["top_k"]
     LLM_TOP_P = config["llm_config"]["top_p"]
+
+    MAX_NEW_TOKEN = config["llm_config"]["max_new_token"]
+    MAX_LENGTH = config["llm_config"]["max_length"]
+
     SYSTEM_PROMPT = config["llm_config"]["llm_prompt"]
     SYSTEM_RAG_PROMPT = config["llm_config"]["llm_rag_prompt"]
 

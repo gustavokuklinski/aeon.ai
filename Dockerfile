@@ -6,6 +6,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     git \
     build-essential \
     ffmpeg \
+    python3-dev \
+    portaudio19-dev \
     && rm -rf /var/lib/apt/lists/*
 
 COPY requirements.txt .

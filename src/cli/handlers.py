@@ -16,6 +16,8 @@ from src.libs.messages import print_error_message, print_info_message, print_aeo
 from src.cli.termPrompts import startup_prompt
 from langchain.docstore.document import Document
 
+from src.config import MAX_LENGTH, MAX_NEW_TOKEN
+
 def _initialize_session(memory_dir_path: Path):
     user_choice = startup_prompt(memory_dir_path)
     if user_choice.startswith("/load"):
@@ -136,7 +138,13 @@ def _handle_rag_chat(user_input, session_vars):
     print_think_message("Thinking...")
     
     try:
-        result = rag_chain.invoke(user_input)
+        result = rag_chain.invoke(
+            user_input,
+            config={
+                "max_new_tokens": MAX_NEW_TOKEN,
+                "max_length": MAX_LENGTH
+            }
+        )
 
         answer = result.get("answer", "No answer found.")
         context_docs = result.get("context", [])

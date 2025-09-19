@@ -14,10 +14,10 @@ from src.utils.new import newConversation
 from src.utils.conversation import loadConversation, saveConversation
 from src.utils.rename import renameConversationForWeb
 from src.utils.load import loadBackup
-from src.webapp.ragweb import initialize_rag_system, rag_system_state
 from src.utils.ingestion import ingestDocuments
 from src.utils.webSearch import webSearch
 
+from src.webapp.ragweb import initialize_rag_system, rag_system_state
 
 def init_routes(app, abs_output_dir, abs_memory_dir):
 

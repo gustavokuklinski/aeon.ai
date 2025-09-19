@@ -1,26 +1,27 @@
 llm_config:
   model: ./data/model/aeon-360M-Q8_0.gguf
-  temperature: 0.2
+  temperature: 0.5
   n_ctx: 2048
   top_k: 40
   top_p: 0.8
+  max_new_token: 250 
+  max_length: 512
   llm_prompt: >
-    ANSWER the user QUESTION using ONLY the CONTEXT.
-    Keep your ANSWER ground in the facts of the CONTEXT.
-    If the CONTEXT doesn't contain the facts to ANSWER the QUESTION state: I dont know, can we /search?
+    Your name is Aeon. Answer the user's question concisely using **only** the provided CONTEXT. 
+    If the CONTEXT doesn't contain the answer, state: 
+    "I don't know, can we search?". 
+    Do not add any information not present in the CONTEXT.
 
   llm_rag_prompt: >
-    "Your responses should be in plain, natural language ONLY.
-    Determine the nature of the user's QUESTION and USER.
-    If the question is factual, follow this process:
-    1. Scan the CONTEXT for all relevant facts.
-    2. Combine these facts to form a single, comprehensive answer.
-    3. If context is unavailable, state: 'I don't know about it. Can we /search?'.
-    If the question is conversational or non-factual, respond naturally and conversationally, without referring to the CONTEXT.
-    Do not echo the user's USER, QUESTION or the CONTEXT.
+    Your responses must be in plain, natural language.
+    **Factual questions:** Use the provided CONTEXT to form a single, comprehensive answer. 
+    Do not use information outside the CONTEXT. 
+    If the CONTEXT does not contain the answer, state: "I don't know about it. Can we search?".
+    **Conversational questions:** Respond naturally and conversationally, without using the CONTEXT.
+    Never echo the user's question or the CONTEXT.
 
 emb_config:
-  model: ./data/model/all-MiniLM-L6-v2-Q8_0.gguf
+  model: ./data/model/nomic-embed-text-v1.5.Q8_0.gguf
   n_ctx: 512
   chunk_size: 100
   chunk_overlap: 50

@@ -7,9 +7,6 @@ import time
 from importlib import import_module
 from pathlib import Path
 
-import src.main
-import src.web
-
 project_root = Path(__file__).resolve().parent
 sys.path.insert(0, str(project_root))
 
@@ -65,12 +62,12 @@ def display_menu_and_execute():
     print(f"RAM TTL: {round(psutil.virtual_memory().total / (1024**3), 2)} GB | USED: {round(psutil.virtual_memory().used / (1024**3), 2)} GB | FREE: {round(psutil.virtual_memory().available / (1024**3), 2)} GB")
     print("Type the \033[1;1;91m[NUMBER]\033[0m option:")
     print("\033[1;1;33m[1] Terminal\033[0m")
-    print("\033[1;1;33m[2] WebGPT - https://:4303[0m")
+    print("\033[1;1;33m[2] WebGPT - https://:4303\033[0m")
     print("\033[1;1;33m[3] Exit\033[0m")
     print("")
 
     try:
-        choice = input("\033[1;91m[NUMBER@aeon]\033[0m \033[1;33m>> \033[0m").strip()
+        choice = input("\033[1;91m[NUMBER]\033[0m \033[1;33m>> \033[0m").strip()
     except EOFError:
         choice = "4"
 
@@ -99,12 +96,11 @@ def display_menu_and_execute():
         print_boot_msg(" Exiting AEON. Goodbye!")
         sys.exit(0)
     else:
-        print_error_msg(" Invalid choice. Please enter a number from 1 to 6.", exit_script=False)
+        print_error_msg(" Invalid choice. Please enter a number from 1 to 3.")
     
     return choice
 
 if __name__ == "__main__":
-    os.system("cls" if os.name == "nt" else "clear")
-    
+   
     print_boot_msg(" Booting AEON")
     display_menu_and_execute()

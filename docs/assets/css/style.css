@@ -12,6 +12,7 @@ hr {
 }
 a {
     color: #fbe746;
+    text-decoration: none;
 }
 .container {
     max-width: 1200px;

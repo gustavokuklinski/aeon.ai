@@ -57,7 +57,7 @@ def main():
         "/search": _handle_search,
         "/delete": _handle_delete,
         "/rename": _handle_rename,
-        "/restart": _handle_restart,
+        "/restart": lambda sv: _handle_restart(sv),
         "/open": lambda sv: openConversation(
             sv['user_input'].split(" ", 1)[1].strip(),
             sv["memory_dir_path"],

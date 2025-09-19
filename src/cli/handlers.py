@@ -1,6 +1,6 @@
 import sys
+import os
 from pathlib import Path
-
 from src.utils.ingestion import ingestDocuments
 from src.utils.webSearch import webSearch
 from src.utils.zipBackup import zipBackup
@@ -183,11 +183,17 @@ def _handle_rag_chat(user_input, session_vars):
 
 def _handle_delete(user_input, session_vars):
     deleteConversation(user_input, session_vars)
+    python = sys.executable
+    os.execv(python, [python] + sys.argv)
 
 
 def _handle_rename(user_input, session_vars):
     renameConversation(user_input, session_vars)
+    python = sys.executable
+    os.execv(python, [python] + sys.argv)
 
 
-def _handle_restart(user_input, session_vars):
+def _handle_restart(session_vars):
     print_info_message("Restarting AEON...")
+    python = sys.executable
+    os.execv(python, [python] + sys.argv)

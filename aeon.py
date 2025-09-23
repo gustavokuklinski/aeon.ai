@@ -1,13 +1,14 @@
 import os
 import sys
 import psutil
-import platform
 import subprocess
 import time
-from importlib import import_module
 from pathlib import Path
 
+# Get the absolute path to the project root directory
 project_root = Path(__file__).resolve().parent
+
+# Add the project root to the system path to allow imports from subdirectories
 sys.path.insert(0, str(project_root))
 
 PYTHON_SCRIPT_DIR = "src"
@@ -38,17 +39,36 @@ def print_error_msg(message, exit_script=True):
         sys.exit(1)
 
 def get_resource_path(relative_path):
+    """Gets the correct path for a resource, handling PyInstaller's temp directory."""
     try:
         base_path = sys._MEIPASS
     except AttributeError:
         base_path = Path(__file__).resolve().parent
     return os.path.join(base_path, relative_path)
 
+def run_terminal_mode():
+    """Starts the application in terminal mode."""
+    print_boot_msg(" Running AEON in Terminal mode...")
+    try:
+        # This assumes src/main.py is a runnable script
+        subprocess.run([sys.executable, "src/main.py"], check=True)
+        print_ok_msg("Terminal mode finished.")
+    except subprocess.CalledProcessError as e:
+        print_error_msg(f"Terminal mode exited with an error: {e}")
 
-
+def run_web_mode():
+    """Starts the application in web mode."""
+    print_boot_msg(" Running AEON in Web mode...")
+    print_boot_msg(" Access the web interface at: http://0.0.0.0:7860")
+    try:
+        # This assumes src/web.py contains a server that starts on its own
+        # and listens on 0.0.0.0:7860
+        subprocess.run([sys.executable, "src/web.py"], check=True)
+    except Exception as e:
+        print_error_msg(f"Web mode exited with an error: {e}")
 
 def display_menu_and_execute():
-    
+    """Displays the main menu and handles user input."""
     print("\033[38;5;160m___________________________________________________\033[0m")
     print("")
     print("\033[38;5;160m      ###       #######     #######    ###     ### \033[0m")
@@ -71,27 +91,10 @@ def display_menu_and_execute():
     except EOFError:
         choice = "4"
 
-    os.environ["PYTHONPATH"] = os.getcwd() + os.pathsep + os.environ.get("PYTHONPATH", "")
-
     if choice == "1":
-        print_boot_msg(" Running AEON in Terminal mode...")
-        try:
-            subprocess.run([sys.executable, "src/main.py"], check=True)
-            print_ok_msg("Terminal mode finished.")
-        except subprocess.CalledProcessError as e:
-            print_error_msg(f"Terminal mode exited with an error: {e}")
-
+        run_terminal_mode()
     elif choice == "2":
-        print_boot_msg(" Running AEON in Web mode...")
-        print_boot_msg(" Access the web interface at: http://0.0.0.0:4303")
-        try:
-            web_module = subprocess.run([sys.executable, "src/web.py"], check=True)
-            web_module.app.run(host="0.0.0.0", port=4303, debug=False)
-        except ImportError:
-            print_error_msg(f"Could not import Web module: '{PYTHON_SCRIPT_DIR}.{Path(FLASK_APP_PATH).stem}'")
-        except Exception as e:
-            print_error_msg(f"Web mode exited with an error: {e}")
-
+        run_web_mode()
     elif choice == "3":
         print_boot_msg(" Exiting AEON. Goodbye!")
         sys.exit(0)
@@ -101,6 +104,19 @@ def display_menu_and_execute():
     return choice
 
 if __name__ == "__main__":
-   
     print_boot_msg(" Booting AEON")
-    display_menu_and_execute()
+    os.environ["PYTHONPATH"] = os.getcwd() + os.pathsep + os.environ.get("PYTHONPATH", "")
+
+    # Check for command-line arguments to bypass the menu
+    if len(sys.argv) > 1:
+        command = sys.argv[1].lower()
+        if command == "terminal":
+            run_terminal_mode()
+        elif command == "web":
+            run_web_mode()
+        else:
+            print_error_msg(f"Invalid command-line argument: '{command}'. Please use 'terminal' or 'web'.", exit_script=False)
+            display_menu_and_execute()
+    else:
+        # No arguments, show the menu
+        display_menu_and_execute()

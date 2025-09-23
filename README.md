@@ -15,13 +15,13 @@ docker build -t aeon .
 
 **Run the docker image**
 ```bash
-docker run -it --rm -p 4303:4303 -v "$(pwd):/app" aeon
+docker run -it --rm -p 7860:7860 -v "$(pwd):/app" aeon
 ```
 
 Docker image params:
 * `-it` : Runs the container in interactive mode, allowing you to use the menu.
 * `--rm` : Automatically removes the container when you exit.
-* `-p 4303:4303` : Maps the container's port 4303 to your host machine's port 4303, allowing you to access the web interface.
+* `-p 7860:7860` : Maps the container's port 7860 to your host machine's port 7860, allowing you to access the web interface.
 * `-v "$(pwd):/app"` : This is the bind mount. It links your project folder on your machine directly to the /app folder in the container. Any changes you save on your local machine will be immediately available to the Python script running inside the container.
 * `aeon` : The name of the Docker image you built.
 

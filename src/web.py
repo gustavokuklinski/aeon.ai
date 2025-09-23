@@ -21,4 +21,4 @@ init_routes(app, abs_output_dir, abs_memory_dir)
 
 if __name__ == "__main__":
     print_info_message("Starting AEON web server...")
-    app.run(host='0.0.0.0', debug=False, port=4303)
+    app.run(host='0.0.0.0', debug=False, port=7860)

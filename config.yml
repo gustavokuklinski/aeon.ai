@@ -1,5 +1,5 @@
 llm_config:
-  model: ./data/model/aeon-360M-Q8_0.gguf
+  model: ./data/model/aeon-360M.Q8_0.gguf
   temperature: 0.5
   n_ctx: 2048
   top_k: 40
@@ -22,12 +22,12 @@ llm_config:
 
 emb_config:
   model: ./data/model/nomic-embed-text-v1.5.Q8_0.gguf
-  n_ctx: 512
+  n_ctx: 2048
   chunk_size: 100
   chunk_overlap: 50
 
 load_plugins:
-  - aeon-speak
   - hello-world
+  - aeon-speak
   - aeon-smolvlm-256m-instruct
   - aeon-tiny-sd

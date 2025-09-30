@@ -1,20 +1,16 @@
 ![alt text](https://raw.githubusercontent.com/gustavokuklinski/aeon.ai/refs/heads/main/docs/assets/img/aeon-logo.png)
 
-<div align="center" style="line-height: 1;">
-
-
+<div style="line-height: 1;">
 <a href="https://github.com/gustavokuklinski/aeon.ai/actions/workflows/python-app.yml" target="_blank" style="margin: 2px;">
     <img src="https://github.com/gustavokuklinski/aeon.ai/actions/workflows/python-app.yml/badge.svg" style="display: inline-block; vertical-align: middle;"/>
 </a>
-
 <a href="https://huggingface.co/spaces/gustavokuklinski/aeon-eval" target="_blank" style="margin: 2px;">
     <img alt="Chat" src="https://img.shields.io/badge/🤖 Chat-Chat Aeon Test-536af5?color=ff0000&logoColor=white" style="display: inline-block; vertical-align: middle;"/>
 </a>
-
-<a href="https://huggingface.co/gustavokuklinski/aeon" target="_blank" style="margin: 2px;">
-    <img alt="Hugging Face" src="https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-Aeon.ai-ffc107?color=ffc107&logoColor=white" style="display: inline-block; vertical-align: middle;"/>
+<a href="https://huggingface.co/gustavokuklinski/aeon-360m" target="_blank" style="margin: 2px;">
+    <img alt="Hugging Face" src="https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-Aeon 350M-ffc107?color=ffc107&logoColor=white" style="display: inline-block; vertical-align: middle;"/>
 </a>
-
+<br />
 </div>
 
 AEON is portable, private, and capable of operating fully offline (with the exception of web search). It democratizes access to powerful, dynamic AI capabilities for a wider audience, regardless of their hardware.

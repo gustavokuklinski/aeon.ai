@@ -10,7 +10,7 @@
 <a href="https://huggingface.co/gustavokuklinski/aeon-360m" target="_blank" style="margin: 2px;">
     <img alt="Hugging Face" src="https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-Aeon 350M-ffc107?color=ffc107&logoColor=white" style="display: inline-block; vertical-align: middle;"/>
 </a>
-<br />
+<br /><br />
 </div>
 
 AEON is portable, private, and capable of operating fully offline (with the exception of web search). It democratizes access to powerful, dynamic AI capabilities for a wider audience, regardless of their hardware.

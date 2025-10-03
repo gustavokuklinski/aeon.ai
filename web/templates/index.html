@@ -70,7 +70,8 @@
                             <p>AEON is a personal and local chat bot, designed for privacy and efficiency.</p>
                             <hr />
                             <p>
-                                <strong>Configuration:</strong><br>
+                            <details>
+                            <summary><strong>LLM Configuration</strong></summary>
                             <table class="config-table">
                                 <tr>
                                     <td>LLM Model:</td>
@@ -81,10 +82,16 @@
                                     <td><code>{{ llm_embeding }}</code></td>
                                 </tr>
                             </table>
+                            </details>
                             </p>
-                            <p><a class="links" href="https://gustavokuklinski.github.io/aeon.ai"
-                                    target="_blank">[AEON.AI]</a><a class="links" href="https://github.com/gustavokuklinski/aeon.ai"
-                                    target="_blank">[GITHUB]</a></p>
+                            <p>
+                                <a class="links" href="https://gustavokuklinski.github.io/aeon.ai"
+                                    target="_blank">[AEON.AI]</a>
+                                <a class="links" href="https://github.com/gustavokuklinski/aeon.ai"
+                                    target="_blank">[GITHUB]</a>
+                                <a class="links" href="https://huggingface.co/gustavokuklinski/aeon-360m"
+                                    target="_blank">[HUGGING FACE]</a>
+                            </p>
                         </span>
                     </div>
                 </div>
@@ -111,6 +118,7 @@
         window.currentConversationId = "{{ initial_conv_id }}";
         window.initialHistory = {{ initial_history | tojson }};
     </script>
+    <script src="https://cdn.jsdelivr.net/npm/js-yaml@4.1.0/dist/js-yaml.min.js"></script>
     <script src="/assets/js/lib/marked/marked.min.js"></script>
     <script src="/assets/js/avatar.js"></script>
     <script src="/assets/js/chat.js"></script>

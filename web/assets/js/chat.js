@@ -751,6 +751,8 @@ ingestButton.addEventListener('click', () => {
     document.body.removeChild(fileInput);
 });
 
+
+/*
 configButton.addEventListener('click', async () => {
     if (!currentConversationId || currentConversationId === 'None') {
         showInfoMessage("Please start or select a conversation first.");
@@ -821,7 +823,313 @@ configButton.addEventListener('click', async () => {
     } finally {
         enableControls();
     }
-});
+}); */
+
+// Helper function to fetch GGUF models (requires a new backend endpoint)
+async function fetchGGUFModels() {
+    try {
+        // ASSUMPTION: Backend endpoint /api/models returns a JSON object with a 'models' array
+        const response = await fetch('/api/models');
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const data = await response.json();
+        // Assuming data is an array of strings, e.g., ["model/aeon-360M.Q8_0.gguf", ...]
+        return data.models || [];
+    } catch (error) {
+        console.error('Failed to fetch GGUF models:', error);
+        // Return a mock list if the fetch fails, to allow the form to still render
+        return ["model/aeon-360M.Q8_0.gguf", "model/nomic-embed-text-v1.5.Q8_0.gguf", "model/default.gguf"];
+    }
+}
+
+// Function to generate the structured HTML content for the config modal
+function generateConfigFormHtml(config, models) {
+    const escape = (s) => (s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+    const getModelName = (path) => path.replace(/^\.\/data\//, '');
+    const wrapPath = (model) => `./data/${model}`;
+
+    const generateSelect = (configValuePath, options) => {
+        const configModelName = getModelName(configValuePath);
+        let optionsHtml = '';
+        for (const modelName of options) {
+            // Check if the current option matches the model name in the config
+            const selected = modelName === configModelName ? 'selected' : '';
+            optionsHtml += `<option value="${escape(modelName)}" ${selected}>${escape(modelName)}</option>`;
+        }
+        return `<select class="input-field" data-key="model">${optionsHtml}</select>`;
+    };
+
+    // Use current config or safe defaults for missing keys
+    const llmConfig = config.llm_config || {};
+    const embConfig = config.emb_config || {};
+
+    return `
+<div class="config-grid">
+            
+            <!-- Left Column: LLM Main Setup and Prompts -->
+            <div>
+                
+                <!-- LLM Main Setup Panel -->
+                <div class="config-panel">
+                <details>
+                    <summary><h3 class="section-title">LLM Setup</h3></summary>
+                    <div data-group="llm_config">
+                        <div class="config-field-row">
+                            <label>Model (.gguf):</label>
+                            ${generateSelect(llmConfig.model || '', models)}
+                        </div>
+
+                        <div class="config-field-row">
+                            <label>Temperature:</label>
+                            <input type="number" class="input-field" data-key="temperature" value="${llmConfig.temperature || 0.5}" step="0.01" min="0" max="1">
+                        </div>
+
+                        <div class="config-field-row">
+                            <label>Context (n_ctx):</label>
+                            <input type="number" class="input-field" data-key="n_ctx" value="${llmConfig.n_ctx || 2048}" step="128" min="512" max="8192">
+                        </div>
+
+                        <div class="config-field-row">
+                            <label>Max New Tokens:</label>
+                            <input type="number" class="input-field" data-key="max_new_token" value="${llmConfig.max_new_token || 250}" step="10" min="10" max="1024">
+                        </div>
+
+                        <div class="config-field-row">
+                            <label>Max Chat History Length:</label>
+                            <input type="number" class="input-field" data-key="max_length" value="${llmConfig.max_length || 512}" step="10" min="10" max="2048">
+                        </div>
+                    </div>
+                </details>
+                </div>
+            
+                <!-- LLM Prompts Panel -->
+                <div class="config-panel">
+                <details>
+                    <summary><h3 class="section-title">Prompts</h3></summary>
+                    <div data-group="llm_config">
+                        <div class="config-field-row">
+                            <label>System Prompt (llm_prompt):</label>
+                            <textarea class="textarea-field" data-key="llm_prompt" rows="5">${escape(llmConfig.llm_prompt || '')}</textarea>
+                        </div>
+
+                        <div class="config-field-row">
+                            <label>RAG Prompt (llm_rag_prompt):</label>
+                            <textarea class="textarea-field" data-key="llm_rag_prompt" rows="5">${escape(llmConfig.llm_rag_prompt || '')}</textarea>
+                        </div>
+                    </div>
+                </details>
+                </div>
+            </div>
+            
+            <!-- Right Column: Embedding Setup and Plugins -->
+            <div>
+                <!-- Embedding Setup Panel -->
+                <div class="config-panel">
+                <details>
+                    <summary><h3 class="section-title">Embedding</h3></summary>
+                    <div data-group="emb_config">
+                        <div class="config-field-row">
+                            <label>Model (.gguf):</label>
+                            ${generateSelect(embConfig.model || '', models)}
+                        </div>
+
+                        <div class="config-field-row">
+                            <label>Chunk Size:</label>
+                            <input type="number" class="input-field" data-key="chunk_size" value="${embConfig.chunk_size || 100}" step="10" min="10" max="1000">
+                        </div>
+
+                        <div class="config-field-row">
+                            <label>Chunk Overlap:</label>
+                            <input type="number" class="input-field" data-key="chunk_overlap" value="${embConfig.chunk_overlap || 50}" step="10" min="0" max="500">
+                        </div>
+                    </div>
+                </details>
+                </div>
+
+                <!-- Plugins Panel -->
+                <div class="config-panel">
+                    <details>
+                    <summary><h3 class="section-title">Plugins</h3></summary>
+                    <div data-group="config">
+                        <div class="config-field-row">
+                            <label>Load Plugins (Comma Separated List):</label>
+                            <input type="text" class="input-field" data-key="load_plugins" value="${(config.load_plugins || []).join(', ')}">
+                        </div>
+                    </div>
+                    </details>
+                </div>
+            </div>
+            
+        </div>
+    `;
+}
+
+// Function to handle the opening, fetching, rendering, and saving of the config modal
+async function openConfigModal() {
+    if (!currentConversationId || currentConversationId === 'None') {
+        showInfoMessage("Please start or select a conversation first.");
+        return;
+    }
+
+    const configModalHtml = `
+        <p><strong>Configuration for ${currentConversationId}</strong></p>
+        <div id="config-form-placeholder" class="config-form-placeholder">
+            <div class="loading-animation"></div>
+            Loading configuration...
+        </div>
+        <p class="mt-4">When [SAVE] Chat will be reloaded to apply changes.</p>
+        <div class="confirm-modal-buttons">
+            <button id="config-save-button" disabled>Save</button>
+            <button id="config-cancel-button">Cancel</button>
+        </div>
+    `;
+
+    const tempModal = document.createElement('div');
+    tempModal.className = 'confirm-modal config-modal';
+    tempModal.innerHTML = `<div class="confirm-modal-content">${configModalHtml}</div>`;
+    document.body.appendChild(tempModal);
+
+    const formPlaceholder = tempModal.querySelector('#config-form-placeholder');
+    const saveButton = tempModal.querySelector('#config-save-button');
+    const cancelButton = tempModal.querySelector('#config-cancel-button');
+    const wrapPath = (modelName) => `./data/${modelName}`;
+
+    cancelButton.addEventListener('click', () => {
+        document.body.removeChild(tempModal);
+    });
+
+    let originalConfig = {};
+
+    try {
+        disableControls();
+
+        if (!window.jsyaml) {
+             throw new Error('YAML parser (js-yaml) not loaded. Please ensure the CDN script is included.');
+        }
+
+        // 1. Fetch Config and Models in parallel
+        const [configResponse, availableModels] = await Promise.all([
+            fetch(`/api/config/${currentConversationId}`),
+            fetchGGUFModels()
+        ]);
+
+        const configData = await configResponse.json();
+
+        if (!configResponse.ok) {
+             throw new Error(configData.message || 'Failed to fetch config.');
+        }
+
+        // 2. Parse YAML and store original
+        originalConfig = window.jsyaml.load(configData.config_content);
+
+        // 3. Render the structured form
+        const formHtml = generateConfigFormHtml(originalConfig, availableModels);
+        formPlaceholder.innerHTML = formHtml;
+
+        // 4. Enable save button
+        saveButton.disabled = false;
+
+    } catch (error) {
+        console.error('Error in config modal setup:', error);
+        formPlaceholder.innerHTML = `<p class="error-message">Error loading config: ${error.message}</p>`;
+        saveButton.disabled = true;
+    } finally {
+        enableControls();
+    }
+
+    // Save Logic
+    saveButton.addEventListener('click', async () => {
+        // Deep clone original config to preserve structure and un-editable keys
+        const newConfig = JSON.parse(JSON.stringify(originalConfig));
+        const formElements = formPlaceholder.querySelectorAll('.input-field, .textarea-field');
+
+        formElements.forEach(element => {
+            const key = element.getAttribute('data-key');
+            // Check for nested group like 'llm_config' or 'emb_config'
+            const group = element.closest('[data-group]')?.getAttribute('data-group');
+            let value;
+
+            if (element.tagName === 'TEXTAREA') {
+                value = element.value;
+            } else if (key === 'load_plugins') {
+                // Convert comma-separated string to array
+                value = element.value.split(',').map(s => s.trim()).filter(s => s.length > 0);
+            } else if (element.type === 'number') {
+                // Convert to correct number type (float or integer based on step attribute)
+                const step = parseFloat(element.getAttribute('step'));
+                value = step < 1 ? parseFloat(element.value) : parseInt(element.value, 10);
+            } else if (element.tagName === 'SELECT') {
+                // Model selection - needs './data/' prefix
+                value = wrapPath(element.value);
+            } else {
+                value = element.value;
+            }
+
+            if (group) {
+                // Update nested keys
+                if (newConfig[group]) {
+                    newConfig[group][key] = value;
+                }
+            } else {
+                // Update top-level keys (llm_prompt, llm_rag_prompt, load_plugins)
+                newConfig[key] = value;
+            }
+        });
+
+        // Final YAML serialization
+        let newConfigYaml;
+        try {
+            // Serialize the JS object back to YAML
+            newConfigYaml = window.jsyaml.dump(newConfig, {
+                indent: 2,
+                lineWidth: -1, // Disable line wrapping
+            });
+            
+            // HACK: Manually force the '>' folded block scalar for prompts 
+            // as this is often required for clean YAML multi-line strings
+            newConfigYaml = newConfigYaml.replace(
+                /llm_prompt: \|/g, 'llm_prompt: >'
+            ).replace(
+                /llm_rag_prompt: \|/g, 'llm_rag_prompt: >'
+            );
+            
+        } catch (e) {
+             showInfoMessage(`Failed to serialize configuration: ${e.message}`);
+             console.error('YAML Dump Error:', e);
+             return;
+        }
+
+
+        disableControls();
+
+        try {
+            const response = await fetch(`/api/config/${currentConversationId}`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ config_content: newConfigYaml })
+            });
+            const data = await response.json();
+            if (response.ok) {
+                showInfoMessage(data.message);
+                // Reload the page to apply new configuration
+                window.location.reload();
+            } else {
+                throw new Error(data.message);
+            }
+        } catch (error) {
+            console.error('Error saving config:', error);
+            showInfoMessage(`Failed to save config: ${error.message}`);
+        } finally {
+            enableControls();
+            document.body.removeChild(tempModal);
+        }
+    });
+}
+
+if (configButton) {
+    configButton.addEventListener('click', openConfigModal);
+}
 
 
 // Hamburger menu toggle

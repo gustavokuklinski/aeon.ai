@@ -5,19 +5,42 @@ import json
 import shutil
 import zipfile
 import yaml
+import glob
 from pathlib import Path
+from langchain.docstore.document import Document
 from werkzeug.utils import secure_filename
 from flask import request, jsonify, render_template, url_for, send_from_directory
 
-from src.config import LLM_MODEL, EMB_MODEL
 from src.utils.new import newConversation
 from src.utils.conversation import loadConversation, saveConversation
 from src.utils.rename import renameConversationForWeb
 from src.utils.load import loadBackup
 from src.utils.ingestion import ingestDocuments
 from src.utils.webSearch import webSearch
-
 from src.webapp.ragweb import initialize_rag_system, rag_system_state
+from src.libs.messages import print_error_message
+from src.config import LLM_MODEL, EMB_MODEL
+
+def _ingest_conversation_turn(user_input, aeon_output, vectorstore, text_splitter, llama_embeddings):
+    try:
+        conversation_text = f"{user_input}\n\n{aeon_output}"
+        
+        conversation_document = Document(
+            page_content=conversation_text,
+            metadata={"source": "Memory"}
+        )
+        
+        docs = text_splitter.split_documents([conversation_document])
+        success, failed = 0, 0
+        for i, chunk in enumerate(docs, start=1):
+            try:
+                vectorstore.add_documents([chunk])
+                success += 1
+            except Exception as e:
+                failed += 1
+                print_error_message(f" Failed on chunk {i}: {e}")
+    except Exception as e:
+        print_error_message(f"Failed to ingest conversation turn: {e}")
 
 def init_routes(app, abs_output_dir, abs_memory_dir):
 
@@ -26,6 +49,7 @@ def init_routes(app, abs_output_dir, abs_memory_dir):
 
     backup_dir = abs_output_dir / "backup"
     os.makedirs(backup_dir, exist_ok=True)
+    abs_data_dir = Path(__file__).parent.parent.parent / 'data'
 
     @app.route("/")
     def index():
@@ -114,6 +138,13 @@ def init_routes(app, abs_output_dir, abs_memory_dir):
                 source_answer,
                 current_rag["current_memory_path"],
                 current_rag["conversation_filename"]
+            )
+            _ingest_conversation_turn(
+                user_input,
+                final_answer,
+                current_rag["vectorstore"],
+                current_rag["text_splitter"],
+                current_rag["llama_embeddings"]
             )
 
             return jsonify({"response": final_answer, "source": source_answer, "conversation_id": conv_id})
@@ -290,6 +321,25 @@ def init_routes(app, abs_output_dir, abs_memory_dir):
         except Exception as e:
             return jsonify({"message": f"Failed to save config file: {e}"}), 500
 
+
+    @app.route('/api/models', methods=['GET'])
+    def get_available_models():
+        """
+        Scans the models directory and returns a list of GGUF files.
+        """
+        model_dir = abs_data_dir / 'model'
+        models = []
+        
+        # Use glob to find all .gguf files recursively in the model directory
+        # and strip the absolute path to make them relative to the 'data' directory.
+        for model_path in glob.glob(str(model_dir / '**/*.gguf'), recursive=True):
+            # Calculate the path relative to the 'data' directory, starting with 'model/'
+            relative_path = os.path.relpath(model_path, abs_data_dir)
+            models.append(relative_path.replace(os.path.sep, '/')) # Use forward slashes for URL/JS compatibility
+
+        return jsonify({"models": models})
+
+
     @app.route('/ingest', methods=['POST'])
     def ingest_files():
         if 'file' not in request.files:
@@ -301,7 +351,7 @@ def init_routes(app, abs_output_dir, abs_memory_dir):
         if file.filename == '':
             return jsonify({"message": "No selected file."}), 400
 
-        allowed_extensions = {'.md', '.txt', '.json'}
+        allowed_extensions = {'.md', '.txt', '.json', '.sqlite3'}
         file_ext = os.path.splitext(file.filename)[1].lower()
         if file_ext not in allowed_extensions:
             return jsonify({"message": f"Invalid file type. Allowed types are: {', '.join(allowed_extensions)}"}), 400

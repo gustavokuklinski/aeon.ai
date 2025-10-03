@@ -38,9 +38,6 @@ const availableCommands = [
     { cmd: '/delete [CHAT_ID]', desc: 'Delete a selected chat.' },
 ];
 
-/**
- * Disables chat controls (input, send button) and shows a loading state.
- */
 function disableControls() {
     messageInput.disabled = true;
     sendButton.disabled = true;
@@ -48,9 +45,6 @@ function disableControls() {
     ingestButton.disabled = true;
 }
 
-/**
- * Enables chat controls and focuses the message input.
- */
 function enableControls() {
     messageInput.disabled = false;
     sendButton.disabled = false;
@@ -60,12 +54,6 @@ function enableControls() {
     ingestButton.disabled = false;
 }
 
-/**
- * Creates and appends a new message div to the chat box.
- * @param {string} text - The message content.
- * @param {string} sender - 'user' or 'bot'.
- * @param {string[]} [sources=[]] - An optional array of source URLs.
- */
 function addMessage(text, sender, sources = []) {
     if (infoMessageBox && !infoMessageBox.classList.contains('hidden')) {
         infoMessageBox.classList.add('hidden');
@@ -90,7 +78,6 @@ function addMessage(text, sender, sources = []) {
         messageDiv.appendChild(aeonIcon);
         messageDiv.appendChild(botTextContent);
 
-        // Add logic to display sources if they exist
         if (sources.length > 0) {
             const sourcesContainer = document.createElement('details');
             sourcesContainer.classList.add('sources');
@@ -136,9 +123,6 @@ function addMessage(text, sender, sources = []) {
     chatBox.scrollTop = chatBox.scrollHeight;
 }
 
-/**
- * Handles sending a message to the backend API.
- */
 async function sendMessage() {
     const userMessage = messageInput.value.trim();
     if (userMessage === '') return;
@@ -248,11 +232,6 @@ async function sendMessage() {
     }
 }
 
-/**
- * Reusable function to create a modal with a custom message and buttons.
- * @param {string} contentHtml - The HTML content for the modal.
- * @returns {Promise<boolean|string|null>} A promise that resolves with the result of the user's action.
- */
 function createModal(contentHtml) {
     return new Promise((resolve) => {
         const modal = document.createElement('div');
@@ -318,11 +297,10 @@ async function webSearch(searchTerm) {
             body: JSON.stringify(payload),
         });
 
-        // The key is to handle the JSON response correctly, regardless of 'ok' status
         let data;
         try {
             data = await response.json();
-            console.log('Server response data:', data); // Add for debugging
+            console.log('Server response data:', data);
         } catch (jsonError) {
             console.error('Failed to parse JSON response:', jsonError);
             addMessage('The server returned an invalid response. Please try again.', 'bot');
@@ -330,16 +308,13 @@ async function webSearch(searchTerm) {
         }
 
         if (response.ok) {
-            // Check for the presence of the aeon key
             if (data.hasOwnProperty('response')) {
                 const sourceLinks = data.source ? data.source.split('\n') : [];
                 addMessage(data.response, 'bot', sourceLinks);
             } else {
-                // Handle a successful response that doesn't have the aeon field
                 addMessage('Web search completed successfully.', 'bot');
             }
         } else {
-            // This is the original error handling block
             addMessage(data.message || 'An error occurred during the web search.', 'bot');
         }
 
@@ -351,11 +326,7 @@ async function webSearch(searchTerm) {
         enableControls();
     }
 }
-/**
- * Handles renaming a conversation via a modal prompt.
- * @param {string} convIdToRename - The ID of the conversation to rename.
- * @param {string} currentName - The current name of the conversation.
- */
+
 async function renameConversationForweb(convIdToRename, currentName) {
     const newName = await createModal(`
         <p>Current name: <strong>${currentName}</strong></p>
@@ -401,10 +372,6 @@ async function renameConversationForweb(convIdToRename, currentName) {
     }
 }
 
-/**
- * Shows a temporary info message in the chat box.
- * @param {string} message - The message to display.
- */
 function showInfoMessage(message) {
     const messageBox = document.createElement('div');
     messageBox.className = 'info-message-box';
@@ -413,10 +380,6 @@ function showInfoMessage(message) {
     setTimeout(() => chatBox.removeChild(messageBox), 3000);
 }
 
-/**
- * Zips a conversation for backup.
- * @param {string} convId - The ID of the conversation to zip.
- */
 function zipConversation(convId) {
     showInfoMessage('Creating backup. Please wait...');
     fetch(`/zip_backup/${convId}`)
@@ -438,9 +401,6 @@ function zipConversation(convId) {
         });
 }
 
-/**
- * Fetches and displays the list of conversations in the sidebar.
- */
 async function loadConversations() {
     try {
         const response = await fetch('/conversations');
@@ -552,10 +512,6 @@ async function loadConversations() {
     }
 }
 
-/**
- * Handles deleting a conversation after a user confirmation.
- * @param {string} convIdToDelete - The ID of the conversation to delete.
- */
 async function deleteConversation(convIdToDelete) {
     const userConfirmed = await createModal(`
         <p>Are you sure you want to delete this conversation? This action cannot be undone.</p>
@@ -596,9 +552,6 @@ async function deleteConversation(convIdToDelete) {
     }
 }
 
-/**
- * Handles starting a new chat session.
- */
 async function startNewChat() {
     loadingSpinner.style.display = 'block';
     disableControls();
@@ -623,10 +576,6 @@ async function startNewChat() {
     }
 }
 
-/**
- * Handles uploading a backup file.
- * @param {File} file - The selected file object.
- */
 async function uploadBackup(file) {
     if (!file) {
         return;
@@ -661,10 +610,6 @@ async function uploadBackup(file) {
     }
 }
 
-/**
- * Handles file ingestion via upload.
- * @param {File} file - The file to be ingested.
- */
 async function ingestFile(file) {
     if (!file) {
         return;
@@ -704,8 +649,6 @@ async function ingestFile(file) {
     }
 }
 
-
-// Event listeners
 sendButton.addEventListener('click', sendMessage);
 messageInput.addEventListener('keypress', (e) => {
     if (e.key === 'Enter') {
@@ -752,98 +695,20 @@ ingestButton.addEventListener('click', () => {
 });
 
 
-/*
-configButton.addEventListener('click', async () => {
-    if (!currentConversationId || currentConversationId === 'None') {
-        showInfoMessage("Please start or select a conversation first.");
-        return;
-    }
-
-    const configHtml = `
-        <p><strong>Configuration for ${currentConversationId}</strong></p>
-        <textarea id="config-textarea" class="config-textarea" rows="20" cols="50" placeholder="Loading..." wrap='off'></textarea>
-        <p>When [SAVE] Chat will be reloaded</p>
-        <div class="confirm-modal-buttons">
-            <button id="config-save-button">Save</button>
-            <button id="config-cancel-button">Cancel</button>
-        </div>
-    `;
-
-    const tempModal = document.createElement('div');
-    tempModal.className = 'confirm-modal';
-    tempModal.innerHTML = `<div class="confirm-modal-content">${configHtml}</div>`;
-    document.body.appendChild(tempModal);
-
-    const configTextArea = tempModal.querySelector('#config-textarea');
-    const saveButton = tempModal.querySelector('#config-save-button');
-    const cancelButton = tempModal.querySelector('#config-cancel-button');
-
-    saveButton.addEventListener('click', async () => {
-        const newConfig = configTextArea.value;
-        disableControls();
-
-        try {
-            const response = await fetch(`/api/config/${currentConversationId}`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ config_content: newConfig })
-            });
-            const data = await response.json();
-            if (response.ok) {
-                showInfoMessage(data.message);
-                window.location.href = '/';
-            } else {
-                throw new Error(data.message);
-            }
-        } catch (error) {
-            console.error('Error saving config:', error);
-            showInfoMessage(`Failed to save config: ${error.message}`);
-        } finally {
-            enableControls();
-            document.body.removeChild(tempModal);
-        }
-    });
-
-    cancelButton.addEventListener('click', () => {
-        document.body.removeChild(tempModal);
-    });
-
-    disableControls();
-    try {
-        const response = await fetch(`/api/config/${currentConversationId}`);
-        const data = await response.json();
-        if (response.ok) {
-            configTextArea.value = data.config_content;
-        } else {
-            throw new Error(data.message);
-        }
-    } catch (error) {
-        console.error('Error fetching config:', error);
-        configTextArea.value = `Error loading config: ${error.message}`;
-    } finally {
-        enableControls();
-    }
-}); */
-
-// Helper function to fetch GGUF models (requires a new backend endpoint)
 async function fetchGGUFModels() {
     try {
-        // ASSUMPTION: Backend endpoint /api/models returns a JSON object with a 'models' array
         const response = await fetch('/api/models');
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
         const data = await response.json();
-        // Assuming data is an array of strings, e.g., ["model/aeon-360M.Q8_0.gguf", ...]
         return data.models || [];
     } catch (error) {
         console.error('Failed to fetch GGUF models:', error);
-        // Return a mock list if the fetch fails, to allow the form to still render
         return ["model/aeon-360M.Q8_0.gguf", "model/nomic-embed-text-v1.5.Q8_0.gguf", "model/default.gguf"];
     }
 }
 
-// Function to generate the structured HTML content for the config modal
 function generateConfigFormHtml(config, models) {
     const escape = (s) => (s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
     const getModelName = (path) => path.replace(/^\.\/data\//, '');
@@ -853,14 +718,12 @@ function generateConfigFormHtml(config, models) {
         const configModelName = getModelName(configValuePath);
         let optionsHtml = '';
         for (const modelName of options) {
-            // Check if the current option matches the model name in the config
             const selected = modelName === configModelName ? 'selected' : '';
             optionsHtml += `<option value="${escape(modelName)}" ${selected}>${escape(modelName)}</option>`;
         }
         return `<select class="input-field" data-key="model">${optionsHtml}</select>`;
     };
 
-    // Use current config or safe defaults for missing keys
     const llmConfig = config.llm_config || {};
     const embConfig = config.emb_config || {};
 
@@ -965,7 +828,6 @@ function generateConfigFormHtml(config, models) {
     `;
 }
 
-// Function to handle the opening, fetching, rendering, and saving of the config modal
 async function openConfigModal() {
     if (!currentConversationId || currentConversationId === 'None') {
         showInfoMessage("Please start or select a conversation first.");
@@ -1005,10 +867,9 @@ async function openConfigModal() {
         disableControls();
 
         if (!window.jsyaml) {
-             throw new Error('YAML parser (js-yaml) not loaded. Please ensure the CDN script is included.');
+             throw new Error('YAML parser (js-yaml) not loaded.');
         }
 
-        // 1. Fetch Config and Models in parallel
         const [configResponse, availableModels] = await Promise.all([
             fetch(`/api/config/${currentConversationId}`),
             fetchGGUFModels()
@@ -1020,14 +881,11 @@ async function openConfigModal() {
              throw new Error(configData.message || 'Failed to fetch config.');
         }
 
-        // 2. Parse YAML and store original
         originalConfig = window.jsyaml.load(configData.config_content);
 
-        // 3. Render the structured form
         const formHtml = generateConfigFormHtml(originalConfig, availableModels);
         formPlaceholder.innerHTML = formHtml;
 
-        // 4. Enable save button
         saveButton.disabled = false;
 
     } catch (error) {
@@ -1038,56 +896,44 @@ async function openConfigModal() {
         enableControls();
     }
 
-    // Save Logic
     saveButton.addEventListener('click', async () => {
-        // Deep clone original config to preserve structure and un-editable keys
         const newConfig = JSON.parse(JSON.stringify(originalConfig));
         const formElements = formPlaceholder.querySelectorAll('.input-field, .textarea-field');
 
         formElements.forEach(element => {
             const key = element.getAttribute('data-key');
-            // Check for nested group like 'llm_config' or 'emb_config'
             const group = element.closest('[data-group]')?.getAttribute('data-group');
             let value;
 
             if (element.tagName === 'TEXTAREA') {
                 value = element.value;
             } else if (key === 'load_plugins') {
-                // Convert comma-separated string to array
                 value = element.value.split(',').map(s => s.trim()).filter(s => s.length > 0);
             } else if (element.type === 'number') {
-                // Convert to correct number type (float or integer based on step attribute)
                 const step = parseFloat(element.getAttribute('step'));
                 value = step < 1 ? parseFloat(element.value) : parseInt(element.value, 10);
             } else if (element.tagName === 'SELECT') {
-                // Model selection - needs './data/' prefix
                 value = wrapPath(element.value);
             } else {
                 value = element.value;
             }
 
             if (group) {
-                // Update nested keys
                 if (newConfig[group]) {
                     newConfig[group][key] = value;
                 }
             } else {
-                // Update top-level keys (llm_prompt, llm_rag_prompt, load_plugins)
                 newConfig[key] = value;
             }
         });
 
-        // Final YAML serialization
         let newConfigYaml;
         try {
-            // Serialize the JS object back to YAML
             newConfigYaml = window.jsyaml.dump(newConfig, {
                 indent: 2,
-                lineWidth: -1, // Disable line wrapping
+                lineWidth: -1,
             });
             
-            // HACK: Manually force the '>' folded block scalar for prompts 
-            // as this is often required for clean YAML multi-line strings
             newConfigYaml = newConfigYaml.replace(
                 /llm_prompt: \|/g, 'llm_prompt: >'
             ).replace(
@@ -1112,7 +958,6 @@ async function openConfigModal() {
             const data = await response.json();
             if (response.ok) {
                 showInfoMessage(data.message);
-                // Reload the page to apply new configuration
                 window.location.reload();
             } else {
                 throw new Error(data.message);
@@ -1132,12 +977,10 @@ if (configButton) {
 }
 
 
-// Hamburger menu toggle
 menuButton.addEventListener('click', () => {
     sidebar.classList.toggle('active');
 });
 
-// Close dropdowns when clicking anywhere on the document
 document.addEventListener('click', (event) => {
     document.querySelectorAll('.dropdown-menu.visible').forEach(menu => {
         const moreOptionsButton = menu.previousElementSibling;
@@ -1156,7 +999,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         initialHistory.forEach(turn => {
             addMessage(turn.user, 'user');
             
-            // Check if the bot message is a web search result with sources
             const sourceLinks = turn.source ? turn.source.split('\n') : [];
             addMessage(turn.aeon, 'bot', sourceLinks);
         });

@@ -18,8 +18,11 @@ from src.utils.load import loadBackup
 from src.utils.ingestion import ingestDocuments
 from src.utils.webSearch import webSearch
 from src.webapp.ragweb import initialize_rag_system, rag_system_state
-from src.libs.messages import print_error_message
+from src.libs.messages import print_error_message, print_info_message
 from src.config import LLM_MODEL, EMB_MODEL
+
+from src.libs.plugins import PluginManager
+
 
 def _ingest_conversation_turn(user_input, aeon_output, vectorstore, text_splitter, llama_embeddings):
     try:
@@ -43,13 +46,14 @@ def _ingest_conversation_turn(user_input, aeon_output, vectorstore, text_splitte
         print_error_message(f"Failed to ingest conversation turn: {e}")
 
 def init_routes(app, abs_output_dir, abs_memory_dir):
-
+    global _plugin_manager
     os.makedirs(abs_output_dir, exist_ok=True)
     os.makedirs(abs_memory_dir, exist_ok=True)
 
     backup_dir = abs_output_dir / "backup"
     os.makedirs(backup_dir, exist_ok=True)
     abs_data_dir = Path(__file__).parent.parent.parent / 'data'
+
 
     @app.route("/")
     def index():
@@ -324,18 +328,12 @@ def init_routes(app, abs_output_dir, abs_memory_dir):
 
     @app.route('/api/models', methods=['GET'])
     def get_available_models():
-        """
-        Scans the models directory and returns a list of GGUF files.
-        """
         model_dir = abs_data_dir / 'model'
         models = []
         
-        # Use glob to find all .gguf files recursively in the model directory
-        # and strip the absolute path to make them relative to the 'data' directory.
         for model_path in glob.glob(str(model_dir / '**/*.gguf'), recursive=True):
-            # Calculate the path relative to the 'data' directory, starting with 'model/'
             relative_path = os.path.relpath(model_path, abs_data_dir)
-            models.append(relative_path.replace(os.path.sep, '/')) # Use forward slashes for URL/JS compatibility
+            models.append(relative_path.replace(os.path.sep, '/'))
 
         return jsonify({"models": models})
 

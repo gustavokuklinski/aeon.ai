@@ -19,6 +19,7 @@ from src.utils.ingestion import ingestDocuments
 from src.utils.webSearch import webSearch
 from src.webapp.ragweb import initialize_rag_system, rag_system_state
 from src.libs.messages import print_error_message, print_info_message
+from src.webapp.plugin import get_plugin_manager, handle_plugin_command
 from src.config import LLM_MODEL, EMB_MODEL
 
 from src.libs.plugins import PluginManager
@@ -46,7 +47,8 @@ def _ingest_conversation_turn(user_input, aeon_output, vectorstore, text_splitte
         print_error_message(f"Failed to ingest conversation turn: {e}")
 
 def init_routes(app, abs_output_dir, abs_memory_dir):
-    global _plugin_manager
+    get_plugin_manager()
+    plugin_manager = get_plugin_manager()
     os.makedirs(abs_output_dir, exist_ok=True)
     os.makedirs(abs_memory_dir, exist_ok=True)
 
@@ -115,6 +117,17 @@ def init_routes(app, abs_output_dir, abs_memory_dir):
 
         try:
             current_rag = rag_system_state[conv_id]
+
+            is_plugin, plugin_response, plugin_source = handle_plugin_command(
+                user_input,
+                conv_id,
+                current_rag["current_memory_path"],
+                current_rag
+            )
+
+            if is_plugin:
+                return jsonify({"response": plugin_response, "source": plugin_source, "conversation_id": conv_id})
+
             response = current_rag["rag_chain"].invoke(user_input)
 
             answer = response.get("answer", "No answer found.")
@@ -156,6 +169,22 @@ def init_routes(app, abs_output_dir, abs_memory_dir):
         except Exception as e:
             print(f"Error during RAG processing: {e}", file=sys.stderr)
             return jsonify({"response": "An error occurred. Please try again."}), 500
+
+
+    @app.route('/api/plugins', methods=['GET'])
+    def list_plugins_route():
+        """Returns a list of loaded plugins for the frontend command list."""
+        try:
+            # FIX: Use the 'plugin_manager' instance (captured via closure)
+            loaded_plugins = plugin_manager.list_plugins() 
+            
+            # The list_plugins method is now fixed in plugins.py to return the correct format, 
+            # so we can return it directly.
+            return jsonify(loaded_plugins), 200
+        except Exception as e:
+            print(f"Error listing plugins: {e}", file=sys.stderr) 
+            return jsonify({"message": f"Failed to retrieve plugins: {e}"}), 500
+
 
     @app.route('/conversations', methods=["GET"])
     def list_conversations_route():
@@ -282,14 +311,24 @@ def init_routes(app, abs_output_dir, abs_memory_dir):
         except Exception:
             return "An error occurred during download.", 500
 
-    @app.route('/serve_from_memory/<folder>/<path:filename>')
-    def serve_from_memory(folder, filename):
+    @app.route('/serve_from_memory/<path:sub_path>') # MODIFIED: Use <path:sub_path> to capture full path
+    def serve_from_memory(sub_path):
         current_conv_id = request.args.get('conv_id')
         if current_conv_id:
             current_memory_path = abs_memory_dir / current_conv_id
-            base_dir = current_memory_path / folder
-            if base_dir.is_dir():
+            
+            file_to_serve = current_memory_path / sub_path
+            
+            # Security check: Ensure the file is inside the conversation directory
+            if not file_to_serve.is_relative_to(current_memory_path):
+                 return "Access forbidden.", 403
+            
+            if file_to_serve.is_file():
+                # Extract the directory and filename to use send_from_directory safely
+                base_dir = file_to_serve.parent
+                filename = file_to_serve.name
                 return send_from_directory(str(base_dir), filename)
+        
         return "File not found", 404
 
     @app.route('/api/config/<conv_id>', methods=['GET'])

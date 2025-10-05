@@ -32,7 +32,8 @@ def initialize_rag_system(
             "llm_instance": llm_instance,
             "current_memory_path": conv_dir_path,
             "conversation_filename": f"{conv_id}.json",
-            "current_conversation_id": conv_id
+            "current_conversation_id": conv_id,
+            "current_chat_history": []
         }
     except Exception as e:
         print_error_message(f"Error loading conversation '{conv_id}': {e}")

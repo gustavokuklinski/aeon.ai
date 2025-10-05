@@ -27,7 +27,7 @@ let initialHistory = window.initialHistory;
 
 startButton.addEventListener('click', () => { window.location.href = '/'; });
 
-const availableCommands = [
+let availableCommands = [
     { cmd: '/new', desc: 'Create a new chat.' },
     { cmd: '/open [CHAT_ID]', desc: 'Open a chat by number.' },
     { cmd: '/zip', desc: 'Backup contents to a zip file at /data/output/backup' },
@@ -37,6 +37,28 @@ const availableCommands = [
     { cmd: '/search [TERM]', desc: 'Make a web search by term and /ingest' },
     { cmd: '/delete [CHAT_ID]', desc: 'Delete a selected chat.' },
 ];
+
+async function fetchPlugins() {
+    try {
+        const response = await fetch('/api/plugins');
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const plugins = await response.json();
+        
+        const pluginCommands = plugins.map(p => ({
+            cmd: `${p.name}`,
+            desc: `${p.description} [Plugin]`,
+        }));
+
+        // Append plugin commands to the global list
+        availableCommands = availableCommands.concat(pluginCommands);
+        console.log("Updated available commands with plugins:", availableCommands);
+    } catch (error) {
+        console.error('Failed to fetch plugins:', error);
+        // Continue without plugins if the fetch fails
+    }
+}
 
 function disableControls() {
     messageInput.disabled = true;
@@ -992,6 +1014,7 @@ document.addEventListener('click', (event) => {
 
 document.addEventListener('DOMContentLoaded', async () => {
     loadingSpinner.style.display = 'none';
+    await fetchPlugins();
     await loadConversations();
 
     if (initialHistory && initialHistory.length > 0) {

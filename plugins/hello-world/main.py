@@ -18,4 +18,8 @@ def run_plugin(*args, **kwargs) -> None:
     print_info_message(f"'{plugin_name}' received input: '{user_string}'")
     print_success_message(f"Hello, you said: {user_string}")
     
-    return None
+    return {
+        "plugin_name": plugin_name,
+        "response": user_string,
+        "status": "success"
+    }

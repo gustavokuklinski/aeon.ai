@@ -86,7 +86,7 @@ hr {
 .sidebar-list li {
     padding: 5px 10px 5px 10px;
     margin-bottom: 5px;
-    background-color: #3e3e3e;
+    
     cursor: pointer;
     color: #fff;
     text-transform: uppercase;
@@ -102,7 +102,7 @@ hr {
 }
 
 .sidebar-list .active {
-    background-color: #600;
+    background-color: #1e1e1e;
     font-weight: bold;
 }
 
@@ -116,7 +116,7 @@ hr {
 .sidebar-button {
     width: 50px;
     padding: 10px;
-    background-color: #424242;
+    background-color: #1a1a1a;
     color: #fff;
     border: none;
     cursor: pointer;
@@ -387,7 +387,7 @@ img {
 }
 
 #confirm-no,
-#rename-cancel,
+#rename-cancel,     
 #config-cancel-button {
     background-color: #424242;
     color: #fff;

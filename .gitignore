@@ -3,6 +3,8 @@ venv
 build
 .venv
 
+data/model/smollm2-360m-instruct-q8_0.gguf
+
 # Python cache folders
 .pytest_cache/
 scripts/__pycache__/

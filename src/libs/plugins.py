@@ -75,6 +75,23 @@ class PluginManager:
         self.plugins_to_load = plugins_to_load
         self.load_plugins()
 
+    def list_plugins(self):
+        """
+        Returns a list of all currently loaded plugins' metadata, formatted for the frontend.
+        The list contains dictionaries like [{'name': command, 'description': desc}].
+        """
+        # FIX: Correctly iterate over the loaded plugins dictionary (self.plugins)
+        plugin_list = []
+        for plugin in self.plugins.values():
+            plugin_list.append({
+                # Use command as the unique identifier/name for the frontend command
+                'name': plugin.command,
+                'parameters': plugin.parameters,
+                'description': plugin.desc # Use desc as the description
+            })
+
+        print_plugin_message(f"Listing {len(self.plugins)} loaded plugins.")
+        return plugin_list
 
     def load_plugins(self):
         if not self.plugins_dir.exists():

@@ -175,11 +175,8 @@ def init_routes(app, abs_output_dir, abs_memory_dir):
     def list_plugins_route():
         """Returns a list of loaded plugins for the frontend command list."""
         try:
-            # FIX: Use the 'plugin_manager' instance (captured via closure)
             loaded_plugins = plugin_manager.list_plugins() 
-            
-            # The list_plugins method is now fixed in plugins.py to return the correct format, 
-            # so we can return it directly.
+
             return jsonify(loaded_plugins), 200
         except Exception as e:
             print(f"Error listing plugins: {e}", file=sys.stderr) 
@@ -311,7 +308,7 @@ def init_routes(app, abs_output_dir, abs_memory_dir):
         except Exception:
             return "An error occurred during download.", 500
 
-    @app.route('/serve_from_memory/<path:sub_path>') # MODIFIED: Use <path:sub_path> to capture full path
+    @app.route('/serve_from_memory/<path:sub_path>')
     def serve_from_memory(sub_path):
         current_conv_id = request.args.get('conv_id')
         if current_conv_id:
@@ -319,12 +316,10 @@ def init_routes(app, abs_output_dir, abs_memory_dir):
             
             file_to_serve = current_memory_path / sub_path
             
-            # Security check: Ensure the file is inside the conversation directory
             if not file_to_serve.is_relative_to(current_memory_path):
                  return "Access forbidden.", 403
             
             if file_to_serve.is_file():
-                # Extract the directory and filename to use send_from_directory safely
                 base_dir = file_to_serve.parent
                 filename = file_to_serve.name
                 return send_from_directory(str(base_dir), filename)

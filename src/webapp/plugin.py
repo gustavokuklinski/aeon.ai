@@ -7,7 +7,6 @@ from src.libs.messages import print_info_message
 _plugin_manager: Optional[PluginManager] = None
 
 def get_plugin_manager(plugins_dir: Path = PLUGINS_DIR) -> PluginManager:
-    """Initializes and returns the global PluginManager, auto-discovering plugins."""
     global _plugin_manager
     if _plugin_manager is None:
         # Find all subdirectories in the PLUGINS_DIR to load
@@ -22,11 +21,6 @@ def handle_plugin_command(
     current_memory_path: Path,
     rag_system_vars: Dict[str, Any]
 ) -> Tuple[bool, str, str]:
-    """
-    Checks if the user input is a plugin command and executes it if found.
-
-    Returns: (is_plugin_command, response_text, source_text)
-    """
     manager = get_plugin_manager()
     parts = user_input.split(' ', 1)
     command = parts[0]
@@ -38,21 +32,16 @@ def handle_plugin_command(
         if not current_memory_path:
             return True, "Internal Error: The conversation memory path is missing. Cannot run plugin.", f"Plugin: {plugin.plugin_name}"
        
-        # Define the output directory specific to this conversation and plugin
         output_dir = current_memory_path / 'outputs'
         os.makedirs(output_dir, exist_ok=True)
 
         print(f"[PLUGIN] Executing command '{command}' with args: '{args}'")
         
-        # --- FIX: Remove conflicting keys from the dictionary before unpacking ---
         rag_vars_for_plugin = rag_system_vars.copy()
-        # Remove keys that are being passed explicitly to avoid the 'multiple values' error
         rag_vars_for_plugin.pop("current_memory_path", None)
         rag_vars_for_plugin.pop("current_conversation_id", None)
         rag_vars_for_plugin.pop("conversation_filename", None)
-        # --- END FIX ---
 
-        # Execute the plugin's run_plugin function, passing all necessary RAG components
         plugin_result = plugin.execute(
             args,
             output_dir=output_dir,
@@ -62,14 +51,10 @@ def handle_plugin_command(
             **rag_vars_for_plugin
         )
 
-        # Standardize the plugin result handling
-        
-
         if isinstance(plugin_result, dict):
             message = plugin_result.get('message', f"Plugin {command} executed but returned no message.")
             source = plugin_result.get('source', f"Plugin: {plugin.plugin_name}")
             
-            # If the plugin returned a filepath, construct a URL for web serving
             if 'filepath' in plugin_result:
                 filepath_value = plugin_result['filepath']
                 if filepath_value:
@@ -92,7 +77,6 @@ def handle_plugin_command(
             return True, f"Plugin '{command}' executed successfully but returned no output.", f"Plugin: {plugin.plugin_name}"
         
 
-        # Fallback for simple string returns
         return True, str(plugin_result), f"Plugin: {plugin.plugin_name}"
     
-    return False, "", "" # Not a plugin command
+    return False, "", ""

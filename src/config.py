@@ -9,21 +9,16 @@ from src.libs.messages import (
     print_success_message,
 )
 
-# Configuration dirs
 MEMORY_DIR = "./data/chats"
 INPUT_DIR = "./data/input"
 CHROMA_DB_DIR = "./data/chats"
 BACKUP_DIR = "./data/output/backup"
 OUTPUT_DIR = "./data/output"
 
-
 CONFIG_FILE = "./config.yml"
-
-
 
 PLUGINS_DIR = Path("./plugins")
 
-# Load Configuration from YAML
 try:
     with open(CONFIG_FILE, 'r', encoding='utf-8') as f:
         config = yaml.safe_load(f)
@@ -61,14 +56,12 @@ if PLUGINS_DIR.is_dir():
                 try:
                     with open(plugin_config_file, 'r', encoding='utf-8') as f:
                         plugin_config = yaml.safe_load(f)
-                        # Store the entire aeon_plugin section
                         if "aeon_plugin" in plugin_config:
-                            # Use plugin's command or a unique identifier as key
                             cmd = plugin_config["aeon_plugin"].get(
                                 "command", plugin_path.name)
                             PLUGINS_CONFIGS[cmd] = {
                                 "config_data": plugin_config["aeon_plugin"],
-                                "plugin_dir": plugin_path  # Store the plugin's root directory
+                                "plugin_dir": plugin_path
                             }
                         else:
                             print_error_message(
@@ -82,13 +75,9 @@ if PLUGINS_DIR.is_dir():
 else:
     print_info_message(f"Plugins directory not found at {PLUGINS_DIR}.")
 
-# Ensure OUTPUT_DIR exists
 Path(OUTPUT_DIR).mkdir(parents=True, exist_ok=True)
 
 def copy_config_to_chat(conversation_id: str):
-    """
-    Copies the main config.yml to a new conversation directory.
-    """
     source_path = Path(CONFIG_FILE)
     destination_dir = Path(MEMORY_DIR) / conversation_id
     destination_path = destination_dir / "config.yml"

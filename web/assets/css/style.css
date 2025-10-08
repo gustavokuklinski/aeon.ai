@@ -98,7 +98,7 @@ hr {
 }
 
 .sidebar-list li:hover {
-    background-color: #950000;
+    background-color: #2d2d2d;
 }
 
 .sidebar-list .active {
@@ -126,7 +126,7 @@ hr {
 }
 
 .sidebar-button:hover {
-    background-color: #950000;
+    background-color: #2d2d2d;
 }
 
 .main-content {
@@ -466,9 +466,8 @@ img {
     position: absolute;
     top: calc(100% + 5px);
     right: 5px;
-    background-color: #2b2b2b;
+    background-color: #444;
     border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     display: none;
     z-index: 10;
     list-style: none;
@@ -491,7 +490,7 @@ img {
 }
 
 .dropdown-item:hover {
-    background-color: #950000;
+    background-color: #2d2d2d;
     border-radius: 6px;
     color: #fff;
 }
@@ -541,7 +540,6 @@ img {
             max-width: 950px;
             margin: 0 auto;
             border-radius: 16px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
             background-color: #2b2b2b;
             padding: 30px;
         }

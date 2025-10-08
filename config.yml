@@ -1,7 +1,7 @@
 llm_config:
   model: ./data/model/aeon-360M.Q8_0.gguf
   temperature: 0.5
-  n_ctx: 2048
+  n_ctx: 8192
   top_k: 40
   top_p: 0.8
   max_new_token: 250 

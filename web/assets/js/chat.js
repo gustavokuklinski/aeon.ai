@@ -788,6 +788,11 @@ function generateConfigFormHtml(config, models) {
                 </details>
                 </div>
             
+                
+            </div>
+            
+            <!-- Right Column: Embedding Setup and Plugins -->
+            <div>
                 <!-- LLM Prompts Panel -->
                 <div class="config-panel">
                 <details>
@@ -804,45 +809,6 @@ function generateConfigFormHtml(config, models) {
                         </div>
                     </div>
                 </details>
-                </div>
-            </div>
-            
-            <!-- Right Column: Embedding Setup and Plugins -->
-            <div>
-                <!-- Embedding Setup Panel -->
-                <div class="config-panel">
-                <details>
-                    <summary><h3 class="section-title">Embedding</h3></summary>
-                    <div data-group="emb_config">
-                        <div class="config-field-row">
-                            <label>Model (.gguf):</label>
-                            ${generateSelect(embConfig.model || '', models)}
-                        </div>
-
-                        <div class="config-field-row">
-                            <label>Chunk Size:</label>
-                            <input type="number" class="input-field" data-key="chunk_size" value="${embConfig.chunk_size || 100}" step="10" min="10" max="1000">
-                        </div>
-
-                        <div class="config-field-row">
-                            <label>Chunk Overlap:</label>
-                            <input type="number" class="input-field" data-key="chunk_overlap" value="${embConfig.chunk_overlap || 50}" step="10" min="0" max="500">
-                        </div>
-                    </div>
-                </details>
-                </div>
-
-                <!-- Plugins Panel -->
-                <div class="config-panel">
-                    <details>
-                    <summary><h3 class="section-title">Plugins</h3></summary>
-                    <div data-group="config">
-                        <div class="config-field-row">
-                            <label>Load Plugins (Comma Separated List):</label>
-                            <input type="text" class="input-field" data-key="load_plugins" value="${(config.load_plugins || []).join(', ')}">
-                        </div>
-                    </div>
-                    </details>
                 </div>
             </div>
             

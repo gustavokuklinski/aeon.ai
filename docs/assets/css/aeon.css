@@ -1,0 +1,584 @@
+/* Custom Properties & Reset */
+:root {
+    /* ** LIGHT MODE PALETTE (Default) ** */
+    --color-light-bg: #FFFFFF;     
+    --color-mid-bg: #F8F8F8;       
+    --color-card-bg: #FFFFFF;      
+    --color-card-border: #E0E0E0;  
+
+    --color-accent: #FF3B30;       
+    --color-text: #222222;         
+    --color-secondary-text: #666666; 
+    
+    /* Variables for transitions/shadows (kept subtle/off) */
+    --color-shadow: rgba(0, 0, 0, 0); 
+
+    --font-primary: 'Inter', sans-serif;
+    --font-mono: 'Space Mono', monospace;
+}
+
+/* ** DARK MODE OVERRIDES ** */
+/* This block will override the :root variables when the body has the .dark-mode class */
+.dark-mode {
+    /* Dark Backgrounds and Structure */
+    --color-light-bg: #100000;      /* Deep black-red, main page background */
+    --color-mid-bg: #200000;       /* Dark background for cards/sections */
+    --color-card-bg: #200000;      /* Dark background for cards */
+    --color-card-border: #5C0000;  /* Subtle, dark red for borders */
+
+    /* Logo & Branding - ACCENT STAYS RED */
+    --color-accent: #FF3B30;       
+    --color-shadow: rgba(255, 59, 48, 0.4); /* Reintroduce red glow shadow for dark mode */
+
+    /* Text */
+    --color-text: #F0F0F0;         /* Near-white for primary headings and text */
+    --color-secondary-text: #AAAAAA; /* Mid-grey for paragraphs and footnotes */
+}
+
+/* --- Dark Mode specific element styles --- */
+
+/* Code Blocks in Dark Mode */
+.dark-mode .code-block {
+    background-color: #0A0A0A; /* Deeper black for code */
+    color: #FFFFFF;
+}
+
+/* Header in Dark Mode */
+.dark-mode header {
+    background-color: var(--color-mid-bg);
+    border-bottom-color: var(--color-card-border);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5); /* Reintroduce subtle shadow */
+}
+
+/* Navigation links in Dark Mode */
+.dark-mode nav a {
+    color: var(--color-text);
+}
+
+/* Feature Cards in Dark Mode */
+.dark-mode .feature-card {
+    background-color: var(--color-card-bg);
+    border-color: var(--color-card-border);
+}
+
+/* Final CTA box in Dark Mode */
+.dark-mode .final-cta {
+    background-color: var(--color-mid-bg);
+}
+
+/* Rag Callout in Dark Mode */
+.dark-mode .rag-callout {
+    background-color: rgba(255, 59, 48, 0.05); /* Subtle red tint */
+}
+/* Ensure to check all existing styles to make sure they use the variables correctly */
+/* For example, ensure the body uses the variables: */
+body {
+    /* ... existing styles ... */
+    background-color: var(--color-light-bg); 
+    color: var(--color-text);
+}
+
+/* Add a style for the button to make it look good */
+.mode-toggle-btn {
+    border: none;
+    background: transparent;
+    color: var(--color-text); /* Use text color, will switch in dark mode */
+    font-size: 1.2rem;
+    padding: 0;
+    width: 30px; /* fixed width for icon */
+    height: 30px;
+    margin-left: 20px !important;
+    cursor: pointer;
+    transition: color 0.3s;
+}
+
+.mode-toggle-btn:hover {
+    color: var(--color-accent);
+}
+
+/* Ensure the code block background is dark in dark mode */
+.dark-mode .code-block {
+    background-color: #000000;
+}
+
+
+
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: var(--font-primary);
+    background-color: var(--color-light-bg); /* LIGHT BACKGROUND */
+    color: var(--color-text);
+    line-height: 1.6;
+    scroll-behavior: smooth;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+h1, h2, h3 {
+    font-family: var(--font-primary);
+    font-weight: 800;
+    line-height: 1.1;
+    color: var(--color-text);
+}
+
+a {
+    color: var(--color-accent);
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+a:hover {
+    color: #CC2D22; /* Darker accent on hover */
+}
+
+/* --- Utility Classes --- */
+.accent-text {
+    color: var(--color-accent);
+}
+
+hr {
+    border: none;
+    height: 1px;
+    background-image: linear-gradient(to right, transparent, var(--color-card-border), transparent);
+    margin: 40px 0;
+}
+
+/* --- Header & Navigation - Light Theme adjustments --- */
+header {
+    background-color: var(--color-mid-bg); /* Light grey header */
+    padding: 15px 0;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    box-shadow: none; /* SHADOWLESS */
+    border-bottom: 1px solid var(--color-card-border); /* Squared border */
+}
+
+header .container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo {
+    /* Image logo, no text styles needed for H1 */
+    font-size: 0; 
+}
+
+.logo img {
+    /* Ensure the image is styled correctly */
+    display: block;
+    max-height: 35px; /* Adjust height for the new light logo/look */
+    width: auto !important; /* Reset inline width */
+}
+
+.logo-light {
+    color: var(--color-accent);
+}
+
+nav a {
+    margin-left: 25px;
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.9rem;
+    color: var(--color-text); /* Nav text should be dark */
+}
+
+/* --- Buttons - Squared and Solid --- */
+.btn {
+    padding: 10px 20px;
+    border-radius: 0; /* SQUARED */
+    font-weight: 700;
+    text-transform: uppercase;
+    font-size: 0.9rem;
+    transition: transform 0.3s ease, background-color 0.3s ease, box-shadow 0.3s ease;
+    display: inline-block;
+}
+
+.btn-primary {
+    background-color: var(--color-accent);
+    color: var(--color-light-bg); /* White text on red button */
+    border: 2px solid var(--color-accent);
+}
+
+.btn-primary:hover {
+    background-color: #CC2D22; /* Darker red on hover */
+    color: var(--color-light-bg);
+    transform: none; /* No vertical transform */
+    box-shadow: none; /* SHADOWLESS */
+}
+
+.btn-secondary {
+    background: transparent;
+    color: var(--color-accent);
+    border: 2px solid var(--color-accent);
+}
+
+.btn-secondary:hover {
+    background-color: var(--color-accent);
+    color: var(--color-light-bg);
+    transform: none; /* No vertical transform */
+}
+
+.btn-nav {
+    padding: 6px 15px;
+    margin-left: 20px !important;
+    font-size: 0.8rem;
+}
+
+/* --- Hero Section - Light Background --- */
+.hero-section {
+    padding: 100px 0;
+    text-align: center;
+    background: var(--color-mid-bg); /* Use light grey background for hero */
+    /* Updated radial gradient for the light theme glow */
+    background: radial-gradient(circle at top center, rgba(255, 59, 48, 0.05) 0%, transparent 50%);
+}
+
+.hero-section .pre-title {
+    color: var(--color-accent);
+    font-size: 1rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+}
+
+.hero-section h1 {
+    font-size: 3.5rem;
+    margin-bottom: 20px;
+    animation: fadeIn 1s ease-out;
+}
+
+.hero-section .subtitle {
+    max-width: 800px;
+    margin: 0 auto 40px;
+    font-size: 1.2rem;
+    color: var(--color-secondary-text);
+}
+
+.hero-actions {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+}
+
+/* Anacronym Strip */
+.anacronym-strip {
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+    margin-top: 60px;
+    padding: 20px 0;
+    border-top: 1px solid var(--color-card-border);
+    border-bottom: 1px solid var(--color-card-border);
+}
+
+.anacronym-item {
+    font-family: var(--font-mono);
+    font-size: 1.1rem;
+    color: var(--color-secondary-text);
+    text-transform: uppercase;
+}
+
+.anacronym-item span {
+    font-size: 1.8rem;
+    color: var(--color-accent);
+    font-weight: 700;
+    margin-right: 5px;
+}
+
+/* Pulse Animation for CTA - Adjusted for light theme */
+@keyframes pulse {
+    0% { box-shadow: 0 0 0 0 rgba(255, 59, 48, 0.4); }
+    70% { box-shadow: 0 0 0 10px rgba(255, 59, 48, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(255, 59, 48, 0); }
+}
+.pulse-animation {
+    animation: pulse 2s infinite;
+}
+
+
+/* --- General Section Styling --- */
+.section {
+    padding: 80px 0;
+    background-color: var(--color-light-bg); /* Ensure sections are light */
+}
+
+.section h2 {
+    font-size: 2.5rem;
+    text-align: center;
+    margin-bottom: 15px;
+}
+
+.section-description {
+    text-align: center;
+    max-width: 700px;
+    margin: 0 auto 50px;
+    color: var(--color-secondary-text);
+}
+
+
+/* --- 1. Key Features Section: Feature Cards - Squared and Shadowless --- */
+.features-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 30px;
+}
+
+.feature-card {
+    background-color: var(--color-card-bg); /* White background */
+    padding: 30px;
+    border-radius: 0; /* SQUARED */
+    border: 1px solid var(--color-card-border);
+    transition: border-color 0.3s ease, transform 0.3s ease;
+    cursor: default;
+    /* Initial state for JS animation/hover */
+    transform: none; 
+}
+
+.feature-card:hover {
+    /* Subtle lift and accent border, no 3D tilt or shadow */
+    transform: translateY(-3px); 
+    box-shadow: none; 
+    border-color: var(--color-accent); 
+}
+
+.card-icon {
+    font-size: 2.5rem;
+    margin-bottom: 15px;
+    color: var(--color-accent); /* Color icons with red accent */
+}
+
+.feature-card h3 {
+    color: var(--color-text); /* Use dark text for headings */
+    font-size: 1.5rem;
+    margin-bottom: 10px;
+}
+
+
+/* --- 2. Technical Architecture Section - Squared and Clear --- */
+.tech-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+}
+
+.tech-card {
+    background-color: var(--color-card-bg); /* White background */
+    padding: 25px;
+    border-radius: 0; /* SQUARED */
+    border: 1px solid var(--color-card-border);
+    border-left: 4px solid var(--color-accent); /* Red accent bar */
+    transition: background-color 0.3s;
+}
+
+.tech-card:hover {
+    background-color: var(--color-mid-bg); /* Subtle grey on hover */
+    outline: none; 
+}
+
+.tech-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.tech-card h3 {
+    font-size: 1.4rem;
+    color: var(--color-text);
+    margin: 0;
+}
+
+.tech-role {
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    color: var(--color-text); /* Dark text for tags */
+    background-color: #EFEFEF; /* Light background for the tag */
+    padding: 4px 8px;
+    border-radius: 3px;
+}
+
+.model-spec {
+    font-size: 0.9rem;
+    margin-top: 15px;
+    padding-top: 10px;
+    border-top: 1px dashed var(--color-card-border);
+    color: var(--color-secondary-text);
+}
+
+.rag-callout {
+    margin-top: 40px;
+    padding: 30px;
+    background-color: #FAFAFA; /* Very light background */
+    border: 2px solid var(--color-accent); /* Clear red border */
+    border-radius: 0; /* SQUARED */
+    text-align: center;
+}
+
+.rag-callout h4 {
+    font-size: 1.6rem;
+    color: var(--color-accent);
+    margin-bottom: 10px;
+}
+
+
+/* --- 3. Getting Started / Installation Section --- */
+.install-options {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 30px;
+    margin-bottom: 50px;
+}
+
+.install-card {
+    background-color: var(--color-card-bg); /* White background */
+    padding: 30px;
+    border-radius: 0; /* SQUARED */
+    border: 1px solid var(--color-card-border);
+}
+
+.install-card h3 {
+    color: var(--color-accent);
+    margin-bottom: 10px;
+}
+
+.code-block {
+    background-color: #333333; /* Dark background for code blocks for contrast */
+    color: #FFFFFF; /* White text on dark code block */
+    font-family: var(--font-mono);
+    padding: 15px;
+    border-radius: 0; /* SQUARED */
+    overflow-x: auto;
+    white-space: pre-wrap;
+    word-break: break-all;
+    display: block;
+    margin-top: 15px;
+    font-size: 0.85rem;
+    border-left: 3px solid var(--color-accent); /* Red accent bar */
+}
+
+.final-cta {
+    text-align: center;
+    padding: 40px;
+    background-color: var(--color-mid-bg); /* Light grey background */
+    border-radius: 0; /* SQUARED */
+    border: 1px solid var(--color-accent);
+    box-shadow: none; /* SHADOWLESS */
+}
+
+.final-cta p {
+    font-size: 1.1rem;
+    margin-bottom: 25px;
+    color: var(--color-text);
+}
+
+
+/* --- Footer - Light Theme --- */
+footer {
+    background-color: var(--color-mid-bg);
+    padding: 20px 0;
+    text-align: center;
+    border-top: 1px solid var(--color-card-border);
+}
+
+footer p {
+    color: var(--color-secondary-text);
+    font-size: 0.9rem;
+}
+
+/* --- Responsive Design --- */
+@media (max-width: 900px) {
+    .tech-grid, .install-options {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 768px) {
+    .hero-section h1 {
+        font-size: 2.5rem;
+    }
+
+    header .container {
+        flex-direction: column;
+    }
+
+    nav {
+        margin-top: 10px;
+    }
+
+    nav a {
+        margin: 0 10px;
+    }
+
+    .anacronym-strip {
+        flex-wrap: wrap;
+        gap: 15px;
+    }
+}
+
+@media (max-width: 480px) {
+    .hero-section {
+        padding: 60px 0;
+    }
+    .hero-actions {
+        flex-direction: column;
+        gap: 15px;
+    }
+}
+
+/* --- Documentation Table Styles --- */
+.doc-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 40px 0;
+    font-family: var(--font-mono);
+    font-size: 0.9rem;
+    border: 1px solid var(--color-card-border);
+}
+
+.doc-table th {
+    background-color: var(--color-mid-bg);
+    color: var(--color-text);
+    text-align: left;
+    padding: 15px;
+    border-bottom: 2px solid var(--color-accent);
+    text-transform: uppercase;
+    font-weight: 700;
+}
+
+.doc-table td {
+    padding: 15px;
+    border-bottom: 1px solid var(--color-card-border);
+    color: var(--color-secondary-text);
+}
+
+.doc-table tbody tr:nth-child(even) {
+    background-color: var(--color-mid-bg);
+}
+
+.doc-table tbody tr:hover {
+    background-color: var(--color-accent);
+    color: var(--color-light-bg);
+}
+
+.doc-table tbody tr:hover td {
+    color: var(--color-light-bg);
+}
+
+.doc-table td code {
+    background-color: rgba(255, 59, 48, 0.1);
+    color: var(--color-accent);
+    padding: 3px 6px;
+    border-radius: 2px;
+}

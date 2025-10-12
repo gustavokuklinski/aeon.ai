@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AEON - Documentation</title>
+    <link rel="stylesheet" href="assets/css/aeon.css">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⚡</text></svg>">
+</head>
+<body id="theme-wrapper">
+
+    <header>
+        <div class="container">
+            <h1 class="logo"><a href="index.html"><img src="assets/img/aeon-logo.png" style="width: 50%;"></a></h1>
+            <nav>
+                <a href="index.html#features">Features</a>
+                <a href="index.html#architecture">Architecture</a>
+                <a href="index.html#install" class="btn btn-nav">Get Started</a>
+                <a href="#" class="btn btn-nav btn-primary">Documentation</a>
+                <button id="theme-toggle" class="btn btn-nav mode-toggle-btn">
+                    ☀️
+                </button>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <section id="cli" class="section">
+            <div class="container">
+                
+                <h2>Command Line <span class="accent-text">Interface (CLI and WEB)</span></h2>
+                <div class="rag-callout">
+                    <h4>Powerful CLI</h4>
+                    <p>Command-line interface (CLI) was designed to be fast and a minimalist experience, making it perfect for developers and power users who want to interact with the AI directly. Some command parameters may change on the web interface.</p>
+                </div>
+
+                <h3 style="margin-top: 40px; margin-bottom: 20px;">Commands</h3>
+
+                <table class="doc-table">
+                    <thead>
+                        <tr>
+                            <th>Command</th>
+                            <th>Description</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code>/help</code></td>
+                            <td>Show this screen.</td>
+                        </tr>
+                        <tr>
+                            <td><code>/new</code></td>
+                            <td>Create a new chat.</td>
+                        </tr>
+                        <tr>
+                            <td><code>/list</code></td>
+                            <td>List all chats.</td>
+                        </tr>
+                        <tr>
+                            <td><code>/open [NUMBER]</code></td>
+                            <td>Open chat.</td>
+                        </tr>
+                        <tr>
+                            <td><code>/load [PATH]/[FILE].zip</code></td>
+                            <td>Load ZIP backup.</td>
+                        </tr>
+                        <tr>
+                            <td><code>/rename [NUMBER] [NEW_NAME]</code></td>
+                            <td>Rename chat by ID.</td>
+                        </tr>
+                        <tr>
+                            <td><code>/delete [NUMBER]</code></td>
+                            <td>Delete selected chat.</td>
+                        </tr>
+                        <tr>
+                            <td><code>/zip</code></td>
+                            <td>Backup contents to a zip file.</td>
+                        </tr>
+                        <tr>
+                            <td><code>/ingest [.json,txt,md,csv,sqlite3]</code></td>
+                            <td>Add documents to RAG.</td>
+                        </tr>
+                        <tr>
+                            <td><code>/search [TERM]</code></td>
+                            <td>Make web search with DuckDuckGo.</td>
+                        </tr>
+                        <tr>
+                            <td><code>/restart</code></td>
+                            <td>Restart.</td>
+                        </tr>
+                        <tr>
+                            <td><code>/quit, /exit, /bye</code></td>
+                            <td>Exit.</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <table class="doc-table">
+                    <thead>
+                        <tr>
+                            <th>Plugins</th>
+                            <th>Description</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code>/say [PROMPT]</code></td>
+                            <td>The voice of Aeon. Use '/say /talk' to open voice chat (to stop say: 'goodbye')<br />Plugin: aeon-speak</td>
+                        </tr>
+                        <tr>
+                            <td><code>/image [PROMPT]</code></td>
+                            <td>Generate images with prompt <br />Plugin: aeon-tiny-sd</td>
+                        </tr>
+                        <tr>
+                            <td><code>/view [URL] [PROMPT]</code></td>
+                            <td>Used to interpret images. User /view /camera [PROMPT] to analyze live objects via camera <br />Plugin: aeon-smolvlm-256M-instruct</td>
+                        </tr>
+                        <tr>
+                            <td><code>/gemma3 [PROMPT]</code></td>
+                            <td>Used to embed Gemma3 results to RAG <br />Plugin: aeon-gemma3-270M-it</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+        
+        <hr>
+
+        <section id="windows-install" class="section">
+            <div class="container">
+                <h2>Installation Guide: <span class="accent-text">Windows 11</span></h2>
+                <p class="section-description">A step-by-step guide for setting up AEON on a Windows 11 environment.</p>
+
+                <div class="install-options">
+                    <div class="install-card">
+                        <h3>Requirements 🛠️</h3>
+                        <ul>
+                            <li>Command line tool (cmd)</li>
+                            <li>GIT with GIT LFS enabled to download large files</li>
+                            <li>Python 3.11 or later (Remember to check `Add python to PATH` and `Disable path length limit` during install)</li>
+                            <li>Microsoft C++ Build Tools - Install: `Desktop development with C++` package</li>
+                        </ul>
+                    </div>
+                    <div class="install-card">
+                        <h3>Automated Setup</h3>
+                        <p>The recommended method using the provided setup script.</p>
+                        <h4>Run: <code>python install.py</code></h4>
+                        <p>This will create the environment, activate the <code>.venv</code>, and download all <code>pip</code> requirements.</p>
+                        
+                        <p style="margin-top: 20px;">Start Virtual Env:</p>
+                        <pre class="code-block">C:\aeon.ai\> .\.venv\Scripts\activate.bat</pre>
+
+                        <p style="margin-top: 20px;">Starting AEON:</p>
+                        <pre class="code-block">C:\aeon.ai\> python aeon.py</pre>
+                    </div>
+                </div>
+
+                <h3 style="margin-top: 40px;">Running Manually for Troubleshoot</h3>
+                <div class="install-card" style="margin-top: 20px;">
+                    <ol>
+                        <li>Open Command line to the directory: <code>C:\> dir C:\aeon.ai\</code></li>
+                        <li>Create a .venv with: <code>C:\aeon.ai\> python -m venv .venv</code></li>
+                        <li>Activate Python .venv: <code>C:\aeon.ai\> .\.venv\Scripts\activate.bat</code></li>
+                        <li>Install pip dependencies: <code>(.venv) C:\aeon.ai\> pip install -r requirements.txt</code></li>
+                        <li>Run: <code>C:\aeon.ai\> python aeon.py</code></li>
+                    </ol>
+                </div>
+                
+                <h3 style="margin-top: 40px; margin-bottom: 20px;">Windows Specs (Reference)</h3>
+                <table class="doc-table">
+                    <thead>
+                        <tr>
+                            <th>OS</th>
+                            <th>CPU</th>
+                            <th>GPU</th>
+                            <th>RAM</th>
+                            <th>SSD</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Windows 11 Home Edition</td>
+                            <td>Intel i7 - 10510U</td>
+                            <td>-</td>
+                            <td>8GB</td>
+                            <td>80GB</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+            </div>
+        </section>
+        
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2024 AEON.AI Project. Built with love and open-source philosophy.</p>
+        </div>
+    </footer>
+
+    <script src="assets/js/aeon.js"></script>
+</body>
+</html>

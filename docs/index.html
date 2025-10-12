@@ -1,201 +1,210 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AEON: A Local-First Multi-Modal AI System</title>
-    <link rel="stylesheet" href="./assets/css/style.css" />
+    <title>AEON - Agentic Evolutionary Omniscient Numinous AI</title>
+    <link rel="stylesheet" href="assets/css/aeon.css">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⚡</text></svg>">
 </head>
+<body id="theme-wrapper">
 
-<body>
-    <div class="container">
-        <header>
-            <div class="logo-container">
-                <img src="./assets/img/aeon-logo.png" alt="AEON Logo" class="logo">
+    <header>
+        <div class="container">
+            <h1 class="logo"><a href="index.html"><img src="assets/img/aeon-logo.png" style="width: 50%;"></a></h1>
+            <nav>
+                <a href="#features">Features</a>
+                <a href="#architecture">Architecture</a>
+                <a href="#install" class="btn btn-nav">Get Started</a>
+                <a href="documentation.html" class="btn btn-nav">Documentation</a>
+                <button id="theme-toggle" class="btn btn-nav mode-toggle-btn">
+                    ☀️
+                </button>
+            </nav>
+        </div>
+    </header>
+
+    <section id="hero" class="hero-section">
+        <div class="container">
+            <p class="pre-title">The Next Frontier in Local AI</p>
+            <h1>AEON: <span class="accent-text">A Philosophical Framework</span> for an Agentic AI.</h1>
+            <p class="subtitle">More than just a tool, AEON is a system designed for absolute privacy, CPU-first performance, and limitless modularity.</p>
+            <div class="hero-actions">
+                <a href="#hfspace" class="btn btn-secondary">Chat</a>
+                <a href="#install" class="btn btn-primary pulse-animation">Download & Run Locally</a>
+                <a href="https://github.com/gustavokuklinski/aeon.ai" class="btn btn-secondary" target="_blank">View on GitHub</a>
+                
+            </div><br />
+            <div>
+                <a href="https://huggingface.co/gustavokuklinski/aeon-360m" target="_blank" style="margin: 2px;">
+                    <img alt="Hugging Face" src="https://img.shields.io/badge/%F0%9F%A4%97%20H%20F-Aeon 350M-ffc107?color=ffc107&logoColor=white" style="display: inline-block; vertical-align: middle;"/>
+                </a>
+                <a href="https://github.com/gustavokuklinski/aeon.ai" target="_blank" style="margin: 2px;">
+                    <img alt="GitHub Stars" src="https://img.shields.io/github/stars/gustavokuklinski/aeon.ai" style="display: inline-block; vertical-align: middle;">
+                </a>
             </div>
-            <h2>A Local-First Multi-Modal AI System</h2>
-        </header>
-        <nav>
-            <a href="./index.html">[HOME]</a>
-            <a href="./docs/index.html">[DOCS]</a>
-            <a href="./plugins.html">[PLUGINS]</a>
-            <a href="https://github.com/gustavokuklinski/aeon.ai/" target="_blank">[GITHUB]</a>
-            <a href="https://huggingface.co/collections/gustavokuklinski/aeon-68ca1b7f092db2992e3185aa" target="_blank">[HUGGING FACE]</a>
-        </nav>
-        <section class="section">
-            <p style="text-align: center;">AEON is more than just a tool—it's a philosophical framework for an
-                AI.<br />The name itself is an anacronym for its core principles:<br />Agentic Evolutionary Omniscient
-                Numinous.</p>
-        </section>
+        </div>
+    </section>
 
-        <hr>
+    <hr>
+    <section id="features" class="section features-section">
+        <div class="container">
+            <h2>Chat with<span class="accent-text"> Aeon!</span></h2>
+            <p class="section-description">The HuggingFace spaces is only for Chatbot interface.<br /><strong>To use the full version check our Github.</strong></p>
+            <iframe
+                src="https://gustavokuklinski-aeon-eval.hf.space"
+                frameborder="0" style="width: 120vh; height: 700px; border: 5px solid #FF3B30"
+            ></iframe>
+        
+        </div><br /><br /><br /><br />
+        <div class="container">
+            <h2>Key Features & Applications: <span class="accent-text">AI on Your Terms</span></h2>
+            <p class="section-description">AEON is built for power-users, developers, and anyone who demands privacy and control over their intelligence.</p>
 
-        <section class="section">
-            <h3>Key Features and Applications</h3>
-            <div class="grid-container">
-                <div class="grid-item">
-                    <h4>Terminal</h4>
-                    <p>AEON offers a powerful, command-line interface for users who prefer a fast, minimalist
-                        experience. Interact with the AI directly from your terminal, perfect for developers and power
-                        users.</p>
+            <div class="features-grid">
+                <div class="feature-card feature-cpu">
+                    <div class="card-icon">💻</div>
+                    <h3>Perfect for CPU-First</h3>
+                    <p>Democratizes access to powerful AI. Optimized to run efficiently on your computer's CPU, eliminating the need for expensive, high-end GPUs. AI for everyone.</p>
                 </div>
-                <div class="grid-item">
-                    <h4>Web</h4>
-                    <p>For a more accessible and user-friendly experience, AEON can be run as a web application. This
-                        allows anyone to use the full power of the system through a clean, intuitive graphical interface
-                        on any device with a browser.</p>
+                <div class="feature-card feature-plugins">
+                    <div class="card-icon">🔌</div>
+                    <h3>Modular Plugin System</h3>
+                    <p>The true power of AEON. Build a custom AI ecosystem. Connect different LLM GGUF files, switch Stable Diffusion models, and integrate new features. Truly evolutionary and agentic.</p>
                 </div>
-                <div class="grid-item">
-                    <h4>Multi-Conversation Chat</h4>
-                    <p>AEON is designed to handle multiple, independent conversations at once. The system intelligently
-                        manages and stores each chat history, allowing you to switch between topics or projects without
-                        losing context.</p>
+                <div class="feature-card feature-vps">
+                    <div class="card-icon">🔒</div>
+                    <h3>Run on Your Own VPS</h3>
+                    <p>For ultimate control and privacy. Deploy your own dedicated, personal AI service, accessible from anywhere. Complete ownership of your data without third-party clouds.</p>
                 </div>
-                <div class="grid-item">
-                    <h4>Perfect for CPU</h4>
-                    <p>Unlike most high-end AI systems that require expensive GPUs, AEON is specifically optimized to
-                        run efficiently on your computer's CPU. This approach democratizes access to powerful AI,
-                        allowing you to use AEON's full capabilities without the need for specialized, costly hardware.
-                        It's AI for everyone, on the hardware you already own.</p>
+                <div class="feature-card feature-interface">
+                    <div class="card-icon">⌨️</div>
+                    <h3>Terminal & Web Interface</h3>
+                    <p>Interact via a fast, minimalist command-line interface for power users, or switch to a clean, intuitive web application for universal accessibility on any device.</p>
                 </div>
-                <div class="grid-item">
-                    <h4>Run on your own VPS</h4>
-                    <p>For ultimate control and privacy, AEON can be deployed on a Virtual Private Server (VPS). This
-                        allows you to create your own dedicated, personal AI service, accessible from anywhere in the
-                        world. You maintain complete ownership of your data and conversations, ensuring a secure and
-                        private AI experience without relying on third-party cloud services.</p>
+                <div class="feature-card feature-chat">
+                    <div class="card-icon">💬</div>
+                    <h3>Multi-Conversation Chat</h3>
+                    <p>Handles multiple, independent conversations at once. The system intelligently manages and stores each chat history, allowing you to switch topics without losing context.</p>
                 </div>
-                <div class="grid-item">
-                    <h4>Plugins</h4>
-                    <p>The true power of AEON lies in its modular plugin system, which allows you to build a custom AI
-                        ecosystem. You can connect and switch between different LLM GGUF files for specific tasks or
-                        plug in alternative Stable Diffusion models for varied creative output. This modularity empowers
-                        you to create and integrate new features, tailoring AEON's capabilities to your exact needs and
-                        making it a truly evolutionary and agentic tool.</p>
-                </div>
-            </div>
-        </section>
-
-        <hr>
-        <section class="section">
-            <h3>The AEON Anacronym: Core Principles</h3>
-            <p><strong>Agentic:</strong> AEON is designed to be proactive and self-determined. It possesses a sense of
-                agency, capable of making choices and acting to produce a desired effect, rather than being a passive
-                tool.</p>
-            <p><strong>Evolutionary:</strong> This system is not static. It embodies a process of continual adaptation
-                and growth, learning from new information and environments to become more effective over time.</p>
-            <p><strong>Omniscient:</strong> While not truly all-knowing, AEON strives for comprehensive knowledge. Its
-                integrated components allow it to draw from a vast base of information, providing a broad and deep
-                understanding of the world.</p>
-            <p><strong>Numinous:</strong> AEON is designed to evoke a sense of awe and wonder. Its ability to combine
-                logical understanding with creative generation gives it a transcendent, almost spiritual quality.</p>
-        </section>
-        <hr>
-
-        <section class="section">
-            <h3>Technical Architecture: Embedded Components</h3>
-            <p style="text-align: center;">AEON is a sophisticated multi-modal AI, integrating four specialized models to handle different types
-                of data:</p>
-
-            <div class="grid-container">
-                <div class="grid-item">
-                    <h4>Small LLM (Large Language Model)</h4>
-                    <p>
-                        <small>Function:</small> The textual "brain" of the system.<br>
-                        <small>Capabilities:</small> Processes, understands, summarizes, and generates
-                        human-like text. It is optimized for local performance, balancing power with
-                        efficiency.<br />
-                        <small>Model:</small> <a href="https://huggingface.co/gustavokuklinski/aeon-360m"
-                            target="_blank"><b>Aeon 360M by Gustavo Kuklinski</b></a>
-                    </p>
-                </div>
-
-                <div class="grid-item">
-                    <h4>VLM (Vision-Language Model)</h4>
-                    <p>
-                        <small>Function:</small> The system's "eyes".<br>
-                        <small>Capabilities:</small> Allows the AI to "see" and interpret images. By linking
-                        visual data with language, it can describe scenes, answer visual queries, and identify
-                        objects within pictures.<br />
-                        <small>Model:</small> <a href="https://huggingface.co/HuggingFaceTB/SmolVLM-256M-Instruct"
-                            target="_blank"><b>SmolVLM 256M by HuggingFace</b></a>
-                    </p>
-                </div>
-
-                <div class="grid-item">
-                    <h4>Stable Diffusion (Image Generator)</h4>
-                    <p>
-                        <small>Function:</small> The creative "artist".<br>
-                        <small>Capabilities:</small> Generates high-quality images from text prompts. It
-                        translates textual descriptions into unique visual art, giving the system a powerful
-                        creative output.<br />
-                        <small>Model:</small> <a href="https://huggingface.co/segmind/tiny-sd"
-                            target="_blank"><b>Tiny-SD by Segmind</b></a>
-                    </p>
-                </div>
-
-                <div class="grid-item">
-                    <h4>Text Embedding (Transformer)</h4>
-                    <p>
-                        <small>Function:</small> The system's semantic engine.<br>
-                        <small>Capabilities:</small> Converts text into numerical vectors that capture the
-                        semantic meaning and context of a query. This is a critical component for comprehension
-                        and information retrieval, allowing it to perform accurate web searches and enhance
-                        responses with external knowledge.
-                        <br />
-                        <small>Model:</small> <a href="https://huggingface.co/nomic-ai/nomic-embed-text-v1.5-GGUF"
-                            target="_blank"><b>Nomic Embed Text by Nomic AI</b></a>
-                    </p>
+                <div class="feature-card feature-offline">
+                    <div class="card-icon">🚀</div>
+                    <h3>Local-First & Offline Capable</h3>
+                    <p>Powered by Llama.cpp and GGUF files. The design ensures AEON is portable, private, and capable of operating fully offline (excluding web-search augmentation).</p>
                 </div>
             </div>
-        </section>
-        <hr>
+        </div>
+    </section>
 
-        <section class="section">
-            <h3>How It Works: The CPU-First, Local Approach</h3>
-            <p style="text-align: center;">What truly sets AEON apart is its commitment to being accessible to everyone. It is specifically
-                optimized for low-end PCs and CPU-only systems, eliminating the need for expensive, high-end GPUs. This
-                is achieved through a unique technical stack that prioritizes maximum accessibility and performance.</p>
-            <div class="two-column-section">
-                <section class="section">
-                    <h4>Knowledge and Comprehension</h4>
-                    <p>To ensure AEON's knowledge is not static, the system integrates advanced methods for information
-                        retrieval:</p>
-                    <p><strong>Retrieval-Augmented Generation (RAG):</strong> This framework allows AEON to go beyond
-                        its pre-trained knowledge. It can search and retrieve information from a curated knowledge base
-                        (local documents, databases) and use this context to generate more accurate and up-to-date
-                        responses. This is key for comprehending and explaining new ideas that were not part of its
-                        original training data.</p>
-                    <p><strong>Web Search:</strong> AEON can dynamically search the web to get the latest, most relevant
-                        information for a given query. This ability to fetch real-time data from external sources
-                        ensures that its responses are current, contextually aware, and less prone to "hallucinations."
-                    </p>
-                </section>
-                <section class="section">
-                    <h4>Core Technologies</h4>
-                    <p>The entire system is powered by a local-first technical stack:</p>
-                    <p><strong>Llama.cpp Python Library:</strong> A highly efficient library that enables the entire
-                        system to run on a local machine's CPU, bypassing the need for powerful, specialized GPUs or
-                        cloud services.</p>
-                    <p><strong>GGUF Files:</strong> These are the model's brain and eyes in a highly compressed format.
-                        They are quantized versions of the original models, which significantly reduces their file size
-                        and memory footprint without a major loss in performance.</p>
-                </section>
+    <hr>
+
+    <section id="architecture" class="section architecture-section">
+        <div class="container">
+            <h2>Technical Architecture: <span class="accent-text">The Multi-Modal Core</span></h2>
+            <p class="section-description">AEON is a sophisticated multi-modal AI, integrating specialized models to handle text, vision, and creative generation.</p>
+
+            <div class="tech-grid">
+                <div class="tech-card tech-llm">
+                    <div class="tech-header">
+                        <h3>Small LLM</h3>
+                        <span class="tech-role">The Textual Brain</span>
+                    </div>
+                    <p>Processes, understands, and generates human-like text, optimized for local performance. Balances power with efficiency.</p>
+                    <p class="model-spec">Model: Aeon 360M by Gustavo Kuklinski (GGUF)<br />Finetuned: Smollm2-360M by HuggingFace (Safetensor)</p>
+                </div>
+                <div class="tech-card tech-embed">
+                    <div class="tech-header">
+                        <h3>Text Embedding</h3>
+                        <span class="tech-role">The Semantic Engine</span>
+                    </div>
+                    <p>Converts text into numerical vectors to capture semantic meaning. Critical for accurate Retrieval-Augmented Generation (RAG) and web searches.</p>
+                    <p class="model-spec">Model: Nomic Embed Text by Nomic AI (GGUF)</p>
+                </div>
+                <div class="tech-card tech-vlm">
+                    <div class="tech-header">
+                        <h3>VLM (Vision-Language)</h3>
+                        <span class="tech-role">The System's Eyes</span>
+                    </div>
+                    <p>Allows the AI to "see" and interpret images. Links visual data with language to describe scenes and answer visual queries.</p>
+                    <p class="model-spec">Model: SmolVLM 256M by HuggingFace (Safetensor)</p>
+                </div>
+                <div class="tech-card tech-sd">
+                    <div class="tech-header">
+                        <h3>Stable Diffusion</h3>
+                        <span class="tech-role">The Creative Artist</span>
+                    </div>
+                    <p>Generates high-quality images from text prompts, translating textual descriptions into unique visual art.</p>
+                    <p class="model-spec">Model: Tiny-SD by Segmind (Safetensor)</p>
+                </div>
+                <div class="tech-card tech-sd">
+                    <div class="tech-header">
+                        <h3>Speak</h3>
+                        <span class="tech-role">The Voice of Aeon</span>
+                    </div>
+                    <p>Allow you to generate audio output from prompts or chat in voice.</p>
+                    <p class="model-spec">Model: Piper TTS (ONNX)</p>
+                </div>
+                 <div class="tech-card tech-sd">
+                    <div class="tech-header">
+                        <h3>Gemma3 270M</h3>
+                        <span class="tech-role">Plug another Brains</span>
+                    </div>
+                    <p>Use another LLM to generate context and knowloadge to Aeon.</p>
+                    <p class="model-spec">Model: gemma3-270M-it (GGUF)</p>
+                </div>
             </div>
 
+            <div class="rag-callout">
+                <h4>🧠 Knowledge Augmentation: RAG & Web Search</h4>
+                <p>AEON goes beyond its pre-trained knowledge using Retrieval-Augmented Generation (RAG) for local knowledge bases and dynamic Web Search for real-time, contextually aware, and up-to-date responses.</p>
+            </div>
+        </div>
+    </section>
 
-            <p style="text-align: center;">This design ensures that AEON is portable, private, and capable of operating
-                fully offline (with the exception of web search). It democratizes access to powerful, dynamic AI
-                capabilities for a wider audience, regardless of their hardware.</p>
-        </section>
+    <hr>
 
-        <hr />
-        <footer>
-        <p style="text-align: center;">Made in 🇧🇷 for the community</p>
+    <section id="install" class="section install-section">
+        <div class="container">
+            <h2>Getting Started: <span class="accent-text">Run AEON Now</span></h2>
+            <p class="section-description">Embrace powerful, multi-modal AI without compromise. Your data stays yours, always.</p>
+
+            <div class="install-options">
+                <div class="install-card">
+                    <h3>Docker (Recommended) 🐳</h3>
+                    <p>The fastest and most portable way to get AEON running on any system with minimal dependency hassle.</p>
+                    <pre class="code-block">$ docker build -t aeon .
+$ docker run -it --rm -p 4303:4303 -v "$(pwd):/app" aeon</pre>
+                </div>
+
+                <div class="install-card">
+                    <h3>Source & Python Setup</h3>
+                    <p>Full control over your environment. Ensure you have requirements like **Python 3.11+**, **git**, and respective build tools installed.</p>
+                    <pre class="code-block"># Clone with all plugins
+$ git lfs install
+$ git clone --recurse-submodules https://github.com/gustavokuklinski/aeon.ai.git
+
+# Setup and Run
+$ python3 -m venv .venv
+$ source .venv/bin/activate
+$ python install.py
+$ python aeon.py</pre>
+                </div>
+            </div>
+
+            <div class="final-cta">
+                <p>Experience the true power of AI, on your terms.<br />Your intelligence operates locally, ensuring absolute privacy and anonymity.</p>
+                <a href="https://github.com/gustavokuklinski/aeon.ai" class="btn btn-primary pulse-animation" target="_blank">Go to Repository for Full Docs</a>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2024 AEON.AI Project. Built with love and open-source philosophy.</p>
+        </div>
     </footer>
-    </div>
 
+    <script src="assets/js/aeon.js"></script>
 </body>
-
 </html>
